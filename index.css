@@ -13,57 +13,83 @@
   --color-accent: #a28a68;
   --color-accent-hover: #b89a78;
   --color-accent-glow: rgba(162, 138, 104, 0.3);
-  
+
   /* Tipografía */
   --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-weight-regular: 400;
   --font-weight-medium: 500;
   --font-weight-bold: 700;
-  
+
   /* Tamaños de Fuente */
-  --text-xs: 0.75rem;     /* 12px */
-  --text-sm: 0.875rem;    /* 14px */
-  --text-base: 1rem;      /* 16px */
-  --text-lg: 1.125rem;    /* 18px */
-  --text-xl: 1.25rem;     /* 20px */
-  --text-2xl: 1.5rem;     /* 24px */
-  --text-3xl: 1.875rem;   /* 30px */
-  --text-4xl: 2.25rem;    /* 36px */
-  --text-5xl: 3rem;       /* 48px */
-  --text-6xl: 3.75rem;    /* 60px */
-  
+  --text-xs: 0.75rem;
+  /* 12px */
+  --text-sm: 0.875rem;
+  /* 14px */
+  --text-base: 1rem;
+  /* 16px */
+  --text-lg: 1.125rem;
+  /* 18px */
+  --text-xl: 1.25rem;
+  /* 20px */
+  --text-2xl: 1.5rem;
+  /* 24px */
+  --text-3xl: 1.875rem;
+  /* 30px */
+  --text-4xl: 2.25rem;
+  /* 36px */
+  --text-5xl: 3rem;
+  /* 48px */
+  --text-6xl: 3.75rem;
+  /* 60px */
+
   /* Espaciado */
-  --space-1: 0.25rem;     /* 4px */
-  --space-2: 0.5rem;      /* 8px */
-  --space-3: 0.75rem;     /* 12px */
-  --space-4: 1rem;        /* 16px */
-  --space-5: 1.25rem;     /* 20px */
-  --space-6: 1.5rem;      /* 24px */
-  --space-8: 2rem;        /* 32px */
-  --space-10: 2.5rem;     /* 40px */
-  --space-12: 3rem;       /* 48px */
-  --space-16: 4rem;       /* 64px */
-  --space-20: 5rem;       /* 80px */
-  --space-24: 6rem;       /* 96px */
-  
+  --space-1: 0.25rem;
+  /* 4px */
+  --space-2: 0.5rem;
+  /* 8px */
+  --space-3: 0.75rem;
+  /* 12px */
+  --space-4: 1rem;
+  /* 16px */
+  --space-5: 1.25rem;
+  /* 20px */
+  --space-6: 1.5rem;
+  /* 24px */
+  --space-8: 2rem;
+  /* 32px */
+  --space-10: 2.5rem;
+  /* 40px */
+  --space-12: 3rem;
+  /* 48px */
+  --space-16: 4rem;
+  /* 64px */
+  --space-20: 5rem;
+  /* 80px */
+  --space-24: 6rem;
+  /* 96px */
+
   /* Sombras */
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 10px 10px -5px rgba(0, 0, 0, 0.5);
   --shadow-glow: 0 0 20px var(--color-accent-glow);
-  
+
   /* Bordes */
-  --radius-sm: 0.375rem;  /* 6px */
-  --radius-md: 0.5rem;    /* 8px */
-  --radius-lg: 0.75rem;   /* 12px */
-  --radius-xl: 1rem;      /* 16px */
-  
+  --radius-sm: 0.375rem;
+  /* 6px */
+  --radius-md: 0.5rem;
+  /* 8px */
+  --radius-lg: 0.75rem;
+  /* 12px */
+  --radius-xl: 1rem;
+  /* 16px */
+
   /* Transiciones */
   --transition-fast: 150ms ease-in-out;
   --transition-base: 250ms ease-in-out;
   --transition-slow: 350ms ease-in-out;
-  
+
   /* Z-index */
   --z-dropdown: 1000;
   --z-sticky: 1020;
@@ -73,7 +99,9 @@
 }
 
 /* === RESET CSS === */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -95,13 +123,20 @@ body {
   overflow-x: hidden;
 }
 
-img, picture, video, canvas, svg {
+img,
+picture,
+video,
+canvas,
+svg {
   display: block;
   max-width: 100%;
   height: auto;
 }
 
-input, button, textarea, select {
+input,
+button,
+textarea,
+select {
   font: inherit;
   color: inherit;
 }
@@ -117,7 +152,8 @@ a {
   text-decoration: none;
 }
 
-ul, ol {
+ul,
+ol {
   list-style: none;
 }
 
@@ -174,7 +210,7 @@ ul, ol {
 .grid-background {
   position: absolute;
   inset: 0;
-  background-image: 
+  background-image:
     linear-gradient(rgba(224, 225, 221, 0.03) 1px, transparent 1px),
     linear-gradient(90deg, rgba(224, 225, 221, 0.03) 1px, transparent 1px);
   background-size: 50px 50px;
@@ -352,6 +388,7 @@ ul, ol {
 .hero-content {
   text-align: center;
   max-width: 900px;
+  margin: 0 auto;
   position: relative;
   z-index: 1;
 }
@@ -362,6 +399,7 @@ ul, ol {
   margin-bottom: var(--space-6);
   line-height: 1.1;
   animation: fadeInUp 0.8s ease-out;
+  text-align: center;
 }
 
 .hero-subtitle {
@@ -372,10 +410,13 @@ ul, ol {
   margin-left: auto;
   margin-right: auto;
   animation: fadeInUp 0.8s ease-out 0.2s both;
+  text-align: center;
 }
 
 .hero-cta {
   animation: fadeInUp 0.8s ease-out 0.4s both;
+  display: flex;
+  justify-content: center;
 }
 
 /* === SERVICIOS (BENTO GRID) === */
@@ -721,6 +762,7 @@ ul, ol {
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -731,6 +773,7 @@ ul, ol {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -763,7 +806,7 @@ ul, ol {
     --text-5xl: 2.5rem;
     --text-4xl: 2rem;
   }
-  
+
   .services-grid {
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   }
@@ -776,11 +819,11 @@ ul, ol {
     --text-4xl: 1.75rem;
     --space-20: 3rem;
   }
-  
+
   .menu-toggle {
     display: flex;
   }
-  
+
   .nav {
     position: fixed;
     top: 70px;
@@ -794,23 +837,23 @@ ul, ol {
     transition: transform var(--transition-base);
     box-shadow: var(--shadow-xl);
   }
-  
+
   .nav.active {
     transform: translateX(0);
   }
-  
+
   .hero {
     min-height: 80vh;
   }
-  
+
   .services-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .portfolio-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .footer-content {
     grid-template-columns: 1fr;
     text-align: center;
@@ -822,11 +865,11 @@ ul, ol {
     --text-6xl: 2rem;
     --text-4xl: 1.5rem;
   }
-  
+
   .container {
     padding: 0 var(--space-3);
   }
-  
+
   .testimonial-quote {
     font-size: var(--text-lg);
   }
