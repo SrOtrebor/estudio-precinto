@@ -120,6 +120,10 @@ body {
   line-height: 1.6;
   color: var(--color-text-primary);
   background-color: var(--color-bg-primary);
+  background-image:
+    linear-gradient(rgba(224, 225, 221, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(224, 225, 221, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
   overflow-x: hidden;
 }
 
