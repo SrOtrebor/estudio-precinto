@@ -152,12 +152,6 @@ const Register = () => {
                   <p style={{ marginTop: '1.5rem', fontSize: '0.85rem', opacity: 0.8 }}>
                     Mantené esta pantalla abierta. Te avisaremos aquí mismo si ganás.
                   </p>
-                  <button 
-                    onClick={() => { localStorage.removeItem('participantId'); localStorage.removeItem('participantName'); window.location.reload(); }}
-                    style={{ marginTop: '1rem', background: 'transparent', border: 'none', color: 'var(--secondary)', fontSize: '0.8rem', cursor: 'pointer', textDecoration: 'underline' }}
-                  >
-                    REGISTRAR A OTRA PERSONA
-                  </button>
                 </>
               )}
 

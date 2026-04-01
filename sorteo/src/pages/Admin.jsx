@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { db, ref, onValue, update, set } from '../firebase';
+import { db, ref, onValue, update, set, runTransaction } from '../firebase';
 import logo from '../assets/logo-troncal.svg';
 
 const Admin = () => {
@@ -8,6 +8,9 @@ const Admin = () => {
   const [winnerId, setWinnerId] = useState(null);
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [password, setPassword] = useState('');
+  const [manualName, setManualName] = useState('');
+  const [manualWhatsapp, setManualWhatsapp] = useState('');
+  const [isRegistering, setIsRegistering] = useState(false);
 
   useEffect(() => {
     const participantsRef = ref(db, 'participants');
@@ -74,6 +77,39 @@ const Admin = () => {
       settings: { status: 'waiting', winner_id: null } 
     });
     window.location.reload();
+  };
+
+  const handleManualRegister = async (e) => {
+    e.preventDefault();
+    if (!manualName || !manualWhatsapp) return;
+    setIsRegistering(true);
+
+    try {
+      const counterRef = ref(db, 'counter');
+      const { snapshot: counterSnapshot } = await runTransaction(counterRef, (currentValue) => {
+        return (currentValue || 0) + 1;
+      });
+
+      const nextId = counterSnapshot.val();
+      const participantsRef = ref(db, `participants/${nextId}`);
+      
+      await set(participantsRef, {
+        name: manualName,
+        whatsapp: manualWhatsapp,
+        id: nextId,
+        timestamp: Date.now(),
+        isManual: true
+      });
+
+      setManualName('');
+      setManualWhatsapp('');
+      alert(`¡Éxito! Registrado con el número #${nextId}`);
+    } catch (error) {
+      console.error("Error al registrar manual:", error);
+      alert("Error al registrar. Intenta de nuevo.");
+    } finally {
+      setIsRegistering(false);
+    }
   };
 
   const exportCSV = () => {
@@ -220,28 +256,61 @@ const Admin = () => {
           </section>
 
           <section className="glass-card" style={{ padding: '1rem' }}>
-             <h2 style={{ marginBottom: '1rem', fontSize: '0.8rem', opacity: 0.6 }}>REGISTRADOS EN VIVO ({participants.length})</h2>
-             <div style={{ maxHeight: '500px', overflowY: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                   <tbody>
-                      {[...participants].sort((a,b) => (b.timestamp || 0) - (a.timestamp || 0)).map((p, idx) => (
-                        <tr key={idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', background: p.isWinner ? 'rgba(0,142,69,0.2)' : 'transparent' }}>
-                           <td style={{ padding: '0.8rem', fontSize: '0.9rem' }}>
-                              <span style={{ color: 'var(--secondary)', fontWeight: 'bold' }}>#{p.id}</span> {p.isWinner ? '🏆' : ''}
-                           </td>
-                           <td style={{ padding: '0.8rem', fontSize: '0.9rem' }}>
-                              <div>{p.name}</div>
-                              <div style={{ fontSize: '0.7rem', opacity: 0.5 }}>{p.whatsapp}</div>
-                           </td>
-                        </tr>
-                      ))}
-                   </tbody>
-                </table>
-             </div>
+            <h2 style={{ marginBottom: '1rem', fontSize: '0.8rem', opacity: 0.6 }}>REGISTRO MANUAL (PARA INVITADOS SIN MÓVIL)</h2>
+            <form onSubmit={handleManualRegister} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+               <input 
+                 className="input-field"
+                 style={{ marginBottom: '0.5rem', fontSize: '0.9rem' }}
+                 type="text" 
+                 placeholder="Nombre del Invitado" 
+                 value={manualName}
+                 onChange={(e) => setManualName(e.target.value)}
+                 required
+               />
+               <input 
+                 className="input-field"
+                 style={{ marginBottom: '0.5rem', fontSize: '0.9rem' }}
+                 type="text" 
+                 placeholder="Referencia / WhatsApp" 
+                 value={manualWhatsapp}
+                 onChange={(e) => setManualWhatsapp(e.target.value)}
+                 required
+               />
+               <button 
+                  type="submit" 
+                  className="btn-primary" 
+                  disabled={isRegistering}
+                  style={{ background: 'var(--accent)', fontSize: '0.8rem' }}
+               >
+                 {isRegistering ? 'REGISTRANDO...' : 'CARGA MANUAL'}
+               </button>
+            </form>
+
+            <div style={{ marginTop: '2rem', fontSize: '0.8rem', opacity: 0.6, borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '1rem' }}>
+               REGISTRADOS EN VIVO ({participants.length})
+            </div>
+            <div style={{ maxHeight: '350px', overflowY: 'auto' }}>
+               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <tbody>
+                     {[...participants].sort((a,b) => (b.timestamp || 0) - (a.timestamp || 0)).map((p, idx) => (
+                       <tr key={idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', background: p.isWinner ? 'rgba(0,142,69,0.2)' : 'transparent' }}>
+                          <td style={{ padding: '0.8rem', fontSize: '0.8rem' }}>
+                             <span style={{ color: 'var(--secondary)', fontWeight: 'bold' }}>#{p.id}</span> {p.isWinner ? '🏆' : ''}
+                          </td>
+                          <td style={{ padding: '0.8rem', fontSize: '0.8rem' }}>
+                             <div>{p.name}</div>
+                             <div style={{ fontSize: '0.6rem', opacity: 0.5 }}>{p.whatsapp} {p.isManual ? '(MANUAL)' : ''}</div>
+                          </td>
+                       </tr>
+                     ))}
+                  </tbody>
+               </table>
+            </div>
           </section>
-       </div>
-    </div>
-  );
-};
+        </div>
+      </div>
+    );
+  }
+;
 
 export default Admin;
