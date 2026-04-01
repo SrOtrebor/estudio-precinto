@@ -125,3 +125,16 @@ body {
 .floating {
   animation: float 6s ease-in-out infinite;
 }
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+@media (min-width: 1024px) {
+  .admin-grid {
+    grid-template-columns: 380px 1fr; /* Columna fija para controles, resto para lista */
+  }
+}

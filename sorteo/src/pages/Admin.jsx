@@ -208,12 +208,7 @@ const Admin = () => {
         <h1 style={{ color: 'var(--accent)', fontSize: '1rem', marginTop: '0.5rem', letterSpacing: '4px' }}>DASHBOARD DE CONTROL</h1>
       </header>
 
-      <div className="admin-grid" style={{ 
-        display: 'grid', 
-        gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', 
-        gap: '2rem',
-        alignItems: 'start'
-      }}>
+      <div className="admin-grid">
         {/* COLUMNA IZQUIERDA: CONTROLES */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
           {/* TARJETA DE ESTADO */}
