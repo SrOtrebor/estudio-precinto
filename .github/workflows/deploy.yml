@@ -1,0 +1,59 @@
+name: Deploy Unified (Site + Sorteo)
+
+on:
+  push:
+    branches: [ "main" ]
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'
+
+      - name: Build Sorteo App
+        working-directory: ./sorteo
+        run: |
+          npm install
+          npm run build
+
+      - name: Create Final Build Structure
+        run: |
+          mkdir dist_final
+          # Copiamos archivos de la raíz (Sitio principal)
+          cp index.html dist_final/
+          cp index.css dist_final/
+          cp script.js dist_final/
+          cp CNAME dist_final/
+          
+          # Copiamos carpetas de recursos si existen
+          [ -d assets ] && cp -r assets dist_final/ || true
+          [ -d SVG ] && cp -r SVG dist_final/ || true
+          
+          # Copiamos el build de la app de sorteos a la subcarpeta /sorteo
+          mkdir -p dist_final/sorteo
+          cp -r sorteo/dist/* dist_final/sorteo/
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # Subimos la carpeta unificada
+          path: './dist_final'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
