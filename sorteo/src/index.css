@@ -20,8 +20,8 @@ body {
   font-family: var(--font-main);
   background-color: var(--bg-dark);
   color: var(--text-light);
-  min-height: 100vh;
-  overflow-x: hidden;
+  height: 100vh;
+  overflow: hidden;
   background-image: 
     linear-gradient(rgba(224, 225, 221, 0.03) 1px, transparent 1px),
     linear-gradient(90deg, rgba(224, 225, 221, 0.03) 1px, transparent 1px);
@@ -29,9 +29,8 @@ body {
 }
 
 #root {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .glass-card {
