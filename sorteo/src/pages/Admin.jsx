@@ -202,115 +202,147 @@ const Admin = () => {
   }
 
   return (
-    <div className="admin-view" style={{ padding: '2rem', maxWidth: '1200px', margin: '0 auto', minHeight: '100vh', color: 'white' }}>
-       <header style={{ textAlign: 'center', marginBottom: '3rem' }}>
-          <img src={logo} alt="La Troncal" style={{ maxWidth: '280px', height: 'auto' }} />
-          <h1 style={{ color: 'var(--accent)', fontSize: '1rem', marginTop: '0.5rem', letterSpacing: '4px' }}>DASHBOARD DE CONTROL</h1>
-       </header>
+    <div className="admin-view" style={{ padding: '2rem', maxWidth: '1400px', margin: '0 auto', minHeight: '100vh', color: 'white' }}>
+      <header style={{ textAlign: 'center', marginBottom: '3rem' }}>
+        <img src={logo} alt="La Troncal" style={{ maxWidth: '280px', height: 'auto' }} />
+        <h1 style={{ color: 'var(--accent)', fontSize: '1rem', marginTop: '0.5rem', letterSpacing: '4px' }}>DASHBOARD DE CONTROL</h1>
+      </header>
 
-       <div className="admin-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
+      <div className="admin-grid" style={{ 
+        display: 'grid', 
+        gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', 
+        gap: '2rem',
+        alignItems: 'start'
+      }}>
+        {/* COLUMNA IZQUIERDA: CONTROLES */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+          {/* TARJETA DE ESTADO */}
           <section className="glass-card" style={{ padding: '2rem' }}>
-             <h2 style={{ color: 'var(--secondary)', marginBottom: '1rem', fontSize: '0.8rem', letterSpacing: '2px' }}>ESTADO DEL SORTEO</h2>
-             <div style={{ fontSize: '2rem', fontWeight: '900', marginBottom: '1.5rem', borderBottom: '1px solid var(--glass-border)', paddingBottom: '1rem' }}>
-                {drawStatus === 'waiting' ? 'ESPERANDO' : 
-                 drawStatus === 'finished' ? 'TERMINADO' : 
-                 drawStatus.toUpperCase()}
-             </div>
-             
-             {drawStatus === 'waiting' && <button className="btn-primary" style={{ width: '100%' }} onClick={handleStartDraw}>LANZAR SORTEO</button>}
-             {drawStatus === 'drawing' && <button className="btn-primary" style={{ width: '100%', opacity: 0.5 }} disabled>SORTEANDO...</button>}
-             {drawStatus === 'finished' && (
-               <>
-                 <div style={{ marginBottom: '1rem', padding: '1rem', background: 'rgba(255,255,255,0.05)', borderRadius: '8px' }}>
-                   GANADOR: <strong>#{winnerId}</strong>
-                 </div>
-                 <div style={{ display: 'flex', gap: '1rem' }}>
-                    <button className="btn-primary" onClick={handleReset} style={{ flex: 1, background: 'transparent', border: '1px solid var(--accent)', color: 'var(--accent)' }}>OTRO PREMIO</button>
-                    <button className="btn-primary" onClick={exportCSV} style={{ flex: 1, background: 'var(--secondary)' }}>EXPORTAR CSV</button>
-                 </div>
-               </>
-             )}
-             
-             <div style={{ marginTop: '3rem', paddingTop: '2rem', borderTop: '1px solid rgba(231, 76, 60, 0.2)' }}>
-               <button 
-                 onClick={handleFullReset} 
-                 style={{ 
-                   width: '100%', 
-                   background: 'rgba(231, 76, 60, 0.05)', 
-                   color: '#e74c3c', 
-                   border: '1px solid rgba(231, 76, 60, 0.2)', 
-                   padding: '0.6rem', 
-                   borderRadius: '8px', 
-                   cursor: 'pointer', 
-                   fontSize: '0.6rem', 
-                   fontWeight: 'bold',
-                   opacity: 0.5,
-                   transition: 'all 0.3s ease'
-                 }}
-                 onMouseOver={(e) => e.target.style.opacity = 0.8}
-                 onMouseOut={(e) => e.target.style.opacity = 0.5}
-               >
-                  ⚙️ RESET SISTEMA (ACCESO RESTRINGIDO)
-               </button>
-             </div>
+            <h2 style={{ color: 'var(--secondary)', marginBottom: '1rem', fontSize: '0.8rem', letterSpacing: '2px' }}>ESTADO DEL SORTEO</h2>
+            <div style={{ fontSize: '2.5rem', fontWeight: '900', marginBottom: '1.5rem', borderBottom: '1px solid var(--glass-border)', paddingBottom: '1rem' }}>
+              {drawStatus === 'waiting' ? 'ESPERANDO' : 
+               drawStatus === 'finished' ? 'TERMINADO' : 
+               drawStatus.toUpperCase()}
+            </div>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              {drawStatus === 'waiting' && <button className="btn-primary" style={{ width: '100%', padding: '1.2rem', fontSize: '1.1rem' }} onClick={handleStartDraw}>LANZAR SORTEO</button>}
+              {drawStatus === 'drawing' && <button className="btn-primary" style={{ width: '100%', opacity: 0.5, padding: '1.2rem' }} disabled>SORTEANDO...</button>}
+              {drawStatus === 'finished' && (
+                <>
+                  <div style={{ padding: '1rem', background: 'rgba(0,142,69,0.1)', borderRadius: '8px', border: '1px solid var(--primary)', textAlign: 'center', marginBottom: '1rem' }}>
+                    ÚLTIMO GANADOR: <strong style={{ fontSize: '1.5rem' }}>#{winnerId}</strong>
+                  </div>
+                  <button className="btn-primary" style={{ width: '100%', background: 'var(--secondary)' }} onClick={handleReset}>NUEVA RONDA</button>
+                </>
+              )}
+            </div>
+
+            <div style={{ marginTop: '3rem', paddingTop: '1.5rem', borderTop: '1px solid rgba(231, 76, 60, 0.2)' }}>
+              <button 
+                onClick={handleFullReset} 
+                style={{ 
+                  width: '100%', 
+                  background: 'rgba(231, 76, 60, 0.05)', 
+                  color: '#e74c3c', 
+                  border: '1px solid rgba(231, 76, 60, 0.1)', 
+                  padding: '0.6rem', 
+                  borderRadius: '8px', 
+                  cursor: 'pointer', 
+                  fontSize: '0.6rem', 
+                  fontWeight: 'bold',
+                  opacity: 0.4
+                }}
+              >
+                ⚙️ RESET SISTEMA (BORRAR TODO)
+              </button>
+            </div>
           </section>
 
-          <section className="glass-card" style={{ padding: '1rem' }}>
-            <h2 style={{ marginBottom: '1rem', fontSize: '0.8rem', opacity: 0.6 }}>REGISTRO MANUAL (PARA INVITADOS SIN MÓVIL)</h2>
-            <form onSubmit={handleManualRegister} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-               <input 
-                 className="input-field"
-                 style={{ marginBottom: '0.5rem', fontSize: '0.9rem' }}
-                 type="text" 
-                 placeholder="Nombre del Invitado" 
-                 value={manualName}
-                 onChange={(e) => setManualName(e.target.value)}
-                 required
-               />
-               <input 
-                 className="input-field"
-                 style={{ marginBottom: '0.5rem', fontSize: '0.9rem' }}
-                 type="text" 
-                 placeholder="Referencia / WhatsApp" 
-                 value={manualWhatsapp}
-                 onChange={(e) => setManualWhatsapp(e.target.value)}
-                 required
-               />
-               <button 
-                  type="submit" 
-                  className="btn-primary" 
-                  disabled={isRegistering}
-                  style={{ background: 'var(--accent)', fontSize: '0.8rem' }}
-               >
-                 {isRegistering ? 'REGISTRANDO...' : 'CARGA MANUAL'}
-               </button>
+          {/* TARJETA DE REGISTRO MANUAL */}
+          <section className="glass-card" style={{ padding: '2rem' }}>
+            <h2 style={{ marginBottom: '1.5rem', fontSize: '0.8rem', opacity: 0.7, letterSpacing: '1px' }}>REGISTRO MANUAL (ADMIN)</h2>
+            <form onSubmit={handleManualRegister} style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+              <input 
+                className="input-field"
+                style={{ marginBottom: '0', fontSize: '1rem' }}
+                type="text" 
+                placeholder="Nombre del Invitado" 
+                value={manualName}
+                onChange={(e) => setManualName(e.target.value)}
+                required
+              />
+              <input 
+                className="input-field"
+                style={{ marginBottom: '0', fontSize: '1rem' }}
+                type="text" 
+                placeholder="Referencia / Empresa" 
+                value={manualWhatsapp}
+                onChange={(e) => setManualWhatsapp(e.target.value)}
+                required
+              />
+              <button 
+                type="submit" 
+                className="btn-primary" 
+                disabled={isRegistering}
+                style={{ background: 'var(--accent)', marginTop: '0.5rem', padding: '1rem' }}
+              >
+                {isRegistering ? 'CARGANDO...' : 'CARGAR INVITADO'}
+              </button>
             </form>
-
-            <div style={{ marginTop: '2rem', fontSize: '0.8rem', opacity: 0.6, borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '1rem' }}>
-               REGISTRADOS EN VIVO ({participants.length})
-            </div>
-            <div style={{ maxHeight: '350px', overflowY: 'auto' }}>
-               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                  <tbody>
-                     {[...participants].sort((a,b) => (b.timestamp || 0) - (a.timestamp || 0)).map((p, idx) => (
-                       <tr key={idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', background: p.isWinner ? 'rgba(0,142,69,0.2)' : 'transparent' }}>
-                          <td style={{ padding: '0.8rem', fontSize: '0.8rem' }}>
-                             <span style={{ color: 'var(--secondary)', fontWeight: 'bold' }}>#{p.id}</span> {p.isWinner ? '🏆' : ''}
-                          </td>
-                          <td style={{ padding: '0.8rem', fontSize: '0.8rem' }}>
-                             <div>{p.name}</div>
-                             <div style={{ fontSize: '0.6rem', opacity: 0.5 }}>{p.whatsapp} {p.isManual ? '(MANUAL)' : ''}</div>
-                          </td>
-                       </tr>
-                     ))}
-                  </tbody>
-               </table>
-            </div>
           </section>
         </div>
+
+        {/* COLUMNA DERECHA: LISTADO DE PARTICIPANTES */}
+        <section className="glass-card" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', height: '100%', maxHeight: '80vh' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+            <h2 style={{ fontSize: '0.8rem', opacity: 0.7, letterSpacing: '2px' }}>PARTICIPANTES REGISTRADOS ({participants.length})</h2>
+            <button 
+              onClick={exportCSV} 
+              style={{ background: 'transparent', border: '1px solid var(--secondary)', color: 'var(--secondary)', padding: '0.4rem 1rem', borderRadius: '6px', fontSize: '0.7rem', cursor: 'pointer', fontWeight: 'bold' }}
+            >
+              DESCARGAR CSV
+            </button>
+          </div>
+          
+          <div style={{ overflowY: 'auto', flex: 1, paddingRight: '1rem' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <thead>
+                <tr style={{ borderBottom: '1px solid var(--glass-border)', textAlign: 'left', fontSize: '0.7rem', color: 'var(--accent)' }}>
+                  <th style={{ padding: '1rem 0.5rem' }}>ID</th>
+                  <th style={{ padding: '1rem 0.5rem' }}>PARTICIPANTE</th>
+                  <th style={{ padding: '1rem 0.5rem' }}>CONTACTO</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[...participants].sort((a,b) => (b.timestamp || 0) - (a.timestamp || 0)).map((p, idx) => (
+                  <tr key={idx} style={{ 
+                    borderBottom: '1px solid rgba(255,255,255,0.03)', 
+                    background: p.isWinner ? 'rgba(0,142,69,0.1)' : 'transparent',
+                    transition: 'background 0.3s'
+                  }}>
+                    <td style={{ padding: '1rem 0.5rem', fontWeight: '900', color: 'var(--secondary)', fontSize: '1rem' }}>
+                      #{p.id}
+                    </td>
+                    <td style={{ padding: '1rem 0.5rem' }}>
+                      <div style={{ fontWeight: 'bold', fontSize: '0.95rem' }}>
+                        {p.name} {p.isWinner ? '🏆' : ''}
+                      </div>
+                    </td>
+                    <td style={{ padding: '1rem 0.5rem', fontSize: '0.75rem', opacity: 0.6 }}>
+                      <div>{p.whatsapp}</div>
+                      {p.isManual && <div style={{ color: 'var(--accent)', fontWeight: 'bold', fontSize: '0.6rem', marginTop: '0.2rem' }}>REGISTRO MANUAL</div>}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
       </div>
-    );
-  }
+    </div>
+  );
+};
 ;
 
 export default Admin;

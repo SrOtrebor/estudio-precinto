@@ -27,9 +27,10 @@ function App() {
           justifyContent: 'center', 
           gap: '0.8rem', 
           zIndex: 100, 
-          flexShrink: 0  /* IMPORTANTE: evitar que se achique */
+          flexShrink: 0 
         }}>
-          <a href="https://estudioprecinto.com.ar" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', textDecoration: 'none' }}>
+          <a href="https://estudioprecinto.com" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '1rem', textDecoration: 'none' }}>
+            <span style={{ color: 'white', fontWeight: 'bold', fontSize: '0.8rem', letterSpacing: '1px' }}>Estudio Precinto</span>
             <img src={logoPrecinto} alt="Estudio Precinto" style={{ height: '20px', opacity: 0.8 }} />
             <div className="precinto-badge" style={{ fontSize: '0.75rem', letterSpacing: '4px', fontWeight: 'bold', color: 'var(--accent)', textShadow: '0 0 10px rgba(162, 138, 104, 0.2)' }}>
               TECNOLOGÍA QUE RESUELVE
