@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { db, ref, onValue } from '../firebase';
-import confetti from 'canvas-confetti';
+import logo from '../assets/logo-troncal.png';
 
 const Monitor = () => {
   const [participantsCount, setParticipantsCount] = useState(0);
@@ -77,10 +77,14 @@ const Monitor = () => {
   return (
     <div className="monitor-view" style={{ minHeight: '100vh', padding: '4rem', textAlign: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'center', background: 'radial-gradient(circle at center, #1b2735 0%, #090a0f 100%)' }}>
       <header style={{ position: 'absolute', top: '4rem', left: '0', right: '0' }}>
-         <h1 style={{ color: 'var(--secondary)', fontSize: '5rem', fontWeight: '900', textShadow: '0 0 30px var(--secondary)' }}>
-            LA <span style={{ color: 'var(--primary)' }}>TRONCAL</span>
-         </h1>
-         <p style={{ letterSpacing: '15px', fontSize: '1.5rem', opacity: 0.5, marginTop: '1rem' }}>AUDIOVISUAL & RADIO</p>
+         <img 
+           src={logo} 
+           alt="La Troncal" 
+           style={{ maxWidth: '600px', height: 'auto', filter: 'drop-shadow(0 0 30px rgba(0, 176, 229, 0.4))' }} 
+         />
+         <p style={{ letterSpacing: '20px', fontSize: '1.2rem', opacity: 0.4, marginTop: '2rem', fontWeight: 'bold' }}>
+            AUDIOVISUAL & RADIO | ESTUDIO PRECINTO
+         </p>
       </header>
 
       <main style={{ marginTop: '5rem' }}>
