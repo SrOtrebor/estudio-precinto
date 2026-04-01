@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import Register from './pages/Register';
 import Monitor from './pages/Monitor';
 import Admin from './pages/Admin';
@@ -7,7 +7,7 @@ import logoPrecinto from './assets/logo-precinto.svg';
 
 function App() {
   return (
-    <Router basename="/sorteo">
+    <Router>
       <div className="app-container">
         <Routes>
           <Route path="/" element={<Register />} />
