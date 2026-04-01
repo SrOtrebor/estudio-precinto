@@ -289,7 +289,7 @@ const Admin = () => {
         </div>
 
         {/* COLUMNA DERECHA: LISTADO DE PARTICIPANTES */}
-        <section className="glass-card" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', height: '100%', maxHeight: '80vh' }}>
+        <section className="glass-card admin-participants-col" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', height: '100%', maxHeight: '85vh' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
             <h2 style={{ fontSize: '0.8rem', opacity: 0.7, letterSpacing: '2px' }}>PARTICIPANTES REGISTRADOS ({participants.length})</h2>
             <button 
