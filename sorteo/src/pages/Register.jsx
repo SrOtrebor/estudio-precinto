@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { db, ref, push, set, onValue, runTransaction } from '../firebase';
 import confetti from 'canvas-confetti';
 import logo from '../assets/logo-troncal.png';
+import logoPrecinto from '../assets/logo-precinto.svg';
 
 const Register = () => {
   const [name, setName] = useState('');
@@ -78,13 +79,10 @@ const Register = () => {
     <div className="registration-view" style={{ padding: '1rem' }}>
       <header className="logo-container" style={{ textAlign: 'center', marginBottom: '2rem' }}>
         <img 
-          src="/sorteo/src/assets/logo-troncal.png" 
+          src={logo} 
           alt="La Troncal" 
           style={{ maxWidth: '280px', height: 'auto', marginBottom: '0.5rem' }} 
         />
-        <p style={{ fontSize: '0.7rem', opacity: 0.5, letterSpacing: '3px', fontWeight: 'bold' }}>
-          TECNOLOGÍA DE ESTUDIO PRECINTO
-        </p>
       </header>
 
        <main className={`glass-card ${registered ? 'floating' : ''}`} style={{ maxWidth: '400px', margin: '1rem auto' }}>

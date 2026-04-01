@@ -82,9 +82,6 @@ const Monitor = () => {
            alt="La Troncal" 
            style={{ maxWidth: '600px', height: 'auto', filter: 'drop-shadow(0 0 30px rgba(0, 176, 229, 0.4))' }} 
          />
-         <p style={{ letterSpacing: '20px', fontSize: '1.2rem', opacity: 0.4, marginTop: '2rem', fontWeight: 'bold' }}>
-            AUDIOVISUAL & RADIO | ESTUDIO PRECINTO
-         </p>
       </header>
 
       <main style={{ marginTop: '5rem' }}>
