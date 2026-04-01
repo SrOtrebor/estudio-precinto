@@ -202,15 +202,22 @@ const Admin = () => {
   }
 
   return (
-    <div className="admin-view" style={{ padding: '2rem', maxWidth: '1400px', width: '100%', margin: '0 auto', minHeight: '100vh', color: 'white' }}>
+    <div className="admin-view" style={{ padding: '2rem', width: '100%', maxWidth: '1400px', margin: '0 auto', color: 'white' }}>
       <header style={{ textAlign: 'center', marginBottom: '3rem' }}>
         <img src={logo} alt="La Troncal" style={{ maxWidth: '280px', height: 'auto' }} />
         <h1 style={{ color: 'var(--accent)', fontSize: '1rem', marginTop: '0.5rem', letterSpacing: '4px' }}>DASHBOARD DE CONTROL</h1>
       </header>
 
-      <div className="admin-grid" style={{ width: '100%' }}>
+      <div className="admin-layout-container" style={{ 
+        display: 'flex', 
+        flexWrap: 'wrap', 
+        gap: '2rem', 
+        width: '100%',
+        alignItems: 'start'
+      }}>
         {/* COLUMNA IZQUIERDA: CONTROLES */}
-        <div className="admin-controls-col">
+        <div style={{ flex: '1 1 400px', minWidth: '350px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
           {/* TARJETA DE ESTADO */}
           <section className="glass-card" style={{ padding: '2rem' }}>
             <h2 style={{ color: 'var(--secondary)', marginBottom: '1rem', fontSize: '0.8rem', letterSpacing: '2px' }}>ESTADO DEL SORTEO</h2>
@@ -286,10 +293,11 @@ const Admin = () => {
               </button>
             </form>
           </section>
+          </div>
         </div>
 
         {/* COLUMNA DERECHA: LISTADO DE PARTICIPANTES */}
-        <section className="glass-card admin-participants-col" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', height: '100%', maxHeight: '85vh' }}>
+        <section className="glass-card" style={{ flex: '2 1 600px', minWidth: '400px', padding: '2rem', display: 'flex', flexDirection: 'column', maxHeight: '85vh' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
             <h2 style={{ fontSize: '0.8rem', opacity: 0.7, letterSpacing: '2px' }}>PARTICIPANTES REGISTRADOS ({participants.length})</h2>
             <button 

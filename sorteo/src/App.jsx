@@ -9,7 +9,7 @@ function App() {
   return (
     <Router>
       <div className="app-container" style={{ height: '100dvh', height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-        <main className="main-content" style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
+        <main className="main-content" style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'stretch', width: '100%' }}>
           <Routes>
             <Route path="/" element={<Register />} />
             <Route path="/monitor" element={<Monitor />} />
