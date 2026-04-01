@@ -202,13 +202,13 @@ const Admin = () => {
   }
 
   return (
-    <div className="admin-view" style={{ padding: '2rem', maxWidth: '1400px', margin: '0 auto', minHeight: '100vh', color: 'white' }}>
+    <div className="admin-view" style={{ padding: '2rem', maxWidth: '1400px', width: '100%', margin: '0 auto', minHeight: '100vh', color: 'white' }}>
       <header style={{ textAlign: 'center', marginBottom: '3rem' }}>
         <img src={logo} alt="La Troncal" style={{ maxWidth: '280px', height: 'auto' }} />
         <h1 style={{ color: 'var(--accent)', fontSize: '1rem', marginTop: '0.5rem', letterSpacing: '4px' }}>DASHBOARD DE CONTROL</h1>
       </header>
 
-      <div className="admin-grid">
+      <div className="admin-grid" style={{ width: '100%' }}>
         {/* COLUMNA IZQUIERDA: CONTROLES */}
         <div className="admin-controls-col">
           {/* TARJETA DE ESTADO */}
