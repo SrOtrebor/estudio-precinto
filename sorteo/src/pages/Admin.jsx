@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { db, ref, onValue, update, set } from '../firebase';
-import logo from '../assets/logo-troncal.png';
+import logo from '../assets/logo-troncal.svg';
 
 const Admin = () => {
   const [participants, setParticipants] = useState([]);
@@ -82,18 +82,78 @@ const Admin = () => {
 
   if (!isAuthorized) {
     return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: 'var(--bg-dark)' }}>
-        <form className="glass-card" onSubmit={handleLogin} style={{ textAlign: 'center', maxWidth: '300px' }}>
-          <img src={logo} alt="La Troncal" style={{ maxWidth: '180px', marginBottom: '2rem' }} />
-          <input 
-            type="password" 
-            className="input-field" 
-            placeholder="Contraseña de Admin" 
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <button type="submit" className="btn-primary" style={{ width: '100%' }}>INGRESAR</button>
+      <div style={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        minHeight: '100vh', 
+        background: 'radial-gradient(circle at center, #1b2735 0%, #090a0f 100%)',
+        position: 'relative',
+        overflow: 'hidden'
+      }}>
+        {/* Adornos de fondo para efecto premium */}
+        <div style={{ position: 'absolute', top: '-10%', left: '-10%', width: '40%', height: '40%', background: 'rgba(0, 176, 229, 0.05)', filter: 'blur(100px)', borderRadius: '50%' }}></div>
+        <div style={{ position: 'absolute', bottom: '-10%', right: '-10%', width: '40%', height: '40%', background: 'rgba(0, 142, 69, 0.05)', filter: 'blur(100px)', borderRadius: '50%' }}></div>
+
+        <form 
+          className="glass-card" 
+          onSubmit={handleLogin} 
+          style={{ 
+            textAlign: 'center', 
+            maxWidth: '400px', 
+            width: '90%', 
+            padding: '3rem', 
+            border: '1px solid rgba(255,255,255,0.05)',
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+            animation: 'fadeInUp 0.6s ease-out'
+          }}
+        >
+          <img src={logo} alt="La Troncal" style={{ maxWidth: '220px', marginBottom: '2.5rem', filter: 'drop-shadow(0 0 15px rgba(0, 176, 229, 0.2))' }} />
+          
+          <div style={{ marginBottom: '2rem' }}>
+            <h2 style={{ fontSize: '0.8rem', letterSpacing: '4px', color: 'var(--accent)', marginBottom: '1.5rem', fontWeight: 'bold' }}>PANEL DE SEGURIDAD</h2>
+            <input 
+              type="password" 
+              className="input-field" 
+              placeholder="Contraseña de Acceso" 
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              style={{ 
+                textAlign: 'center', 
+                fontSize: '1.2rem', 
+                letterSpacing: '8px',
+                background: 'rgba(255,255,255,0.03)',
+                border: '1px solid rgba(255,255,255,0.1)'
+              }}
+              autoFocus
+            />
+          </div>
+
+          <button 
+            type="submit" 
+            className="btn-primary" 
+            style={{ 
+              width: '100%', 
+              padding: '1rem', 
+              fontSize: '1rem',
+              background: 'linear-gradient(45deg, var(--primary), var(--secondary))',
+              boxShadow: '0 10px 20px -10px rgba(0, 142, 69, 0.5)'
+            }}
+          >
+            AUTENTICAR
+          </button>
+          
+          <p style={{ marginTop: '2rem', fontSize: '0.6rem', opacity: 0.3, letterSpacing: '2px' }}>
+            SISTEMA DE SORTEOS EN VIVO V2.0
+          </p>
         </form>
+
+        <style>{`
+          @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+        `}</style>
       </div>
     );
   }

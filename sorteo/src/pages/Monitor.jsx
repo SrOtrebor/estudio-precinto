@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { db, ref, onValue } from '../firebase';
-import logo from '../assets/logo-troncal.png';
+import logo from '../assets/logo-troncal.svg';
 
 const Monitor = () => {
   const [participantsCount, setParticipantsCount] = useState(0);

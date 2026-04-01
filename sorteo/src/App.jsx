@@ -15,9 +15,9 @@ function App() {
           <Route path="/admin" element={<Admin />} />
         </Routes>
 
-        <footer className="footer-banner" style={{ padding: '1.5rem', borderTop: '1px solid var(--glass-border)', marginTop: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.8rem', opacity: 0.8, background: 'rgba(0,0,0,0.2)' }}>
-          <img src={logoPrecinto} alt="Estudio Precinto" style={{ height: '16px', opacity: 0.6 }} />
-          <div className="precinto-badge" style={{ fontSize: '0.7rem', letterSpacing: '4px', fontWeight: 'bold' }}>
+        <footer className="footer-banner" style={{ padding: '2.5rem', borderTop: '1px solid var(--glass-border)', marginTop: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1.2rem', opacity: 0.95, background: 'rgba(0,0,0,0.4)', transition: 'all 0.3s ease' }}>
+          <img src={logoPrecinto} alt="Estudio Precinto" style={{ height: '28px', opacity: 0.8 }} />
+          <div className="precinto-badge" style={{ fontSize: '1rem', letterSpacing: '6px', fontWeight: 'bold', color: 'var(--accent)', textShadow: '0 0 15px rgba(162, 138, 104, 0.3)' }}>
             TECNOLOGÍA QUE RESUELVE
           </div>
         </footer>

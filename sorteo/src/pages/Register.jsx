@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { db, ref, push, set, onValue, runTransaction } from '../firebase';
 import confetti from 'canvas-confetti';
-import logo from '../assets/logo-troncal.png';
+import logo from '../assets/logo-troncal.svg';
 import logoPrecinto from '../assets/logo-precinto.svg';
 
 const Register = () => {
