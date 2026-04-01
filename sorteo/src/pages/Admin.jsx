@@ -208,15 +208,9 @@ const Admin = () => {
         <h1 style={{ color: 'var(--accent)', fontSize: '1rem', marginTop: '0.5rem', letterSpacing: '4px' }}>DASHBOARD DE CONTROL</h1>
       </header>
 
-      <div className="admin-grid" style={{ 
-        display: 'flex', 
-        flexWrap: 'wrap', 
-        gap: '2rem',
-        alignItems: 'start',
-        justifyContent: 'center'
-      }}>
+      <div className="admin-grid">
         {/* COLUMNA IZQUIERDA: CONTROLES */}
-        <div style={{ flex: '1 1 400px', minWidth: '320px', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+        <div className="admin-controls-col">
           {/* TARJETA DE ESTADO */}
           <section className="glass-card" style={{ padding: '2rem' }}>
             <h2 style={{ color: 'var(--secondary)', marginBottom: '1rem', fontSize: '0.8rem', letterSpacing: '2px' }}>ESTADO DEL SORTEO</h2>
@@ -295,7 +289,7 @@ const Admin = () => {
         </div>
 
         {/* COLUMNA DERECHA: LISTADO DE PARTICIPANTES */}
-        <section className="glass-card" style={{ flex: '2 1 600px', minWidth: '350px', padding: '2rem', display: 'flex', flexDirection: 'column', height: '100%', maxHeight: '80vh' }}>
+        <section className="glass-card" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', height: '100%', maxHeight: '80vh' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
             <h2 style={{ fontSize: '0.8rem', opacity: 0.7, letterSpacing: '2px' }}>PARTICIPANTES REGISTRADOS ({participants.length})</h2>
             <button 

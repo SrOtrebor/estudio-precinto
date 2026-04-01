@@ -133,8 +133,14 @@ body {
   align-items: start;
 }
 
-@media (min-width: 1024px) {
+.admin-controls-col {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+@media (min-width: 850px) {
   .admin-grid {
-    grid-template-columns: 380px 1fr; /* Columna fija para controles, resto para lista */
+    grid-template-columns: 400px 1fr;
   }
 }
