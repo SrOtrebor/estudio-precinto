@@ -59,7 +59,14 @@ const Admin = () => {
   };
 
   const handleFullReset = async () => {
-    if (!window.confirm("¿ESTÁS SEGURO? Se borrarán todos los participantes registrados.")) return;
+    const confirmPass = window.prompt("ESCRIBE LA CONTRASEÑA PARA BORRAR TODA LA BASE DE DATOS:");
+    if (confirmPass !== 'troncal2025') {
+       alert("Acción cancelada o contraseña incorrecta.");
+       return;
+    }
+    
+    if (!window.confirm("¿ESTÁS TOTALMENTE SEGURO? Esta acción es irreversible.")) return;
+    
     localStorage.clear();
     await set(ref(db, '/'), { 
       counter: 0, 
@@ -186,9 +193,28 @@ const Admin = () => {
                </>
              )}
              
-             <button onClick={handleFullReset} style={{ width: '100%', marginTop: '3rem', background: 'transparent', color: '#e74c3c', border: '1px solid #e74c3c', padding: '0.8rem', borderRadius: '8px', cursor: 'pointer', fontSize: '0.7rem', fontWeight: 'bold' }}>
-                RESET TOTAL (BORRAR TODO)
-             </button>
+             <div style={{ marginTop: '3rem', paddingTop: '2rem', borderTop: '1px solid rgba(231, 76, 60, 0.2)' }}>
+               <button 
+                 onClick={handleFullReset} 
+                 style={{ 
+                   width: '100%', 
+                   background: 'rgba(231, 76, 60, 0.05)', 
+                   color: '#e74c3c', 
+                   border: '1px solid rgba(231, 76, 60, 0.2)', 
+                   padding: '0.6rem', 
+                   borderRadius: '8px', 
+                   cursor: 'pointer', 
+                   fontSize: '0.6rem', 
+                   fontWeight: 'bold',
+                   opacity: 0.5,
+                   transition: 'all 0.3s ease'
+                 }}
+                 onMouseOver={(e) => e.target.style.opacity = 0.8}
+                 onMouseOut={(e) => e.target.style.opacity = 0.5}
+               >
+                  ⚙️ RESET SISTEMA (ACCESO RESTRINGIDO)
+               </button>
+             </div>
           </section>
 
           <section className="glass-card" style={{ padding: '1rem' }}>

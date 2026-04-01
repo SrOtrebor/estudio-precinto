@@ -8,6 +8,7 @@ const Monitor = () => {
   const [winnerName, setWinnerName] = useState(null);
   const [winnerId, setWinnerId] = useState(null);
   const [shuffledId, setShuffledId] = useState('000');
+  const [shuffledName, setShuffledName] = useState('...');
   const [participants, setParticipants] = useState([]);
 
   useEffect(() => {
@@ -46,9 +47,10 @@ const Monitor = () => {
     if (drawStatus === 'drawing' && participants.length > 0) {
       const eligible = participants.filter(p => !p.isWinner);
       interval = setInterval(() => {
-        const randomP = eligible[Math.floor(Math.random() * eligible.length)] || { id: '???' };
+        const randomP = eligible[Math.floor(Math.random() * eligible.length)] || { id: '???', name: '...' };
         setShuffledId(randomP.id.toString().padStart(3, '0'));
-      }, 80);
+        setShuffledName(randomP.name);
+      }, 70);
     }
     return () => clearInterval(interval);
   }, [drawStatus, participants]);
@@ -98,10 +100,13 @@ const Monitor = () => {
 
         {drawStatus === 'drawing' && (
           <div className="suspense-container">
-             <h2 style={{ fontSize: '4rem', color: 'var(--accent)' }} className="floating">CALCULANDO SEÑAL GANADORA</h2>
-             <div className="ruleta-container" style={{ margin: '4rem auto', height: '180px', overflow: 'hidden', borderTop: '2px solid var(--accent)', borderBottom: '2px solid var(--accent)', maxWidth: '600px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <div style={{ fontSize: '10rem', color: 'white', fontWeight: '900', fontVariantNumeric: 'tabular-nums' }}>
+             <h2 style={{ fontSize: '4rem', color: 'var(--accent)', textShadow: '0 0 20px var(--accent)' }} className="floating">BUSCANDO SEÑAL GANADORA</h2>
+             <div className="ruleta-container" style={{ margin: '4rem auto', minHeight: '300px', overflow: 'hidden', borderTop: '2px solid var(--accent)', borderBottom: '2px solid var(--accent)', maxWidth: '900px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ fontSize: '6rem', color: 'var(--secondary)', fontWeight: '300', textTransform: 'uppercase', opacity: 0.8 }}>
                    #{shuffledId}
+                </div>
+                <div style={{ fontSize: '10rem', color: 'white', fontWeight: '900', textTransform: 'uppercase', lineHeight: 1 }}>
+                   {shuffledName}
                 </div>
              </div>
              <p style={{ fontSize: '2rem', opacity: 0.6 }}>CONECTANDO CON EL AZAR...</p>

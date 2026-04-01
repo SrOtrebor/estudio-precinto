@@ -11,6 +11,9 @@ const Register = () => {
   const [participantId, setParticipantId] = useState(null);
   const [drawStatus, setDrawStatus] = useState('waiting');
   const [winnerId, setWinnerId] = useState(null);
+  const [participants, setParticipants] = useState([]);
+  const [shuffledId, setShuffledId] = useState('000');
+  const [shuffledName, setShuffledName] = useState('...');
 
   useEffect(() => {
     const savedId = localStorage.getItem('participantId');
@@ -20,6 +23,12 @@ const Register = () => {
       setParticipantId(savedId);
       setName(savedName);
     }
+
+    const participantsRef = ref(db, 'participants');
+    onValue(participantsRef, (snapshot) => {
+      const data = snapshot.val();
+      setParticipants(data ? Object.values(data) : []);
+    });
 
     const settingsRef = ref(db, 'settings');
     onValue(settingsRef, (snapshot) => {
@@ -32,15 +41,28 @@ const Register = () => {
   }, []);
 
   useEffect(() => {
+    let interval;
+    if (drawStatus === 'drawing' && participants.length > 0) {
+      interval = setInterval(() => {
+        const randomP = participants[Math.floor(Math.random() * participants.length)];
+        setShuffledId(randomP.id.toString().padStart(3, '0'));
+        setShuffledName(randomP.name);
+      }, 70);
+    }
+    return () => clearInterval(interval);
+  }, [drawStatus, participants]);
+
+  useEffect(() => {
     if (drawStatus === 'finished' && winnerId === participantId && participantId) {
       confetti({
-        particleCount: 150,
-        spread: 70,
-        origin: { y: 0.6 },
+        particleCount: 200,
+        spread: 100,
+        origin: { y: 0.5 },
         colors: ['#008e45', '#00b0e5', '#a28a68']
       });
+      // VIBRACIÓN MÁS FUERTE
       if (navigator.vibrate) {
-        navigator.vibrate([200, 100, 200, 100, 500]);
+        navigator.vibrate([300, 100, 300, 100, 800]);
       }
     }
   }, [drawStatus, winnerId, participantId]);
@@ -140,19 +162,38 @@ const Register = () => {
               )}
 
               {drawStatus === 'drawing' && (
-                <div style={{ padding: '2rem 0' }}>
-                  <h2 className="floating">¡SORTEANDO! 🎰</h2>
-                  <p style={{ marginTop: '1rem' }}>Cruzá los dedos... el azar está decidiendo.</p>
+                <div style={{ padding: '2rem 0', animation: 'pulse 1.5s infinite' }}>
+                  <h2 style={{ fontSize: '1rem', color: 'var(--accent)', letterSpacing: '3px', marginBottom: '2rem' }}>¡SORTEO EN VIVO!</h2>
+                  <div style={{ margin: '2rem 0', background: 'rgba(255,255,255,0.05)', padding: '2rem', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
+                    <div style={{ fontSize: '1.2rem', color: 'var(--secondary)', fontWeight: '300' }}>#{shuffledId}</div>
+                    <div style={{ fontSize: '2.5rem', fontWeight: '900', color: 'white', textTransform: 'uppercase', lineHeight: 1.2 }}>{shuffledName}</div>
+                  </div>
+                  <p style={{ fontSize: '0.8rem', opacity: 0.6, marginTop: '1rem' }}>EL GANADOR APARECERÁ AQUÍ...</p>
+                  <style>{`
+                    @keyframes pulse {
+                      0% { transform: scale(1); opacity: 1; }
+                      50% { transform: scale(1.02); opacity: 0.8; }
+                      100% { transform: scale(1); opacity: 1; }
+                    }
+                  `}</style>
                 </div>
               )}
 
               {drawStatus === 'finished' && (
                 <div>
                   {winnerId === participantId ? (
-                    <div style={{ padding: '1rem 0' }}>
-                      <h2 style={{ color: 'var(--primary)', fontSize: '2rem' }}>¡GANASTE! 🎉</h2>
-                      <p style={{ margin: '1rem 0' }}>¡Felicidades, {name}! Acercate al control de la radio o comunicate con nosotros.</p>
-                      <button className="btn-primary" onClick={() => window.location.reload()}>OK</button>
+                    <div style={{ padding: '2rem 0', animation: 'winnerCelebrate 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)' }}>
+                      <div style={{ fontSize: '5rem', marginBottom: '1rem' }}>🏆</div>
+                      <h2 style={{ color: 'var(--primary)', fontSize: '3rem', fontWeight: '900', textShadow: '0 0 20px rgba(0,142,69,0.5)' }}>¡GANASTE! 🎉</h2>
+                      <p style={{ margin: '1.5rem 0', fontSize: '1.1rem', lineHeight: 1.5 }}>¡Felicidades, {name}! Sos el ganador del premio actual. Acercate al escenario para retirarlo.</p>
+                      <button className="btn-primary" style={{ width: '100%', padding: '1.2rem', background: 'linear-gradient(45deg, var(--primary), var(--secondary))' }} onClick={() => window.location.reload()}>ENTENDIDO</button>
+                      
+                      <style>{`
+                        @keyframes winnerCelebrate {
+                          0% { transform: scale(0.5); opacity: 0; }
+                          100% { transform: scale(1); opacity: 1; }
+                        }
+                      `}</style>
                     </div>
                   ) : (
                     <div>
