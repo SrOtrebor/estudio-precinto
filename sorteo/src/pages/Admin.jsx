@@ -176,7 +176,9 @@ const Admin = () => {
           <section className="glass-card" style={{ padding: '2rem' }}>
              <h2 style={{ color: 'var(--secondary)', marginBottom: '1rem', fontSize: '0.8rem', letterSpacing: '2px' }}>ESTADO DEL SORTEO</h2>
              <div style={{ fontSize: '2rem', fontWeight: '900', marginBottom: '1.5rem', borderBottom: '1px solid var(--glass-border)', paddingBottom: '1rem' }}>
-                {drawStatus === 'waiting' ? 'ESPERANDO' : drawStatus.toUpperCase()}
+                {drawStatus === 'waiting' ? 'ESPERANDO' : 
+                 drawStatus === 'finished' ? 'TERMINADO' : 
+                 drawStatus.toUpperCase()}
              </div>
              
              {drawStatus === 'waiting' && <button className="btn-primary" style={{ width: '100%' }} onClick={handleStartDraw}>LANZAR SORTEO</button>}

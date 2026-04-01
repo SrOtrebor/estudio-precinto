@@ -8,7 +8,7 @@ import logoPrecinto from './assets/logo-precinto.svg';
 function App() {
   return (
     <Router>
-      <div className="app-container" style={{ height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      <div className="app-container" style={{ height: '100dvh', height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         <main className="main-content" style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
           <Routes>
             <Route path="/" element={<Register />} />

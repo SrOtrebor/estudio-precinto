@@ -16,12 +16,19 @@
   padding: 0;
 }
 
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
 body {
   font-family: var(--font-main);
   background-color: var(--bg-dark);
   color: var(--text-light);
-  height: 100vh;
-  overflow: hidden;
+  height: 100%;
+  width: 100%;
   background-image: 
     linear-gradient(rgba(224, 225, 221, 0.03) 1px, transparent 1px),
     linear-gradient(90deg, rgba(224, 225, 221, 0.03) 1px, transparent 1px);
@@ -29,8 +36,8 @@ body {
 }
 
 #root {
-  height: 100vh;
-  overflow: hidden;
+  height: 100%;
+  width: 100%;
 }
 
 .glass-card {

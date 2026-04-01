@@ -98,8 +98,8 @@ const Register = () => {
   };
 
   return (
-    <div className="registration-view" style={{ padding: '1rem' }}>
-      <header className="logo-container" style={{ textAlign: 'center', marginBottom: '2rem' }}>
+    <div className="registration-view" style={{ padding: '0.5rem', display: 'flex', flexDirection: 'column', height: '100%' }}>
+      <header className="logo-container" style={{ textAlign: 'center', marginBottom: '1rem', padding: '1rem 0' }}>
         <img 
           src={logo} 
           alt="La Troncal" 
@@ -107,7 +107,7 @@ const Register = () => {
         />
       </header>
 
-       <main className={`glass-card ${registered ? 'floating' : ''}`} style={{ maxWidth: '400px', margin: '1rem auto' }}>
+       <main className={`glass-card ${registered ? 'floating' : ''}`} style={{ maxWidth: '400px', margin: '0.2rem auto', padding: '1.5rem' }}>
           {!registered ? (
             <>
               <h2 style={{ marginBottom: '1rem' }}>Sorteo Exclusivo</h2>
