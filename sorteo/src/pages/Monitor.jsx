@@ -77,66 +77,90 @@ const Monitor = () => {
   }, [drawStatus, winnerId]);
 
   return (
-    <div className="monitor-view" style={{ minHeight: '100vh', padding: '4rem', textAlign: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'center', background: 'radial-gradient(circle at center, #1b2735 0%, #090a0f 100%)' }}>
-      <header style={{ position: 'absolute', top: '4rem', left: '0', right: '0' }}>
+    <div className="monitor-view" style={{ 
+      height: '100vh', 
+      width: '100vw',
+      padding: '2vh 5vw', 
+      textAlign: 'center', 
+      display: 'flex', 
+      flexDirection: 'column', 
+      justifyContent: 'space-between', 
+      alignItems: 'center',
+      background: 'radial-gradient(circle at center, #1b2735 0%, #090a0f 100%)',
+      overflow: 'hidden'
+    }}>
+      <header style={{ width: '100%', padding: '2vh 0' }}>
          <img 
            src={logo} 
            alt="La Troncal" 
-           style={{ maxWidth: '600px', height: 'auto', filter: 'drop-shadow(0 0 30px rgba(0, 176, 229, 0.4))' }} 
+           style={{ 
+             maxHeight: '15vh', 
+             maxWidth: '80%', 
+             height: 'auto', 
+             filter: 'drop-shadow(0 0 30px rgba(0, 176, 229, 0.4))' 
+           }} 
          />
       </header>
 
-      <main style={{ marginTop: '5rem' }}>
+      <main style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', width: '100%' }}>
         {drawStatus === 'waiting' && (
-          <div className="floating">
-            <h2 style={{ fontSize: '3.5rem', marginBottom: '2rem', color: 'white' }}>Escaneando Participantes...</h2>
-            <div style={{ fontSize: '15rem', color: 'var(--primary)', fontWeight: '900', lineHeight: 1 }}>
+          <div className="floating" style={{ padding: '2vh' }}>
+            <h2 style={{ fontSize: '3rem', marginBottom: '1rem', color: 'white' }}>ESCANEANDO PARTICIPANTES...</h2>
+            <div style={{ fontSize: '25vh', color: 'var(--primary)', fontWeight: '900', lineHeight: 1 }}>
               {participantsCount.toString().padStart(3, '0')}
             </div>
-            <p style={{ fontSize: '2.5rem', opacity: 0.7, fontWeight: '300' }}>PERSONAS EN VIVO</p>
-            <div style={{ marginTop: '3rem', color: 'var(--accent)', fontSize: '1.2rem', letterSpacing: '3px' }}>LISTOS PARA EL SORTEO</div>
+            <p style={{ fontSize: '2rem', opacity: 0.7, fontWeight: '300' }}>PERSONAS EN VIVO</p>
+            <div style={{ marginTop: '2h', color: 'var(--accent)', fontSize: '1.2rem', letterSpacing: '5px' }}>LISTOS PARA EL SORTEO</div>
           </div>
         )}
 
         {drawStatus === 'drawing' && (
           <div className="suspense-container">
-             <h2 style={{ fontSize: '4rem', color: 'var(--accent)', textShadow: '0 0 20px var(--accent)' }} className="floating">BUSCANDO SEÑAL GANADORA</h2>
-             <div className="ruleta-container" style={{ margin: '4rem auto', minHeight: '300px', overflow: 'hidden', borderTop: '2px solid var(--accent)', borderBottom: '2px solid var(--accent)', maxWidth: '900px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                <div style={{ fontSize: '6rem', color: 'var(--secondary)', fontWeight: '300', textTransform: 'uppercase', opacity: 0.8 }}>
+             <h2 style={{ fontSize: '3.5rem', color: 'var(--accent)', textShadow: '0 0 20px var(--accent)' }} className="floating">BUSCANDO SEÑAL GANADORA</h2>
+             <div className="ruleta-container" style={{ margin: '2vh auto', minHeight: '30vh', overflow: 'hidden', borderTop: '2px solid var(--accent)', borderBottom: '2px solid var(--accent)', width: '100%', maxWidth: '1200px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ fontSize: '4rem', color: 'var(--secondary)', fontWeight: '300', textTransform: 'uppercase', opacity: 0.8 }}>
                    #{shuffledId}
                 </div>
-                <div style={{ fontSize: '10rem', color: 'white', fontWeight: '900', textTransform: 'uppercase', lineHeight: 1 }}>
+                <div style={{ fontSize: '10vh', color: 'white', fontWeight: '900', textTransform: 'uppercase', lineHeight: 1.2 }}>
                    {shuffledName}
                 </div>
              </div>
-             <p style={{ fontSize: '2rem', opacity: 0.6 }}>CONECTANDO CON EL AZAR...</p>
-             <style>{`
-               @keyframes blinkRuleta {
-                 0% { opacity: 0.2; transform: scale(0.9); }
-                 50% { opacity: 1; transform: scale(1.1); }
-                 100% { opacity: 0.2; transform: scale(0.9); }
-               }
-             `}</style>
+             <p style={{ fontSize: '1.5rem', opacity: 0.6 }}>CONECTANDO CON EL AZAR...</p>
           </div>
         )}
 
         {drawStatus === 'finished' && winnerId && (
-          <div style={{ animation: 'winnerPop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275)' }}>
-            <h2 style={{ fontSize: '4rem', color: 'var(--primary)', marginBottom: '2rem' }}>¡YA TENEMOS GANADOR!</h2>
-            <div style={{ fontSize: '18rem', color: 'white', fontWeight: '900', textShadow: '0 0 80px rgba(0, 142, 69, 0.8)', lineHeight: 0.9 }}>
+          <div style={{ animation: 'winnerPop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+            <h2 style={{ fontSize: '3rem', color: 'var(--primary)', marginBottom: '1vh', letterSpacing: '2px' }}>¡YA TENEMOS GANADOR!</h2>
+            <div style={{ fontSize: '28vh', color: 'white', fontWeight: '900', textShadow: '0 0 80px rgba(0, 142, 69, 0.8)', lineHeight: 0.8, margin: '1vh 0' }}>
               #{winnerId}
             </div>
-            <h3 style={{ fontSize: '6rem', color: 'var(--accent)', marginTop: '2rem', textTransform: 'uppercase' }}>{winnerName || 'CONECTANDO...'}</h3>
-            <p style={{ fontSize: '2rem', color: 'var(--secondary)', marginTop: '2rem' }}>¡ACERCATE AL ESCENARIO!</p>
-            <style>{`
-              @keyframes winnerPop {
-                0% { transform: scale(0.5); opacity: 0; filter: blur(20px); }
-                100% { transform: scale(1); opacity: 1; filter: blur(0); }
-              }
-            `}</style>
+            <h3 style={{ fontSize: '8vh', color: 'var(--accent)', marginTop: '1vh', textTransform: 'uppercase', fontWeight: '900', maxWidth: '90vw', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {winnerName || 'CONECTANDO...'}
+            </h3>
+            <p style={{ fontSize: '2.5rem', color: 'var(--secondary)', fontWeight: 'bold', marginTop: '2vh' }}>¡ACERCATE AL ESCENARIO!</p>
           </div>
         )}
       </main>
+
+      <footer style={{ width: '100%', padding: '2vh 0', borderTop: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '2rem' }}>
+        <p style={{ fontSize: '0.8rem', opacity: 0.4, letterSpacing: '2px' }}>Estudio Precinto</p>
+        <div style={{ width: '1px', height: '1rem', background: 'rgba(255,255,255,0.2)' }}></div>
+        <p style={{ fontSize: '0.8rem', opacity: 0.4, letterSpacing: '2px' }}>TECNOLOGÍA QUE RESUELVE</p>
+      </footer>
+
+      <style>{`
+        @keyframes winnerPop {
+          0% { transform: scale(0.5); opacity: 0; filter: blur(20px); }
+          100% { transform: scale(1); opacity: 1; filter: blur(0); }
+        }
+        @keyframes float {
+          0% { transform: translateY(0px); }
+          50% { transform: translateY(-10px); }
+          100% { transform: translateY(0px); }
+        }
+        .floating { animation: float 4s ease-in-out infinite; }
+      `}</style>
     </div>
   );
 };

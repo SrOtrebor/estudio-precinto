@@ -53,7 +53,8 @@ const Register = () => {
   }, [drawStatus, participants]);
 
   useEffect(() => {
-    if (drawStatus === 'finished' && winnerId === participantId && participantId) {
+    // Usamos Number() para asegurar que la comparación sea exitosa (Firebase devuelve Number, localStorage devuelve String)
+    if (drawStatus === 'finished' && Number(winnerId) === Number(participantId) && participantId) {
       confetti({
         particleCount: 200,
         spread: 100,
@@ -179,7 +180,7 @@ const Register = () => {
                     <div style={{ padding: '2rem 0', animation: 'winnerCelebrate 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)' }}>
                       <div style={{ fontSize: '5rem', marginBottom: '1rem' }}>🏆</div>
                       <h2 style={{ color: 'var(--primary)', fontSize: '3rem', fontWeight: '900', textShadow: '0 0 20px rgba(0,142,69,0.5)' }}>¡GANASTE! 🎉</h2>
-                      <p style={{ margin: '1.5rem 0', fontSize: '1.1rem', lineHeight: 1.5 }}>¡Felicidades, {name}! Sos el ganador del premio actual. Acercate al escenario para retirarlo.</p>
+                      <p style={{ margin: '1.5rem 0', fontSize: '1.1rem', lineHeight: 1.5 }}>¡Felicidades, {name}! Sos el ganador. Acercate al escenario para retirar tu premio.</p>
                       <button className="btn-primary" style={{ width: '100%', padding: '1.2rem', background: 'linear-gradient(45deg, var(--primary), var(--secondary))' }} onClick={() => window.location.reload()}>ENTENDIDO</button>
                       
                       <style>{`
