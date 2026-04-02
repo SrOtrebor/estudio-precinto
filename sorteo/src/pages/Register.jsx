@@ -35,9 +35,12 @@ const Register = () => {
     onValue(settingsRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
-        // Validar Sesión (Invalidación remota)
+        // Validar Sesión (Invalidación remota robusta)
         const savedSessionId = localStorage.getItem('sessionId');
-        if (data.sessionId && savedSessionId && String(savedSessionId) !== String(data.sessionId)) {
+        const savedId = localStorage.getItem('participantId');
+        
+        // Si hay un registro previo pero no hay sesión o no coincide, reseteamos todo.
+        if (data.sessionId && savedId && (!savedSessionId || String(savedSessionId) !== String(data.sessionId))) {
           localStorage.clear();
           window.location.reload();
           return;
@@ -81,6 +84,13 @@ const Register = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
     if (!name || !whatsapp) return;
+
+    // Bloqueo de duplicados por WhatsApp
+    const isDuplicate = participants.some(p => p.whatsapp.trim() === whatsapp.trim());
+    if (isDuplicate) {
+      alert("Este número de WhatsApp ya se encuentra registrado.");
+      return;
+    }
 
     try {
       const counterRef = ref(db, 'counter');
