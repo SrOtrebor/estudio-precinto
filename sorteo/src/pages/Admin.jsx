@@ -74,7 +74,11 @@ const Admin = () => {
     await set(ref(db, '/'), { 
       counter: 0, 
       participants: {}, 
-      settings: { status: 'waiting', winner_id: null } 
+      settings: { 
+        status: 'waiting', 
+        winner_id: null,
+        sessionId: Date.now() 
+      } 
     });
     window.location.reload();
   };

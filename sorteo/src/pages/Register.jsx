@@ -14,6 +14,7 @@ const Register = () => {
   const [participants, setParticipants] = useState([]);
   const [shuffledId, setShuffledId] = useState('000');
   const [shuffledName, setShuffledName] = useState('...');
+  const [currentSessionId, setCurrentSessionId] = useState(null);
 
   useEffect(() => {
     const savedId = localStorage.getItem('participantId');
@@ -34,6 +35,15 @@ const Register = () => {
     onValue(settingsRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
+        // Validar Sesión (Invalidación remota)
+        const savedSessionId = localStorage.getItem('sessionId');
+        if (data.sessionId && savedSessionId && String(savedSessionId) !== String(data.sessionId)) {
+          localStorage.clear();
+          window.location.reload();
+          return;
+        }
+        
+        setCurrentSessionId(data.sessionId || null);
         setDrawStatus(data.status);
         setWinnerId(data.winner_id);
       }
@@ -90,6 +100,9 @@ const Register = () => {
 
       localStorage.setItem('participantId', nextId);
       localStorage.setItem('participantName', name);
+      if (currentSessionId) {
+        localStorage.setItem('sessionId', currentSessionId);
+      }
       setParticipantId(nextId);
       setRegistered(true);
     } catch (error) {
