@@ -102,7 +102,7 @@ const Monitor = () => {
          />
       </header>
 
-      <main style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', width: '100%' }}>
+      <main style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', width: '100%', position: 'relative' }}>
         {drawStatus === 'waiting' && (
           <div className="floating" style={{ padding: '2vh' }}>
             <h2 style={{ fontSize: '3rem', marginBottom: '1rem', color: 'white' }}>ESCANEANDO PARTICIPANTES...</h2>
@@ -143,6 +143,34 @@ const Monitor = () => {
         )}
       </main>
 
+      {/* CINTA DE GANADORES HISTÓRICOS */}
+      {participants.filter(p => p.isWinner).length > 0 && (
+        <section style={{ width: '100%', background: 'rgba(255,255,255,0.03)', padding: '1.5vh 0', borderTop: '1px solid rgba(162, 138, 104, 0.2)', marginBottom: '1vh' }}>
+           <h4 style={{ fontSize: '0.8rem', color: 'var(--accent)', letterSpacing: '3px', marginBottom: '1vh', opacity: 0.6 }}>HISTORIAL DE GANADORES</h4>
+           <div style={{ display: 'flex', gap: '1.5rem', justifyContent: 'center', flexWrap: 'wrap', padding: '0 2rem' }}>
+              {participants
+                .filter(p => p.isWinner)
+                .sort((a, b) => (a.prizeNumber || 0) - (b.prizeNumber || 0))
+                .slice(-10) // Mostrar los últimos 10
+                .map((p, idx) => (
+                  <div key={idx} style={{ 
+                    background: 'rgba(0, 142, 69, 0.1)', 
+                    border: '1px solid var(--primary)', 
+                    padding: '0.5rem 1rem', 
+                    borderRadius: '50px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    animation: 'fadeInUp 0.5s ease-out'
+                  }}>
+                    <span style={{ color: 'var(--secondary)', fontWeight: 'bold', fontSize: '0.9rem' }}>#{p.prizeNumber}</span>
+                    <span style={{ fontWeight: 'bold', fontSize: '0.8rem', textTransform: 'uppercase' }}>{p.name.split(' ')[0]}</span>
+                  </div>
+                ))}
+           </div>
+        </section>
+      )}
+
       <footer style={{ width: '100%', padding: '2vh 0', borderTop: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '2rem' }}>
         <p style={{ fontSize: '0.8rem', opacity: 0.4, letterSpacing: '2px' }}>Estudio Precinto</p>
         <div style={{ width: '1px', height: '1rem', background: 'rgba(255,255,255,0.2)' }}></div>
@@ -153,6 +181,10 @@ const Monitor = () => {
         @keyframes winnerPop {
           0% { transform: scale(0.5); opacity: 0; filter: blur(20px); }
           100% { transform: scale(1); opacity: 1; filter: blur(0); }
+        }
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
         }
         @keyframes float {
           0% { transform: translateY(0px); }

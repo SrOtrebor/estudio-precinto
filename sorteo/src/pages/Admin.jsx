@@ -49,7 +49,15 @@ const Admin = () => {
        const randomIndex = Math.floor(Math.random() * eligible.length);
        const winner = eligible[randomIndex];
        
-       await update(ref(db, `participants/${winner.id}`), { isWinner: true });
+       // Calculamos el número de premio (cuántos ganadores ya existen + 1)
+       const totalWinnersSoFar = participants.filter(p => p.isWinner).length;
+       const prizeNumber = totalWinnersSoFar + 1;
+       
+       await update(ref(db, `participants/${winner.id}`), { 
+         isWinner: true,
+         prizeNumber: prizeNumber 
+       });
+
        await update(ref(db, 'settings'), { 
          status: 'finished', 
          winner_id: winner.id 
