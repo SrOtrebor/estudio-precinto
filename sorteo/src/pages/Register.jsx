@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { db, ref, push, set, onValue, runTransaction } from '../firebase';
+import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import confetti from 'canvas-confetti';
 import logo from '../assets/logo-troncal.svg';
 import logoPrecinto from '../assets/logo-precinto.svg';
@@ -85,8 +86,16 @@ const Register = () => {
     e.preventDefault();
     if (!name || !whatsapp) return;
 
-    // Bloqueo de duplicados por WhatsApp
-    const isDuplicate = participants.some(p => p.whatsapp.trim() === whatsapp.trim());
+    // Validación de Formato Profesional (AR - Argentina)
+    const phoneNumber = parsePhoneNumberFromString(whatsapp, 'AR');
+    if (!phoneNumber || !phoneNumber.isValid()) {
+      alert("Por favor, ingresá un número de WhatsApp válido (Ej: 1122334455). El sistema detectó un formato incorrecto.");
+      return;
+    }
+
+    // Bloqueo de duplicados por WhatsApp (Normalizado)
+    const normalizedWp = phoneNumber.number; // Formato internacional +549...
+    const isDuplicate = participants.some(p => p.whatsapp_normalized === normalizedWp);
     if (isDuplicate) {
       alert("Este número de WhatsApp ya se encuentra registrado.");
       return;
@@ -104,6 +113,7 @@ const Register = () => {
       await set(participantsRef, {
         name,
         whatsapp,
+        whatsapp_normalized: normalizedWp,
         id: nextId,
         timestamp: Date.now()
       });
@@ -157,6 +167,9 @@ const Register = () => {
                <button type="submit" className="btn-primary" style={{ width: '100%', marginTop: '1rem' }}>
                  OBTENER MI NÚMERO
                </button>
+               <p style={{ marginTop: '1.5rem', fontSize: '0.7rem', opacity: 0.5, fontStyle: 'italic', lineHeight: 1.4, textAlign: 'center' }}>
+                 * El sistema verifica la validez del número. Registros falsos serán descalificados automáticamente y sus premios anulados.
+               </p>
             </form>
           </>
         ) : (

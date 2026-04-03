@@ -11,6 +11,8 @@ const Admin = () => {
   const [manualName, setManualName] = useState('');
   const [manualWhatsapp, setManualWhatsapp] = useState('');
   const [isRegistering, setIsRegistering] = useState(false);
+  const [nfcStock, setNfcStock] = useState(0);
+  const [asesoriaStock, setAsesoriaStock] = useState(0);
 
   useEffect(() => {
     const participantsRef = ref(db, 'participants');
@@ -27,6 +29,18 @@ const Admin = () => {
         setDrawStatus(data.status || 'waiting');
         setWinnerId(data.winner_id || null);
       }
+    });
+
+    const stockRef = ref(db, 'nfc_stock');
+    onValue(stockRef, (snapshot) => {
+      const data = snapshot.val();
+      setNfcStock(data !== null ? data : 9);
+    });
+
+    const aseRef = ref(db, 'asesoria_stock');
+    onValue(aseRef, (snapshot) => {
+      const data = snapshot.val();
+      setAsesoriaStock(data !== null ? data : 35);
     });
   }, []);
 
@@ -67,6 +81,14 @@ const Admin = () => {
 
   const handleReset = async () => {
     await update(ref(db, 'settings'), { status: 'waiting', winner_id: null });
+  };
+
+  const handleUpdateStock = async (newStock) => {
+    await set(ref(db, 'nfc_stock'), Number(newStock));
+  };
+
+  const handleUpdateAseStock = async (newStock) => {
+    await set(ref(db, 'asesoria_stock'), Number(newStock));
   };
 
   const handleFullReset = async () => {
@@ -301,9 +323,58 @@ const Admin = () => {
                 disabled={isRegistering}
                 style={{ background: 'var(--accent)', marginTop: '0.5rem', padding: '1rem' }}
               >
-                {isRegistering ? 'CARGANDO...' : 'CARGAR INVITADO'}
+              {isRegistering ? 'CARGANDO...' : 'CARGAR INVITADO'}
               </button>
             </form>
+          </section>
+
+          {/* SECCIÓN ESTUDIO PRECINTO */}
+          <section className="glass-card" style={{ padding: '2rem', border: '1px solid var(--accent)' }}>
+            <h2 style={{ color: 'var(--accent)', marginBottom: '1.5rem', fontSize: '0.8rem', letterSpacing: '2px', fontWeight: 'bold' }}>DINÁMICA ESTUDIO PRECINTO</h2>
+            <div style={{ background: 'rgba(162, 138, 104, 0.1)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(162, 138, 104, 0.2)' }}>
+              <p style={{ fontSize: '0.75rem', opacity: 0.8, marginBottom: '1rem' }}>STOCK DE TAGS NFC DISPONIBLES:</p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <div style={{ fontSize: '2.5rem', fontWeight: '900', color: 'var(--accent)' }}>{nfcStock}</div>
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                  <button 
+                    onClick={() => handleUpdateStock(nfcStock + 1)}
+                    style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid var(--accent)', color: 'white', padding: '0.3rem', borderRadius: '4px', cursor: 'pointer' }}
+                  >+ Aumentar</button>
+                  <button 
+                    onClick={() => handleUpdateStock(Math.max(0, nfcStock - 1))}
+                    style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid var(--accent)', color: 'white', padding: '0.3rem', borderRadius: '4px', cursor: 'pointer' }}
+                  >- Disminuir</button>
+                </div>
+              </div>
+              <input 
+                type="number" 
+                className="input-field" 
+                value={nfcStock} 
+                onChange={(e) => handleUpdateStock(e.target.value)}
+                style={{ marginTop: '1rem', marginBottom: '0', textAlign: 'center' }}
+              />
+            </div>
+
+            <div style={{ background: 'rgba(0, 176, 229, 0.1)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(0, 176, 229, 0.2)', marginTop: '1.5rem' }}>
+              <p style={{ fontSize: '0.75rem', opacity: 0.8, marginBottom: '1rem' }}>STOCK DE ASESORÍAS DISPONIBLES:</p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <div style={{ fontSize: '2.5rem', fontWeight: '900', color: 'var(--secondary)' }}>{asesoriaStock}</div>
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                  <button 
+                    onClick={() => handleUpdateAseStock(asesoriaStock + 1)}
+                    style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid var(--secondary)', color: 'white', padding: '0.3rem', borderRadius: '4px', cursor: 'pointer' }}
+                  >+ Aumentar</button>
+                  <button 
+                    onClick={() => handleUpdateAseStock(Math.max(0, asesoriaStock - 1))}
+                    style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid var(--secondary)', color: 'white', padding: '0.3rem', borderRadius: '4px', cursor: 'pointer' }}
+                  >- Disminuir</button>
+                </div>
+              </div>
+            </div>
+
+            <p style={{ fontSize: '0.6rem', marginTop: '1rem', opacity: 0.5, fontStyle: 'italic' }}>
+              Los premios se descuentan automáticamente al ganar en la ruleta.
+            </p>
           </section>
           </div>
         </div>
@@ -327,6 +398,7 @@ const Admin = () => {
                   <th style={{ padding: '1rem 0.5rem' }}>ID</th>
                   <th style={{ padding: '1rem 0.5rem' }}>PARTICIPANTE</th>
                   <th style={{ padding: '1rem 0.5rem' }}>CONTACTO</th>
+                  <th style={{ padding: '1rem 0.5rem', textAlign: 'center' }}>RULETA</th>
                 </tr>
               </thead>
               <tbody>
@@ -347,6 +419,20 @@ const Admin = () => {
                     <td style={{ padding: '1rem 0.5rem', fontSize: '0.75rem', opacity: 0.6 }}>
                       <div>{p.whatsapp}</div>
                       {p.isManual && <div style={{ color: 'var(--accent)', fontWeight: 'bold', fontSize: '0.6rem', marginTop: '0.2rem' }}>REGISTRO MANUAL</div>}
+                    </td>
+                    <td style={{ padding: '1rem 0.5rem', textAlign: 'center' }}>
+                      {p.ya_jugo_ruleta ? (
+                        <div>
+                          <div style={{ background: 'var(--accent)', color: 'white', padding: '0.2rem 0.5rem', borderRadius: '4px', fontSize: '0.65rem', fontWeight: 'bold', display: 'inline-block' }}>JUGÓ</div>
+                          {p.roulette_win && (
+                              <div style={{ fontSize: '0.6rem', color: 'var(--accent)', fontWeight: 'bold', marginTop: '0.3rem' }}>
+                                  🎁 {p.roulette_win === 'TAG_NFC' ? 'TAG NFC' : p.roulette_win === 'ASESORIA' ? 'ASESORÍA' : 'CARAMELOS'}
+                              </div>
+                          )}
+                        </div>
+                      ) : (
+                        <span style={{ opacity: 0.2, fontSize: '0.65rem' }}>-</span>
+                      )}
                     </td>
                   </tr>
                 ))}

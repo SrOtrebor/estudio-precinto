@@ -3,6 +3,7 @@ import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import Register from './pages/Register';
 import Monitor from './pages/Monitor';
 import Admin from './pages/Admin';
+import Roulette from './pages/Roulette';
 import logoPrecinto from './assets/logo-precinto.svg';
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
             <Route path="/" element={<Register />} />
             <Route path="/monitor" element={<Monitor />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/ruleta" element={<Roulette />} />
           </Routes>
         </main>
 
