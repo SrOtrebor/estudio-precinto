@@ -9,6 +9,7 @@ const Roulette = () => {
   const [whatsapp, setWhatsapp] = useState('');
   const [step, setStep] = useState('login'); // login | check | play | result | already-played
   const [participant, setParticipant] = useState(null);
+  const [participants, setParticipants] = useState([]);
   const [error, setError] = useState('');
   const [nfcStock, setNfcStock] = useState(0);
   const [asesoriaStock, setAsesoriaStock] = useState(0);
@@ -37,6 +38,13 @@ const Roulette = () => {
 
     const savedId = localStorage.getItem('participantId');
     if (savedId) handleLookup(null, savedId);
+
+    // Listado de participantes persistente para cálculo de probabilidades dinámicas
+    const pRef = ref(db, 'participants');
+    onValue(pRef, (snapshot) => {
+      const data = snapshot.val();
+      setParticipants(data ? Object.values(data) : []);
+    });
   }, []);
 
   const playClickSound = () => {
@@ -97,10 +105,16 @@ const Roulette = () => {
     setIsSpinning(true);
     await update(ref(db, `participants/${participant.id}`), { ya_jugo_ruleta: true });
 
+    // CÁLCULO DE PROBABILIDAD ADAPTATIVA (DINÁMICA)
+    const pendingParticipants = participants.filter(p => !p.ya_jugo_ruleta).length || 1;
+    const pTagLimit = (nfcStock / pendingParticipants) * 100;
+    const pAseLimit = pTagLimit + ((asesoriaStock / pendingParticipants) * 100);
+
     const rand = Math.random() * 100;
     let winType = 'CARAMELOS';
-    if (rand < 5 && nfcStock > 0) winType = 'TAG_NFC';
-    else if (rand < 25 && asesoriaStock > 0) winType = 'ASESORIA';
+    
+    if (rand < pTagLimit && nfcStock > 0) winType = 'TAG_NFC';
+    else if (rand < pAseLimit && asesoriaStock > 0) winType = 'ASESORIA';
 
     const matchIndices = segments.map((s, i) => s.type === winType ? i : -1).filter(i => i !== -1);
     const targetIdx = matchIndices[Math.floor(Math.random() * matchIndices.length)];
