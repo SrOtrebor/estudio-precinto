@@ -27,8 +27,10 @@ jobs:
 
       - name: Build Sorteo App
         working-directory: ./sorteo
+        env:
+          VITE_ADMIN_PASSWORD: ${{ secrets.VITE_ADMIN_PASSWORD }}
         run: |
-          npm install
+          npm ci
           npm run build
 
       - name: Create Final Build Structure

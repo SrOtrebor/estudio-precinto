@@ -62,7 +62,7 @@ const Admin = () => {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    if (password === 'troncal2025') {
+    if (password === import.meta.env.VITE_ADMIN_PASSWORD) {
        setIsAuthorized(true);
     } else {
        alert("Contraseña incorrecta");
@@ -108,7 +108,7 @@ const Admin = () => {
 
   const handleFullReset = async () => {
     const confirmPass = window.prompt("ESCRIBE LA CONTRASEÑA PARA BORRAR TODA LA BASE DE DATOS:");
-    if (confirmPass !== 'troncal2025') {
+    if (confirmPass !== import.meta.env.VITE_ADMIN_PASSWORD) {
        alert("Acción cancelada o contraseña incorrecta.");
        return;
     }

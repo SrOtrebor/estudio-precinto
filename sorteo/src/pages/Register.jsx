@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { db, ref, push, set, onValue, runTransaction } from '../firebase';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import confetti from 'canvas-confetti';
@@ -81,6 +81,12 @@ const Register = () => {
       }
     }
   }, [drawStatus, winnerId, participantId]);
+
+  // Participante actual calculado una sola vez cuando cambian participants o participantId
+  const currentParticipant = useMemo(
+    () => participants.find(p => Number(p.id) === Number(participantId)),
+    [participants, participantId]
+  );
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -174,23 +180,16 @@ const Register = () => {
           </>
         ) : (
           <div style={{ textAlign: 'center' }}>
-            {/* Lógica Persistente de Ganador */}
-            {participants.find(p => Number(p.id) === Number(participantId))?.isWinner ? (
+            {/* Lógica Persistente de Ganador - usa la variable memoizada */}
+            {currentParticipant?.isWinner ? (
               <div style={{ padding: '2rem 0', animation: 'winnerCelebrate 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)' }}>
                   <div style={{ fontSize: '5rem', marginBottom: '1rem' }}>🏆</div>
                   <h2 style={{ color: 'var(--primary)', fontSize: '3rem', fontWeight: '900', textShadow: '0 0 20px rgba(0,142,69,0.5)' }}>¡GANASTE! 🎉</h2>
                   <div style={{ margin: '1rem 0', background: 'rgba(162, 138, 104, 0.2)', padding: '1rem', borderRadius: '12px', border: '1px solid var(--accent)' }}>
-                    <p style={{ color: 'var(--accent)', fontWeight: '800', fontSize: '1.2rem' }}>PREMIO #{participants.find(p => Number(p.id) === Number(participantId))?.prizeNumber}</p>
+                    <p style={{ color: 'var(--accent)', fontWeight: '800', fontSize: '1.2rem' }}>PREMIO #{currentParticipant?.prizeNumber}</p>
                   </div>
                   <p style={{ margin: '1.5rem 0', fontSize: '1.1rem', lineHeight: 1.5 }}>¡Felicidades, {name}! Sos el ganador. Acercate al escenario para retirar tu premio.</p>
                   <p style={{ fontSize: '0.8rem', opacity: 0.6 }}>Mantené esta pantalla abierta para retirar.</p>
-                  
-                  <style>{`
-                    @keyframes winnerCelebrate {
-                      0% { transform: scale(0.5); opacity: 0; }
-                      100% { transform: scale(1); opacity: 1; }
-                    }
-                  `}</style>
               </div>
             ) : (
               <>
@@ -220,15 +219,9 @@ const Register = () => {
                       <div style={{ fontSize: '2.5rem', fontWeight: '900', color: 'white', textTransform: 'uppercase', lineHeight: 1.2 }}>{shuffledName}</div>
                     </div>
                     <p style={{ fontSize: '0.8rem', opacity: 0.6, marginTop: '1rem' }}>EL GANADOR APARECERÁ AQUÍ...</p>
-                    <style>{`
-                      @keyframes pulse {
-                        0% { transform: scale(1); opacity: 1; }
-                        50% { transform: scale(1.02); opacity: 0.8; }
-                        100% { transform: scale(1); opacity: 1; }
-                      }
-                    `}</style>
                   </div>
                 )}
+
 
                 {drawStatus === 'finished' && (
                   <div>
@@ -238,13 +231,6 @@ const Register = () => {
                         <h2 style={{ color: 'var(--primary)', fontSize: '3rem', fontWeight: '900', textShadow: '0 0 20px rgba(0,142,69,0.5)' }}>¡GANASTE! 🎉</h2>
                         <p style={{ margin: '1.5rem 0', fontSize: '1.1rem', lineHeight: 1.5 }}>¡Felicidades, {name}! Sos el ganador. Acercate al escenario para retirar tu premio.</p>
                         <button className="btn-primary" style={{ width: '100%', padding: '1.2rem', background: 'linear-gradient(45deg, var(--primary), var(--secondary))' }} onClick={() => window.location.reload()}>ENTENDIDO</button>
-                        
-                        <style>{`
-                          @keyframes winnerCelebrate {
-                            0% { transform: scale(0.5); opacity: 0; }
-                            100% { transform: scale(1); opacity: 1; }
-                          }
-                        `}</style>
                       </div>
                     ) : (
                       <div>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { db, ref, onValue } from '../firebase';
+import confetti from 'canvas-confetti';
 import logo from '../assets/logo-troncal.svg';
 
 const Monitor = () => {
@@ -28,19 +29,12 @@ const Monitor = () => {
         setDrawStatus(data.status);
         if (data.status === 'finished' && data.winner_id) {
           setWinnerId(data.winner_id);
-          // Buscar el nombre del ganador de forma manual una vez
-          const pRef = ref(db, 'participants');
-          onValue(pRef, (pSnapshot) => {
-             const pData = pSnapshot.val();
-             if (pData) {
-               const winnerObj = Object.values(pData).find(p => p.id === data.winner_id);
-               if (winnerObj) setWinnerName(winnerObj.name);
-             }
-          }, { onlyOnce: true });
+          // El nombre del ganador lo resolvemos con el array ya cargado en el useEffect de abajo
         }
       }
     });
   }, []);
+
 
   useEffect(() => {
     let interval;
@@ -54,6 +48,14 @@ const Monitor = () => {
     }
     return () => clearInterval(interval);
   }, [drawStatus, participants]);
+
+  // Resolver el nombre del ganador desde el array local (sin leer Firebase otra vez)
+  useEffect(() => {
+    if (winnerId && participants.length > 0) {
+      const winnerObj = participants.find(p => p.id === winnerId);
+      if (winnerObj) setWinnerName(winnerObj.name);
+    }
+  }, [winnerId, participants]);
 
   useEffect(() => {
     if (drawStatus === 'finished' && winnerId) {
@@ -178,19 +180,6 @@ const Monitor = () => {
       </footer>
 
       <style>{`
-        @keyframes winnerPop {
-          0% { transform: scale(0.5); opacity: 0; filter: blur(20px); }
-          100% { transform: scale(1); opacity: 1; filter: blur(0); }
-        }
-        @keyframes fadeInUp {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes float {
-          0% { transform: translateY(0px); }
-          50% { transform: translateY(-10px); }
-          100% { transform: translateY(0px); }
-        }
         .floating { animation: float 4s ease-in-out infinite; }
       `}</style>
     </div>
