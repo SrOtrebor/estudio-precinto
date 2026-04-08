@@ -14,6 +14,12 @@ const LandingBanner = () => {
 
     const options = [
         {
+            id: 4,
+            title: "QUIERO MI DIAGNÓSTICO GENERAL",
+            message: "Hola Rober! Quiero que me diagnostiques de punta a punta. Vengo del banner.",
+            premium: true
+        },
+        {
             id: 1,
             title: "Pierdo mucho tiempo en Excel",
             message: "Hola Rober! Siento que el Excel me está ganando. Necesito un diagnóstico de procesos."
@@ -27,12 +33,6 @@ const LandingBanner = () => {
             id: 3,
             title: "Quiero automatizar mis ventas",
             message: "Hola Rober! Quiero que mis ventas fluyan solas. ¿Qué herramientas me recomendás?"
-        },
-        {
-            id: 4,
-            title: "QUIERO MI DIAGNÓSTICO GENERAL",
-            message: "Hola Rober! Quiero que me diagnostiques de punta a punta. Vengo del banner.",
-            premium: true
         }
     ];
 
@@ -148,7 +148,7 @@ const LandingBanner = () => {
                         className={`terminal-button ${opt.premium ? 'premium' : ''}`}
                         onClick={() => handleOptionSelect(opt)}
                         style={{
-                            transform: `perspective(1000px) rotateX(${tilt.y * 0.1}deg) rotateY(${tilt.x * 0.1}deg)`
+                            transform: `perspective(1000px) rotateX(${tilt.y * 0.5}deg) rotateY(${tilt.x * 0.5}deg)`
                         }}
                     >
                         <div className="button-glare" style={{
