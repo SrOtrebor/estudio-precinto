@@ -132,7 +132,7 @@ const LandingBanner = () => {
             <header className="landing-header">
                 <img src={logoPrecinto} alt="Estudio Precinto" className="landing-logo" />
                 <h1 className="landing-title">Recuperá 2 horas de tu día.</h1>
-                <p className="landing-subtitle">Seleccioná tu mayor obstáculo hoy:</p>
+                <p className="landing-subtitle">Seleccioná tu mayor obstáculo:</p>
             </header>
 
             <div 

@@ -32,7 +32,6 @@
   z-index: 1;
   width: 100%;
   margin-bottom: 1rem;
-  animation: fadeInDown 0.8s ease-out;
   flex-shrink: 0;
 }
 
@@ -41,6 +40,7 @@
   height: auto;
   margin-bottom: 2rem;
   filter: drop-shadow(0 0 10px rgba(162, 138, 104, 0.2));
+  animation: fadeInDown 0.8s ease-out both;
 }
 
 .landing-title {
@@ -52,6 +52,7 @@
   background-clip: text;
   -webkit-text-fill-color: transparent;
   letter-spacing: -0.5px;
+  animation: fadeInUp 0.8s ease-out 0.4s both;
 }
 
 .landing-subtitle {
@@ -59,6 +60,7 @@
   opacity: 0.8;
   font-weight: 400;
   letter-spacing: 1px;
+  animation: textFocusIn 1s ease-out 0.8s both;
 }
 
 .buttons-grid {
@@ -71,7 +73,6 @@
   flex: 1;
   justify-content: center;
   padding: 1rem 0;
-  animation: fadeInUp 0.8s ease-out 0.2s both;
 }
 
 .terminal-button {
@@ -97,7 +98,13 @@
   overflow: hidden;
   height: 100%;
   max-height: 70px;
+  animation: fadeInUp 0.6s ease-out both;
 }
+
+.terminal-button:nth-child(1) { animation-delay: 1.2s; }
+.terminal-button:nth-child(2) { animation-delay: 1.3s; }
+.terminal-button:nth-child(3) { animation-delay: 1.4s; }
+.terminal-button:nth-child(4) { animation-delay: 1.5s; }
 
 .terminal-button::before {
   content: '';
@@ -250,9 +257,15 @@
   to { opacity: 1; }
 }
 
-@keyframes zoomIn {
-  from { opacity: 0; transform: scale(0.5); }
-  to { opacity: 1; transform: scale(1); }
+@keyframes textFocusIn {
+  0% {
+    filter: blur(12px);
+    opacity: 0;
+  }
+  100% {
+    filter: blur(0);
+    opacity: 1;
+  }
 }
 
 /* Media query para pantallas muy pequeñas */
