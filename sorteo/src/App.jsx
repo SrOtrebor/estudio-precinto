@@ -1,5 +1,5 @@
 import React from 'react';
-import { HashRouter as Router, Routes, Route } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Register from './pages/Register';
 import Monitor from './pages/Monitor';
 import Admin from './pages/Admin';
@@ -7,20 +7,40 @@ import Roulette from './pages/Roulette';
 import LandingBanner from './pages/LandingBanner';
 import logoPrecinto from './assets/logo-precinto.svg';
 
-function App() {
-  return (
-    <Router>
-      <div className="app-container" style={{ height: '100dvh', height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-        <main className="main-content" style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'stretch', width: '100%' }}>
-          <Routes>
-            <Route path="/" element={<Register />} />
-            <Route path="/monitor" element={<Monitor />} />
-            <Route path="/admin" element={<Admin />} />
-            <Route path="/ruleta" element={<Roulette />} />
-            <Route path="/diagnostico" element={<LandingBanner />} />
-          </Routes>
-        </main>
+function AppContent() {
+  const location = useLocation();
+  const isLanding = location.pathname === '/diagnostico';
 
+  return (
+    <div className="app-container" style={{ 
+      height: '100dvh', 
+      width: '100%',
+      display: 'flex', 
+      flexDirection: 'column', 
+      overflow: 'hidden',
+      position: 'fixed',
+      top: 0,
+      left: 0
+    }}>
+      <main className="main-content" style={{ 
+        flex: 1, 
+        overflowY: isLanding ? 'hidden' : 'auto', 
+        display: 'flex', 
+        flexDirection: 'column', 
+        alignItems: 'stretch', 
+        width: '100%',
+        height: '100%'
+      }}>
+        <Routes>
+          <Route path="/" element={<Register />} />
+          <Route path="/monitor" element={<Monitor />} />
+          <Route path="/admin" element={<Admin />} />
+          <Route path="/ruleta" element={<Roulette />} />
+          <Route path="/diagnostico" element={<LandingBanner />} />
+        </Routes>
+      </main>
+
+      {!isLanding && (
         <footer className="footer-banner" style={{ 
           padding: '1.2rem', 
           borderTop: '1px solid var(--glass-border)', 
@@ -41,7 +61,15 @@ function App() {
             </div>
           </a>
         </footer>
-      </div>
+      )}
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <AppContent />
     </Router>
   );
 }
