@@ -13,6 +13,9 @@ const Admin = () => {
   const [isRegistering, setIsRegistering] = useState(false);
   const [nfcStock, setNfcStock] = useState(0);
   const [asesoriaStock, setAsesoriaStock] = useState(0);
+  const [activeTab, setActiveTab] = useState('sorteo'); // 'sorteo' | 'banner'
+  const [bannerHits, setBannerHits] = useState([]);
+  const [bannerClicks, setBannerClicks] = useState([]);
 
   useEffect(() => {
     const participantsRef = ref(db, 'participants');
@@ -42,6 +45,19 @@ const Admin = () => {
       const data = snapshot.val();
       setAsesoriaStock(data !== null ? data : 35);
     });
+
+    // Listeners de Banner Tracking
+    const hitsRef = ref(db, 'banner_tracking/hits');
+    onValue(hitsRef, (snapshot) => {
+      const data = snapshot.val();
+      setBannerHits(data ? Object.values(data) : []);
+    });
+
+    const clicksRef = ref(db, 'banner_tracking/clicks');
+    onValue(clicksRef, (snapshot) => {
+      const data = snapshot.val();
+      setBannerClicks(data ? Object.values(data) : []);
+    });
   }, []);
 
   const handleLogin = (e) => {
@@ -63,7 +79,6 @@ const Admin = () => {
        const randomIndex = Math.floor(Math.random() * eligible.length);
        const winner = eligible[randomIndex];
        
-       // Calculamos el número de premio (cuántos ganadores ya existen + 1)
        const totalWinnersSoFar = participants.filter(p => p.isWinner).length;
        const prizeNumber = totalWinnersSoFar + 1;
        
@@ -168,7 +183,6 @@ const Admin = () => {
         position: 'relative',
         overflow: 'hidden'
       }}>
-        {/* Adornos de fondo para efecto premium */}
         <div style={{ position: 'absolute', top: '-10%', left: '-10%', width: '40%', height: '40%', background: 'rgba(0, 176, 229, 0.05)', filter: 'blur(100px)', borderRadius: '50%' }}></div>
         <div style={{ position: 'absolute', bottom: '-10%', right: '-10%', width: '40%', height: '40%', background: 'rgba(0, 142, 69, 0.05)', filter: 'blur(100px)', borderRadius: '50%' }}></div>
 
@@ -206,23 +220,8 @@ const Admin = () => {
             />
           </div>
 
-          <button 
-            type="submit" 
-            className="btn-primary" 
-            style={{ 
-              width: '100%', 
-              padding: '1rem', 
-              fontSize: '1rem',
-              background: 'linear-gradient(45deg, var(--primary), var(--secondary))',
-              boxShadow: '0 10px 20px -10px rgba(0, 142, 69, 0.5)'
-            }}
-          >
-            AUTENTICAR
-          </button>
-          
-          <p style={{ marginTop: '2rem', fontSize: '0.6rem', opacity: 0.3, letterSpacing: '2px' }}>
-            SISTEMA DE SORTEOS EN VIVO V2.0
-          </p>
+          <button type="submit" className="btn-primary" style={{ width: '100%', padding: '1rem', fontSize: '1rem', background: 'linear-gradient(45deg, var(--primary), var(--secondary))', boxShadow: '0 10px 20px -10px rgba(0, 142, 69, 0.5)' }}>AUTENTICAR</button>
+          <p style={{ marginTop: '2rem', fontSize: '0.6rem', opacity: 0.3, letterSpacing: '2px' }}>SISTEMA DE SORTEOS EN VIVO V2.0</p>
         </form>
 
         <style>{`
@@ -237,213 +236,225 @@ const Admin = () => {
 
   return (
     <div className="admin-view" style={{ padding: '2rem', width: '100%', maxWidth: '1400px', margin: '0 auto', color: 'white' }}>
-      <header style={{ textAlign: 'center', marginBottom: '3rem' }}>
+      <header style={{ textAlign: 'center', marginBottom: '2rem' }}>
         <img src={logo} alt="La Troncal" style={{ maxWidth: '280px', height: 'auto' }} />
         <h1 style={{ color: 'var(--accent)', fontSize: '1rem', marginTop: '0.5rem', letterSpacing: '4px' }}>DASHBOARD DE CONTROL</h1>
+        
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'center', 
+          gap: '1rem', 
+          marginTop: '2.5rem',
+          padding: '0.5rem',
+          background: 'rgba(255,255,255,0.03)',
+          borderRadius: '12px',
+          display: 'inline-flex',
+          border: '1px solid var(--glass-border)'
+        }}>
+          <button 
+            onClick={() => setActiveTab('sorteo')}
+            style={{
+              padding: '0.8rem 2rem',
+              borderRadius: '8px',
+              border: 'none',
+              background: activeTab === 'sorteo' ? 'linear-gradient(45deg, var(--primary), var(--secondary))' : 'transparent',
+              color: 'white',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              transition: 'all 0.3s'
+            }}
+          >🎰 GESTIÓN SORTEO</button>
+          <button 
+            onClick={() => setActiveTab('banner')}
+            style={{
+              padding: '0.8rem 2rem',
+              borderRadius: '8px',
+              border: 'none',
+              background: activeTab === 'banner' ? 'var(--accent)' : 'transparent',
+              color: 'white',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              transition: 'all 0.3s'
+            }}
+          >📊 MÉTRICAS BANNER</button>
+        </div>
       </header>
 
-      <div className="admin-layout-container" style={{ 
-        display: 'flex', 
-        flexWrap: 'wrap', 
-        gap: '2rem', 
-        width: '100%',
-        alignItems: 'start'
-      }}>
-        {/* COLUMNA IZQUIERDA: CONTROLES */}
-        <div style={{ flex: '1 1 400px', minWidth: '350px' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-          {/* TARJETA DE ESTADO */}
-          <section className="glass-card" style={{ padding: '2rem' }}>
-            <h2 style={{ color: 'var(--secondary)', marginBottom: '1rem', fontSize: '0.8rem', letterSpacing: '2px' }}>ESTADO DEL SORTEO</h2>
-            <div style={{ fontSize: '2.5rem', fontWeight: '900', marginBottom: '1.5rem', borderBottom: '1px solid var(--glass-border)', paddingBottom: '1rem' }}>
-              {drawStatus === 'waiting' ? 'ESPERANDO' : 
-               drawStatus === 'finished' ? 'TERMINADO' : 
-               drawStatus.toUpperCase()}
-            </div>
-            
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              {drawStatus === 'waiting' && <button className="btn-primary" style={{ width: '100%', padding: '1.2rem', fontSize: '1.1rem' }} onClick={handleStartDraw}>LANZAR SORTEO</button>}
-              {drawStatus === 'drawing' && <button className="btn-primary" style={{ width: '100%', opacity: 0.5, padding: '1.2rem' }} disabled>SORTEANDO...</button>}
-              {drawStatus === 'finished' && (
-                <>
-                  <div style={{ padding: '1rem', background: 'rgba(0,142,69,0.1)', borderRadius: '8px', border: '1px solid var(--primary)', textAlign: 'center', marginBottom: '1rem' }}>
-                    ÚLTIMO GANADOR: <strong style={{ fontSize: '1.5rem' }}>#{winnerId}</strong>
-                  </div>
-                  <button className="btn-primary" style={{ width: '100%', background: 'var(--secondary)' }} onClick={handleReset}>NUEVA RONDA</button>
-                </>
-              )}
-            </div>
-
-            <div style={{ marginTop: '3rem', paddingTop: '1.5rem', borderTop: '1px solid rgba(231, 76, 60, 0.2)' }}>
-              <button 
-                onClick={handleFullReset} 
-                style={{ 
-                  width: '100%', 
-                  background: 'rgba(231, 76, 60, 0.05)', 
-                  color: '#e74c3c', 
-                  border: '1px solid rgba(231, 76, 60, 0.1)', 
-                  padding: '0.6rem', 
-                  borderRadius: '8px', 
-                  cursor: 'pointer', 
-                  fontSize: '0.6rem', 
-                  fontWeight: 'bold',
-                  opacity: 0.4
-                }}
-              >
-                ⚙️ RESET SISTEMA (BORRAR TODO)
-              </button>
-            </div>
-          </section>
-
-          {/* TARJETA DE REGISTRO MANUAL */}
-          <section className="glass-card" style={{ padding: '2rem' }}>
-            <h2 style={{ marginBottom: '1.5rem', fontSize: '0.8rem', opacity: 0.7, letterSpacing: '1px' }}>REGISTRO MANUAL (ADMIN)</h2>
-            <form onSubmit={handleManualRegister} style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-              <input 
-                className="input-field"
-                style={{ marginBottom: '0', fontSize: '1rem' }}
-                type="text" 
-                placeholder="Nombre del Invitado" 
-                value={manualName}
-                onChange={(e) => setManualName(e.target.value)}
-                required
-              />
-              <input 
-                className="input-field"
-                style={{ marginBottom: '0', fontSize: '1rem' }}
-                type="text" 
-                placeholder="Referencia / Empresa" 
-                value={manualWhatsapp}
-                onChange={(e) => setManualWhatsapp(e.target.value)}
-                required
-              />
-              <button 
-                type="submit" 
-                className="btn-primary" 
-                disabled={isRegistering}
-                style={{ background: 'var(--accent)', marginTop: '0.5rem', padding: '1rem' }}
-              >
-              {isRegistering ? 'CARGANDO...' : 'CARGAR INVITADO'}
-              </button>
-            </form>
-          </section>
-
-          {/* SECCIÓN ESTUDIO PRECINTO */}
-          <section className="glass-card" style={{ padding: '2rem', border: '1px solid var(--accent)' }}>
-            <h2 style={{ color: 'var(--accent)', marginBottom: '1.5rem', fontSize: '0.8rem', letterSpacing: '2px', fontWeight: 'bold' }}>DINÁMICA ESTUDIO PRECINTO</h2>
-            <div style={{ background: 'rgba(162, 138, 104, 0.1)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(162, 138, 104, 0.2)' }}>
-              <p style={{ fontSize: '0.75rem', opacity: 0.8, marginBottom: '1rem' }}>STOCK DE TAGS NFC DISPONIBLES:</p>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <div style={{ fontSize: '2.5rem', fontWeight: '900', color: 'var(--accent)' }}>{nfcStock}</div>
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  <button 
-                    onClick={() => handleUpdateStock(nfcStock + 1)}
-                    style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid var(--accent)', color: 'white', padding: '0.3rem', borderRadius: '4px', cursor: 'pointer' }}
-                  >+ Aumentar</button>
-                  <button 
-                    onClick={() => handleUpdateStock(Math.max(0, nfcStock - 1))}
-                    style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid var(--accent)', color: 'white', padding: '0.3rem', borderRadius: '4px', cursor: 'pointer' }}
-                  >- Disminuir</button>
+      {activeTab === 'sorteo' ? (
+        <div className="admin-layout-container" style={{ display: 'flex', flexWrap: 'wrap', gap: '2rem', width: '100%', alignItems: 'start' }}>
+          <div style={{ flex: '1 1 400px', minWidth: '350px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+              <section className="glass-card" style={{ padding: '2rem' }}>
+                <h2 style={{ color: 'var(--secondary)', marginBottom: '1rem', fontSize: '0.8rem', letterSpacing: '2px' }}>ESTADO DEL SORTEO</h2>
+                <div style={{ fontSize: '2.5rem', fontWeight: '900', marginBottom: '1.5rem', borderBottom: '1px solid var(--glass-border)', paddingBottom: '1rem' }}>
+                  {drawStatus === 'waiting' ? 'ESPERANDO' : drawStatus === 'finished' ? 'TERMINADO' : drawStatus.toUpperCase()}
                 </div>
-              </div>
-              <input 
-                type="number" 
-                className="input-field" 
-                value={nfcStock} 
-                onChange={(e) => handleUpdateStock(e.target.value)}
-                style={{ marginTop: '1rem', marginBottom: '0', textAlign: 'center' }}
-              />
-            </div>
-
-            <div style={{ background: 'rgba(0, 176, 229, 0.1)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(0, 176, 229, 0.2)', marginTop: '1.5rem' }}>
-              <p style={{ fontSize: '0.75rem', opacity: 0.8, marginBottom: '1rem' }}>STOCK DE ASESORÍAS DISPONIBLES:</p>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <div style={{ fontSize: '2.5rem', fontWeight: '900', color: 'var(--secondary)' }}>{asesoriaStock}</div>
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  <button 
-                    onClick={() => handleUpdateAseStock(asesoriaStock + 1)}
-                    style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid var(--secondary)', color: 'white', padding: '0.3rem', borderRadius: '4px', cursor: 'pointer' }}
-                  >+ Aumentar</button>
-                  <button 
-                    onClick={() => handleUpdateAseStock(Math.max(0, asesoriaStock - 1))}
-                    style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid var(--secondary)', color: 'white', padding: '0.3rem', borderRadius: '4px', cursor: 'pointer' }}
-                  >- Disminuir</button>
-                </div>
-              </div>
-            </div>
-
-            <p style={{ fontSize: '0.6rem', marginTop: '1rem', opacity: 0.5, fontStyle: 'italic' }}>
-              Los premios se descuentan automáticamente al ganar en la ruleta.
-            </p>
-          </section>
-          </div>
-        </div>
-
-        {/* COLUMNA DERECHA: LISTADO DE PARTICIPANTES */}
-        <section className="glass-card" style={{ flex: '2 1 600px', minWidth: '400px', padding: '2rem', display: 'flex', flexDirection: 'column', maxHeight: '85vh' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-            <h2 style={{ fontSize: '0.8rem', opacity: 0.7, letterSpacing: '2px' }}>PARTICIPANTES REGISTRADOS ({participants.length})</h2>
-            <button 
-              onClick={exportCSV} 
-              style={{ background: 'transparent', border: '1px solid var(--secondary)', color: 'var(--secondary)', padding: '0.4rem 1rem', borderRadius: '6px', fontSize: '0.7rem', cursor: 'pointer', fontWeight: 'bold' }}
-            >
-              DESCARGAR CSV
-            </button>
-          </div>
-          
-          <div style={{ overflowY: 'auto', flex: 1, paddingRight: '1rem' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-              <thead>
-                <tr style={{ borderBottom: '1px solid var(--glass-border)', textAlign: 'left', fontSize: '0.7rem', color: 'var(--accent)' }}>
-                  <th style={{ padding: '1rem 0.5rem' }}>ID</th>
-                  <th style={{ padding: '1rem 0.5rem' }}>PARTICIPANTE</th>
-                  <th style={{ padding: '1rem 0.5rem' }}>CONTACTO</th>
-                  <th style={{ padding: '1rem 0.5rem', textAlign: 'center' }}>RULETA</th>
-                </tr>
-              </thead>
-              <tbody>
-                {[...participants].sort((a,b) => (b.timestamp || 0) - (a.timestamp || 0)).map((p, idx) => (
-                  <tr key={idx} style={{ 
-                    borderBottom: '1px solid rgba(255,255,255,0.03)', 
-                    background: p.isWinner ? 'rgba(0,142,69,0.1)' : 'transparent',
-                    transition: 'background 0.3s'
-                  }}>
-                    <td style={{ padding: '1rem 0.5rem', fontWeight: '900', color: 'var(--secondary)', fontSize: '1rem' }}>
-                      #{p.id}
-                    </td>
-                    <td style={{ padding: '1rem 0.5rem' }}>
-                      <div style={{ fontWeight: 'bold', fontSize: '0.95rem' }}>
-                        {p.name} {p.isWinner ? '🏆' : ''}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  {drawStatus === 'waiting' && <button className="btn-primary" style={{ width: '100%', padding: '1.2rem' }} onClick={handleStartDraw}>LANZAR SORTEO</button>}
+                  {drawStatus === 'drawing' && <button className="btn-primary" style={{ width: '100%', opacity: 0.5 }} disabled>SORTEANDO...</button>}
+                  {drawStatus === 'finished' && (
+                    <>
+                      <div style={{ padding: '1rem', background: 'rgba(0,142,69,0.1)', borderRadius: '8px', border: '1px solid var(--primary)', textAlign: 'center' }}>
+                        ÚLTIMO GANADOR: <strong style={{ fontSize: '1.5rem' }}>#{winnerId}</strong>
                       </div>
-                    </td>
-                    <td style={{ padding: '1rem 0.5rem', fontSize: '0.75rem', opacity: 0.6 }}>
-                      <div>{p.whatsapp}</div>
-                      {p.isManual && <div style={{ color: 'var(--accent)', fontWeight: 'bold', fontSize: '0.6rem', marginTop: '0.2rem' }}>REGISTRO MANUAL</div>}
-                    </td>
-                    <td style={{ padding: '1rem 0.5rem', textAlign: 'center' }}>
-                      {p.ya_jugo_ruleta ? (
-                        <div>
-                          <div style={{ background: 'var(--accent)', color: 'white', padding: '0.2rem 0.5rem', borderRadius: '4px', fontSize: '0.65rem', fontWeight: 'bold', display: 'inline-block' }}>JUGÓ</div>
-                          {p.roulette_win && (
-                              <div style={{ fontSize: '0.6rem', color: 'var(--accent)', fontWeight: 'bold', marginTop: '0.3rem' }}>
-                                  🎁 {p.roulette_win === 'TAG_NFC' ? 'TAG NFC' : p.roulette_win === 'ASESORIA' ? 'ASESORÍA' : 'CARAMELOS'}
-                              </div>
-                          )}
-                        </div>
-                      ) : (
-                        <span style={{ opacity: 0.2, fontSize: '0.65rem' }}>-</span>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                      <button className="btn-primary" style={{ width: '100%', background: 'var(--secondary)' }} onClick={handleReset}>NUEVA RONDA</button>
+                    </>
+                  )}
+                </div>
+                <div style={{ marginTop: '3rem', paddingTop: '1.5rem', borderTop: '1px solid rgba(231, 76, 60, 0.2)' }}>
+                  <button onClick={handleFullReset} style={{ width: '100%', background: 'rgba(231, 76, 60, 0.05)', color: '#e74c3c', border: '1px solid rgba(231, 76, 60, 0.1)', padding: '0.6rem', borderRadius: '8px', cursor: 'pointer', fontSize: '0.6rem', fontWeight: 'bold', opacity: 0.4 }}>⚙️ RESET SISTEMA (BORRAR TODO)</button>
+                </div>
+              </section>
+
+              <section className="glass-card" style={{ padding: '2rem' }}>
+                <h2 style={{ marginBottom: '1.5rem', fontSize: '0.8rem', opacity: 0.7, letterSpacing: '1px' }}>REGISTRO MANUAL (ADMIN)</h2>
+                <form onSubmit={handleManualRegister} style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+                  <input className="input-field" type="text" placeholder="Nombre" value={manualName} onChange={(e) => setManualName(e.target.value)} required />
+                  <input className="input-field" type="text" placeholder="Referencia" value={manualWhatsapp} onChange={(e) => setManualWhatsapp(e.target.value)} required />
+                  <button type="submit" className="btn-primary" disabled={isRegistering} style={{ background: 'var(--accent)' }}>{isRegistering ? 'CARGANDO...' : 'CARGAR INVITADO'}</button>
+                </form>
+              </section>
+
+              <section className="glass-card" style={{ padding: '2rem', border: '1px solid var(--accent)' }}>
+                <h2 style={{ color: 'var(--accent)', marginBottom: '1.5rem', fontSize: '0.8rem', letterSpacing: '2px', fontWeight: 'bold' }}>STOCK PREMIOS</h2>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                  <div style={{ background: 'rgba(162, 138, 104, 0.1)', padding: '1rem', borderRadius: '8px' }}>
+                    <p style={{ fontSize: '0.6rem' }}>TAGS NFC</p>
+                    <div style={{ fontSize: '1.5rem', fontWeight: '900' }}>{nfcStock}</div>
+                  </div>
+                  <div style={{ background: 'rgba(0, 176, 229, 0.1)', padding: '1rem', borderRadius: '8px' }}>
+                    <p style={{ fontSize: '0.6rem' }}>ASESORÍAS</p>
+                    <div style={{ fontSize: '1.5rem', fontWeight: '900' }}>{asesoriaStock}</div>
+                  </div>
+                </div>
+              </section>
+            </div>
           </div>
-        </section>
-      </div>
+
+          <section className="glass-card" style={{ flex: '2 1 600px', minWidth: '400px', padding: '2rem', display: 'flex', flexDirection: 'column', maxHeight: '75vh' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+              <h2 style={{ fontSize: '0.8rem', opacity: 0.7 }}>PARTICIPANTES ({participants.length})</h2>
+              <button onClick={exportCSV} className="btn-secondary" style={{ padding: '0.4rem 1rem', fontSize: '0.7rem' }}>EXPORTAR CSV</button>
+            </div>
+            <div style={{ overflowY: 'auto', flex: 1 }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ borderBottom: '1px solid var(--glass-border)', textAlign: 'left', fontSize: '0.7rem' }}>
+                    <th style={{ padding: '1rem 0.5rem' }}>ID</th>
+                    <th style={{ padding: '1rem 0.5rem' }}>NOMBRE</th>
+                    <th style={{ padding: '1rem 0.5rem' }}>CONTACTO</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[...participants].sort((a,b) => (b.timestamp || 0) - (a.timestamp || 0)).map((p, idx) => (
+                    <tr key={idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.03)', background: p.isWinner ? 'rgba(0,142,69,0.1)' : 'transparent' }}>
+                      <td style={{ padding: '1rem 0.5rem', fontWeight: 'bold' }}>#{p.id}</td>
+                      <td style={{ padding: '1rem 0.5rem' }}>{p.name} {p.isWinner ? '🏆' : ''}</td>
+                      <td style={{ padding: '1rem 0.5rem', fontSize: '0.8rem', opacity: 0.6 }}>{p.whatsapp}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      ) : (
+        <BannerMetricsView 
+            bannerHits={bannerHits} 
+            bannerClicks={bannerClicks} 
+            participants={participants}
+        />
+      )}
     </div>
   );
 };
-;
+
+const BannerMetricsView = ({ bannerHits, bannerClicks, participants }) => {
+  const totalScans = bannerHits.length;
+  const totalClicks = bannerClicks.length;
+  const ctr = totalScans > 0 ? ((totalClicks / totalScans) * 100).toFixed(1) : 0;
+
+  const counts = bannerClicks.reduce((acc, click) => {
+    acc[click.optionTitle] = (acc[click.optionTitle] || 0) + 1;
+    return acc;
+  }, {});
+  const topObstacle = Object.keys(counts).length > 0 
+    ? Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b) 
+    : 'N/A';
+
+  const exportBannerCSV = () => {
+    const headers = "Hora,Nombre/ID,Opción Elegida\n";
+    const rows = [...bannerClicks].reverse().map(c => {
+        const time = new Date(c.timestamp).toLocaleTimeString();
+        const user = c.participantName || `Anónimo (#${c.participantId})`;
+        const title = c.optionTitle ? c.optionTitle.replace(/,/g, '') : 'N/A';
+        return `${time},${user},${title}`;
+    }).join("\n");
+    const blob = new Blob([headers + rows], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `metricas_banner_estudio_precinto.csv`;
+    a.click();
+  };
+
+  return (
+    <div style={{ animation: 'fadeIn 0.5s ease-out' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', marginBottom: '3rem' }}>
+        <div className="glass-card" style={{ padding: '2.5rem', textAlign: 'center' }}>
+          <div style={{ fontSize: '0.7rem', opacity: 0.6, letterSpacing: '2px' }}>ESCANEOS TOTALES</div>
+          <div style={{ fontSize: '3.5rem', fontWeight: '900', color: 'var(--secondary)' }}>{totalScans}</div>
+        </div>
+        <div className="glass-card" style={{ padding: '2.5rem', textAlign: 'center' }}>
+          <div style={{ fontSize: '0.7rem', opacity: 0.6, letterSpacing: '2px' }}>CONVERSIÓN (CTR)</div>
+          <div style={{ fontSize: '3.5rem', fontWeight: '900', color: 'var(--accent)' }}>{ctr}%</div>
+        </div>
+        <div className="glass-card" style={{ padding: '2.5rem', textAlign: 'center' }}>
+          <div style={{ fontSize: '0.7rem', opacity: 0.6, letterSpacing: '2px' }}>TOP OBSTÁCULO</div>
+          <div style={{ fontSize: '1.1rem', fontWeight: 'bold', color: 'white', marginTop: '1rem' }}>{topObstacle}</div>
+        </div>
+      </div>
+
+      <section className="glass-card" style={{ padding: '2.5rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+          <h2 style={{ fontSize: '0.8rem', opacity: 0.7 }}>INTERESADOS ({totalClicks})</h2>
+          <button onClick={exportBannerCSV} className="btn-secondary" style={{ padding: '0.5rem 1.2rem', color: 'var(--accent)', borderColor: 'var(--accent)' }}>DESCARGAR PROSPECTOS</button>
+        </div>
+        <div style={{ maxHeight: '500px', overflowY: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr style={{ borderBottom: '1px solid var(--glass-border)', textAlign: 'left', fontSize: '0.7rem', color: 'var(--accent)' }}>
+                <th style={{ padding: '1rem' }}>HORA</th>
+                <th style={{ padding: '1rem' }}>USUARIO</th>
+                <th style={{ padding: '1rem' }}>ELECCIÓN</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[...bannerClicks].reverse().map((click, idx) => (
+                <tr key={idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
+                  <td style={{ padding: '1rem', fontSize: '0.8rem', opacity: 0.6 }}>{new Date(click.timestamp).toLocaleTimeString()}</td>
+                  <td style={{ padding: '1rem' }}>
+                    <div style={{ fontWeight: 'bold' }}>{click.participantName || 'Anónimo'}</div>
+                    <div style={{ fontSize: '0.6rem', opacity: 0.4 }}>ID: #{click.participantId}</div>
+                  </td>
+                  <td style={{ padding: '1rem' }}>
+                    <span style={{ 
+                      background: 'rgba(255,255,255,0.03)', 
+                      padding: '0.3rem 0.8rem', 
+                      borderRadius: '20px', 
+                      fontSize: '0.7rem',
+                      border: click.optionTitle.includes('GENERAL') ? '1px solid var(--accent)' : 'none'
+                    }}>{click.optionTitle}</span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <style>{`@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }`}</style>
+    </div>
+  );
+};
 
 export default Admin;
