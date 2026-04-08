@@ -1,0 +1,255 @@
+.landing-container {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 2rem 1.5rem;
+  background: radial-gradient(circle at top, #1b2735 0%, #090a0f 100%);
+  position: relative;
+  overflow-y: auto;
+  color: white;
+  text-align: center;
+}
+
+/* Adornos de fondo premium */
+.landing-container::before {
+  content: '';
+  position: fixed;
+  top: -10%;
+  left: -10%;
+  width: 50%;
+  height: 50%;
+  background: rgba(162, 138, 104, 0.05);
+  filter: blur(100px);
+  border-radius: 50%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.landing-header {
+  z-index: 1;
+  width: 100%;
+  margin-bottom: 2.5rem;
+  animation: fadeInDown 0.8s ease-out;
+}
+
+.landing-logo {
+  max-width: 180px;
+  height: auto;
+  margin-bottom: 2rem;
+  filter: drop-shadow(0 0 10px rgba(162, 138, 104, 0.2));
+}
+
+.landing-title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(to right, #fff, var(--accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.5px;
+}
+
+.landing-subtitle {
+  font-size: 1rem;
+  opacity: 0.8;
+  font-weight: 400;
+  letter-spacing: 1px;
+}
+
+.buttons-grid {
+  z-index: 1;
+  width: 100%;
+  max-width: 450px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  margin-bottom: 3rem;
+  animation: fadeInUp 0.8s ease-out 0.2s both;
+}
+
+.terminal-button {
+  width: 100%;
+  padding: 1.6rem 1.2rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(162, 138, 104, 0.2);
+  border-radius: 20px;
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+.terminal-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(162, 138, 104, 0.2),
+    transparent
+  );
+  transition: all 0.6s;
+}
+
+.terminal-button:hover::before {
+  left: 100%;
+}
+
+.terminal-button:hover {
+  transform: translateY(-5px);
+  border-color: var(--accent);
+  box-shadow: 0 12px 30px rgba(162, 138, 104, 0.15);
+  color: var(--accent);
+}
+
+.terminal-button:active {
+  transform: translateY(2px) scale(0.95) !important;
+  background: rgba(162, 138, 104, 0.2);
+  transition: all 0.1s;
+}
+
+.button-glare {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 255, 255, 0.15) 0%,
+    transparent 50%
+  );
+  pointer-events: none;
+  z-index: 0;
+  transition: transform 0.1s ease-out;
+}
+
+.terminal-button.premium {
+  background: linear-gradient(135deg, var(--accent) 0%, #d4bf9d 100%);
+  color: var(--bg-dark);
+  border: none;
+  font-weight: 800;
+  box-shadow: 0 15px 35px rgba(162, 138, 104, 0.4);
+  animation: breathe 3s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0% { box-shadow: 0 15px 35px rgba(162, 138, 104, 0.4); }
+  50% { box-shadow: 0 15px 55px rgba(162, 138, 104, 0.7); transform: scale(1.02); }
+  100% { box-shadow: 0 15px 35px rgba(162, 138, 104, 0.4); }
+}
+
+.terminal-button.premium:hover {
+  filter: brightness(1.1);
+  box-shadow: 0 20px 45px rgba(162, 138, 104, 0.5);
+  color: var(--bg-dark);
+}
+
+.landing-footer {
+  z-index: 1;
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding-bottom: 1rem;
+  animation: fadeIn 1s ease-out 0.5s both;
+}
+
+.btn-secondary {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.75rem;
+  padding: 0.6rem 1.2rem;
+  border-radius: 100px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  transition: all 0.3s;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+}
+
+.footer-slogan {
+  font-size: 0.7rem;
+  letter-spacing: 4px;
+  font-weight: 700;
+  color: var(--accent);
+  opacity: 0.8;
+  text-transform: uppercase;
+}
+
+/* Estado de Gracias */
+.thanks-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  animation: zoomIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.thanks-icon {
+  font-size: 5rem;
+  margin-bottom: 2rem;
+}
+
+.thanks-title {
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: var(--secondary);
+  margin-bottom: 1rem;
+}
+
+.thanks-text {
+  font-size: 1.1rem;
+  opacity: 0.8;
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes zoomIn {
+  from { opacity: 0; transform: scale(0.5); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Media query para pantallas muy pequeñas */
+@media (max-width: 360px) {
+  .landing-title { font-size: 1.5rem; }
+  .terminal-button { padding: 1.1rem; font-size: 0.95rem; }
+}

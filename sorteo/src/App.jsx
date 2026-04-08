@@ -4,6 +4,7 @@ import Register from './pages/Register';
 import Monitor from './pages/Monitor';
 import Admin from './pages/Admin';
 import Roulette from './pages/Roulette';
+import LandingBanner from './pages/LandingBanner';
 import logoPrecinto from './assets/logo-precinto.svg';
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
             <Route path="/monitor" element={<Monitor />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/ruleta" element={<Roulette />} />
+            <Route path="/diagnostico" element={<LandingBanner />} />
           </Routes>
         </main>
 
