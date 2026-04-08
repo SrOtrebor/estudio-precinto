@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { db, ref, set, push } from '../firebase';
+import { db, ref, push, set } from '../firebase';
 import logoPrecinto from '../assets/logo-precinto.svg';
 import './LandingBanner.css';
 
@@ -37,34 +37,28 @@ const LandingBanner = () => {
     ];
 
     useEffect(() => {
-        // 1. Identificar al usuario
-        const pId = localStorage.getItem('participantId');
-        const pName = localStorage.getItem('participantName');
-        
-        if (pId) {
-            setParticipant({ id: pId, name: pName });
+        // 1. Identificar si ya está registrado en localStorage
+        const savedData = localStorage.getItem('sorteo_participant');
+        if (savedData) {
+            setParticipant(JSON.parse(savedData));
         }
 
-        // 2. Registrar el "Hit" (Visita) en Firebase
+        // 2. Trackear Hit (visita anónima o identificada)
         const trackHit = async () => {
-            try {
-                const statsRef = ref(db, 'banner_tracking/hits');
-                await push(statsRef, {
-                    participantId: pId || 'anonymous',
-                    participantName: pName || 'Anónimo',
-                    timestamp: Date.now(),
-                    userAgent: navigator.userAgent
-                });
-            } catch (err) {
-                console.error("Error tracking hit:", err);
-            }
+            const hitsRef = ref(db, 'banner_tracking/hits');
+            const data = JSON.parse(savedData || '{}');
+            await push(hitsRef, {
+                timestamp: Date.now(),
+                participantId: data.id || 'anonymous',
+                participantName: data.name || 'anonymous',
+                userAgent: navigator.userAgent
+            });
         };
 
         trackHit();
 
         // 3. Manejo de Giroscopio (Parallax)
         const handleOrientation = (e) => {
-            // Beta (inclinación adelante/atrás) y Gamma (inclinación izquierda/derecha)
             const x = e.gamma ? Math.min(Math.max(e.gamma, -20), 20) : 0;
             const y = e.beta ? Math.min(Math.max(e.beta - 45, -20), 20) : 0;
             setTilt({ x, y });
@@ -80,33 +74,27 @@ const LandingBanner = () => {
     }, []);
 
     const handleOptionSelect = async (option) => {
-        // A. Efecto Gatillo (Vibración)
-        if (navigator.vibrate) {
-            navigator.vibrate(60);
+        // Vibración háptica si el móvil lo soporta
+        if ("vibrate" in navigator) {
+            navigator.vibrate(50);
         }
 
-        // B. Registrar el Clic en Firebase
-        try {
-            const clicksRef = ref(db, 'banner_tracking/clicks');
-            await push(clicksRef, {
-                participantId: participant?.id || 'anonymous',
-                participantName: participant?.name || 'Anónimo',
-                optionId: option.id,
-                optionTitle: option.title,
-                timestamp: Date.now()
-            });
-        } catch (err) {
-            console.error("Error tracking click:", err);
-        }
+        // Tracking del click
+        const clicksRef = ref(db, 'banner_tracking/clicks');
+        await push(clicksRef, {
+            timestamp: Date.now(),
+            participantId: participant?.id || 'anonymous',
+            participantName: participant?.name || 'anonymous',
+            optionId: option.id,
+            optionTitle: option.title
+        });
 
-        // C. Abrir WhatsApp
-        const waUrl = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(option.message)}`;
-        window.open(waUrl, '_blank');
+        // Abrir WhatsApp con mensaje predefinido
+        const encodedMsg = encodeURIComponent(option.message);
+        window.open(`https://wa.me/${WA_NUMBER}?text=${encodedMsg}`, '_blank');
 
-        // D. Cambiar a estado de Gracias
+        // Mostrar estado de gracias y redirigir
         setStatus('thanks');
-
-        // E. Redirigir a estudioprecinto.com después de 3 segundos
         setTimeout(() => {
             window.location.href = "https://estudioprecinto.com";
         }, 4000);
@@ -115,7 +103,7 @@ const LandingBanner = () => {
     if (status === 'thanks') {
         return (
             <div className="landing-container">
-                <div className="thanks-container">
+                <div className="thanks-card">
                     <div className="thanks-icon">✅</div>
                     <h1 className="thanks-title">¡Gracias!</h1>
                     <p className="thanks-text">Rober recibió tu interés.</p>
@@ -158,6 +146,11 @@ const LandingBanner = () => {
                     </button>
                 ))}
             </div>
+
+            <p className="landing-closing">
+                Estás a un click de recuperar 2 horas de tu día. <br/>
+                Seleccioná una opción y hablemos.
+            </p>
 
             <footer className="landing-footer">
                 <div className="footer-slogan">TECNOLOGÍA QUE RESUELVE.</div>
