@@ -13,6 +13,7 @@ const Admin = () => {
   const [isRegistering, setIsRegistering] = useState(false);
   const [nfcStock, setNfcStock] = useState(0);
   const [asesoriaStock, setAsesoriaStock] = useState(0);
+  const [candyStock, setCandyStock] = useState(0);
   const [activeTab, setActiveTab] = useState('sorteo'); // 'sorteo' | 'banner'
   const [bannerHits, setBannerHits] = useState([]);
   const [bannerClicks, setBannerClicks] = useState([]);
@@ -45,6 +46,12 @@ const Admin = () => {
     onValue(aseRef, (snapshot) => {
       const data = snapshot.val();
       setAsesoriaStock(data !== null ? data : 35);
+    });
+
+    const candyRef = ref(db, 'candy_stock');
+    onValue(candyRef, (snapshot) => {
+      const data = snapshot.val();
+      setCandyStock(data !== null ? data : 100);
     });
 
     // Listeners de Banner Tracking
@@ -105,6 +112,10 @@ const Admin = () => {
 
   const handleUpdateAseStock = async (newStock) => {
     await set(ref(db, 'asesoria_stock'), Number(newStock));
+  };
+
+  const handleUpdateCandyStock = async (newStock) => {
+    await set(ref(db, 'candy_stock'), Number(newStock));
   };
 
   const handleFullReset = async () => {
@@ -322,7 +333,7 @@ const Admin = () => {
 
               <section className="glass-card" style={{ padding: '2rem', border: '1px solid var(--accent)' }}>
                 <h2 style={{ color: 'var(--accent)', marginBottom: '1.5rem', fontSize: '0.8rem', letterSpacing: '2px', fontWeight: 'bold' }}>STOCK PREMIOS</h2>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
                   <div style={{ background: 'rgba(162, 138, 104, 0.1)', padding: '1rem', borderRadius: '8px' }}>
                     <p style={{ fontSize: '0.6rem' }}>TAGS NFC</p>
                     <input 
@@ -333,7 +344,7 @@ const Admin = () => {
                         background: 'transparent', 
                         border: 'none', 
                         color: 'white', 
-                        fontSize: '1.5rem', 
+                        fontSize: '1.2rem', 
                         fontWeight: '900', 
                         width: '100%',
                         outline: 'none'
@@ -350,7 +361,24 @@ const Admin = () => {
                         background: 'transparent', 
                         border: 'none', 
                         color: 'white', 
-                        fontSize: '1.5rem', 
+                        fontSize: '1.2rem', 
+                        fontWeight: '900', 
+                        width: '100%',
+                        outline: 'none'
+                      }}
+                    />
+                  </div>
+                  <div style={{ background: 'rgba(255, 255, 255, 0.05)', padding: '1rem', borderRadius: '8px' }}>
+                    <p style={{ fontSize: '0.6rem' }}>CARAMELOS</p>
+                    <input 
+                      type="number" 
+                      value={candyStock} 
+                      onChange={(e) => handleUpdateCandyStock(e.target.value)}
+                      style={{ 
+                        background: 'transparent', 
+                        border: 'none', 
+                        color: 'white', 
+                        fontSize: '1.2rem', 
                         fontWeight: '900', 
                         width: '100%',
                         outline: 'none'

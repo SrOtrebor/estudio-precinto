@@ -13,6 +13,7 @@ const Roulette = () => {
   const [error, setError] = useState('');
   const [nfcStock, setNfcStock] = useState(0);
   const [asesoriaStock, setAsesoriaStock] = useState(0);
+  const [candyStock, setCandyStock] = useState(0);
   const [isSpinning, setIsSpinning] = useState(false);
   const [prize, setPrize] = useState(null);
   const [rotation, setRotation] = useState(0);
@@ -35,6 +36,8 @@ const Roulette = () => {
     onValue(nfcRef, (snapshot) => setNfcStock(snapshot.val() ?? 9));
     const aseRef = ref(db, 'asesoria_stock');
     onValue(aseRef, (snapshot) => setAsesoriaStock(snapshot.val() ?? 35));
+    const candyRef = ref(db, 'candy_stock');
+    onValue(candyRef, (snapshot) => setCandyStock(snapshot.val() ?? 100));
 
     const savedId = localStorage.getItem('participantId');
     if (savedId) handleLookup(null, savedId);
@@ -130,6 +133,7 @@ const Roulette = () => {
     setTimeout(async () => {
       if (winType === 'TAG_NFC') await runTransaction(ref(db, 'nfc_stock'), (c) => (c || 0) > 0 ? c - 1 : 0);
       else if (winType === 'ASESORIA') await runTransaction(ref(db, 'asesoria_stock'), (c) => (c || 0) > 0 ? c - 1 : 0);
+      else if (winType === 'CARAMELOS') await runTransaction(ref(db, 'candy_stock'), (c) => (c || 0) > 0 ? c - 1 : 0);
       await update(ref(db, `participants/${participant.id}`), { roulette_win: winType });
       setPrize(winType); setStep('result'); setIsSpinning(false);
       if (winType !== 'CARAMELOS') {
