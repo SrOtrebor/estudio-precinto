@@ -15,7 +15,9 @@ const Admin = () => {
   const [asesoriaStock, setAsesoriaStock] = useState(0);
   const [activeTab, setActiveTab] = useState('sorteo'); // 'sorteo' | 'banner'
   const [bannerHits, setBannerHits] = useState([]);
+  const [bannerHits, setBannerHits] = useState([]);
   const [bannerClicks, setBannerClicks] = useState([]);
+  const [filter, setFilter] = useState('all'); // 'all' | 'winner' | 'tag' | 'ase' | 'candy'
 
   useEffect(() => {
     const participantsRef = ref(db, 'participants');
@@ -162,13 +164,17 @@ const Admin = () => {
   };
 
   const exportCSV = () => {
-    const headers = "Nombre,WhatsApp,ID\n";
-    const rows = participants.map(p => `${p.name},${p.whatsapp},${p.id}`).join("\n");
+    const headers = "Nombre,WhatsApp,ID,Ganador Sorteo,Premio Ruleta\n";
+    const rows = participants.map(p => {
+        const raffle = p.isWinner ? `SI (#${p.prizeNumber})` : "NO";
+        const roulette = p.roulette_win || (p.ya_jugo_ruleta ? "DULCE (Default)" : "NO JUGO");
+        return `${p.name},${p.whatsapp},${p.id},${raffle},${roulette}`;
+    }).join("\n");
     const blob = new Blob([headers + rows], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `participantes_troncal.csv`;
+    a.download = `participantes_troncal_completo.csv`;
     a.click();
   };
 
@@ -332,9 +338,18 @@ const Admin = () => {
           </div>
 
           <section className="glass-card" style={{ flex: '2 1 600px', minWidth: '400px', padding: '2rem', display: 'flex', flexDirection: 'column', maxHeight: '75vh' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
               <h2 style={{ fontSize: '0.8rem', opacity: 0.7 }}>PARTICIPANTES ({participants.length})</h2>
               <button onClick={exportCSV} className="btn-secondary" style={{ padding: '0.4rem 1rem', fontSize: '0.7rem' }}>EXPORTAR CSV</button>
+            </div>
+
+            {/* BARRA DE FILTROS */}
+            <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
+                <button onClick={() => setFilter('all')} style={{ padding: '0.4rem 0.8rem', borderRadius: '20px', fontSize: '0.7rem', border: '1px solid var(--glass-border)', background: filter === 'all' ? 'var(--secondary)' : 'transparent', color: 'white', cursor: 'pointer' }}>TODOS</button>
+                <button onClick={() => setFilter('winner')} style={{ padding: '0.4rem 0.8rem', borderRadius: '20px', fontSize: '0.7rem', border: '1px solid var(--primary)', background: filter === 'winner' ? 'var(--primary)' : 'transparent', color: filter === 'winner' ? 'black' : 'var(--primary)', fontWeight: 'bold', cursor: 'pointer' }}>🏆 GANADORES</button>
+                <button onClick={() => setFilter('tag')} style={{ padding: '0.4rem 0.8rem', borderRadius: '20px', fontSize: '0.7rem', border: '1px solid var(--accent)', background: filter === 'tag' ? 'var(--accent)' : 'transparent', color: 'white', cursor: 'pointer' }}>🏷️ TAG NFC</button>
+                <button onClick={() => setFilter('ase')} style={{ padding: '0.4rem 0.8rem', borderRadius: '20px', fontSize: '0.7rem', border: '1px solid #00b0e5', background: filter === 'ase' ? '#00b0e5' : 'transparent', color: 'white', cursor: 'pointer' }}>💡 ASESORÍA</button>
+                <button onClick={() => setFilter('candy')} style={{ padding: '0.4rem 0.8rem', borderRadius: '20px', fontSize: '0.7rem', border: '1px solid #999', background: filter === 'candy' ? '#666' : 'transparent', color: 'white', cursor: 'pointer' }}>🍬 CARAMELOS</button>
             </div>
             <div style={{ overflowY: 'auto', flex: 1 }}>
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -342,14 +357,45 @@ const Admin = () => {
                   <tr style={{ borderBottom: '1px solid var(--glass-border)', textAlign: 'left', fontSize: '0.7rem' }}>
                     <th style={{ padding: '1rem 0.5rem' }}>ID</th>
                     <th style={{ padding: '1rem 0.5rem' }}>NOMBRE</th>
+                    <th style={{ padding: '1rem 0.5rem' }}>RULETA / PREMIO</th>
                     <th style={{ padding: '1rem 0.5rem' }}>CONTACTO</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {[...participants].sort((a,b) => (b.timestamp || 0) - (a.timestamp || 0)).map((p, idx) => (
+                  {[...participants]
+                    .filter(p => {
+                        if (filter === 'winner') return p.isWinner;
+                        if (filter === 'tag') return p.roulette_win === 'TAG_NFC';
+                        if (filter === 'ase') return p.roulette_win === 'ASESORIA';
+                        if (filter === 'candy') return p.roulette_win === 'CARAMELOS';
+                        return true;
+                    })
+                    .sort((a,b) => (b.timestamp || 0) - (a.timestamp || 0))
+                    .map((p, idx) => (
                     <tr key={idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.03)', background: p.isWinner ? 'rgba(0,142,69,0.1)' : 'transparent' }}>
                       <td style={{ padding: '1rem 0.5rem', fontWeight: 'bold' }}>#{p.id}</td>
-                      <td style={{ padding: '1rem 0.5rem' }}>{p.name} {p.isWinner ? '🏆' : ''}</td>
+                      <td style={{ padding: '1rem 0.5rem' }}>
+                        <div style={{ fontWeight: 'bold' }}>{p.name} {p.isWinner ? '🏆' : ''}</div>
+                        {p.isWinner && <div style={{ fontSize: '0.6rem', color: 'var(--primary)' }}>GANADOR #{p.prizeNumber}</div>}
+                      </td>
+                      <td style={{ padding: '1rem 0.5rem' }}>
+                        {p.ya_jugo_ruleta ? (
+                            <span style={{ 
+                                padding: '0.2rem 0.6rem', 
+                                borderRadius: '4px', 
+                                fontSize: '0.65rem', 
+                                fontWeight: 'bold',
+                                background: p.roulette_win === 'TAG_NFC' ? 'var(--accent)' : 
+                                            p.roulette_win === 'ASESORIA' ? '#00b0e5' : 'rgba(255,255,255,0.1)',
+                                color: p.roulette_win === 'CARAMELOS' ? '#999' : 'white'
+                            }}>
+                                {p.roulette_win === 'TAG_NFC' ? '🏷️ TAG NFC' : 
+                                 p.roulette_win === 'ASESORIA' ? '💡 ASESORÍA' : '🍬 CARAMELOS'}
+                            </span>
+                        ) : (
+                            <span style={{ fontSize: '0.65rem', opacity: 0.3 }}>- pend -</span>
+                        )}
+                      </td>
                       <td style={{ padding: '1rem 0.5rem', fontSize: '0.8rem', opacity: 0.6 }}>{p.whatsapp}</td>
                     </tr>
                   ))}

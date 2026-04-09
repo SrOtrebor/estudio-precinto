@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { db, ref, push, set, onValue, runTransaction } from '../firebase';
+import React, { useState, useEffect } from 'react';
+import { db, ref, set, onValue, runTransaction, get, query, limitToLast, child } from '../firebase';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import confetti from 'canvas-confetti';
 import logo from '../assets/logo-troncal.svg';
@@ -12,7 +12,8 @@ const Register = () => {
   const [participantId, setParticipantId] = useState(null);
   const [drawStatus, setDrawStatus] = useState('waiting');
   const [winnerId, setWinnerId] = useState(null);
-  const [participants, setParticipants] = useState([]);
+  const [participants, setParticipants] = useState([]); // Ahora solo será una muestra pequeña para la animación
+  const [userData, setUserData] = useState(null); // Datos del usuario actual
   const [shuffledId, setShuffledId] = useState('000');
   const [shuffledName, setShuffledName] = useState('...');
   const [currentSessionId, setCurrentSessionId] = useState(null);
@@ -26,11 +27,13 @@ const Register = () => {
       setName(savedName);
     }
 
-    const participantsRef = ref(db, 'participants');
-    onValue(participantsRef, (snapshot) => {
-      const data = snapshot.val();
-      setParticipants(data ? Object.values(data) : []);
-    });
+    // Si ya tiene ID, escuchamos SOLO sus datos (muy eficiente)
+    if (savedId) {
+       const userRef = ref(db, `participants/${savedId}`);
+       onValue(userRef, (snapshot) => {
+         setUserData(snapshot.val());
+       });
+    }
 
     const settingsRef = ref(db, 'settings');
     onValue(settingsRef, (snapshot) => {
@@ -54,13 +57,28 @@ const Register = () => {
     });
   }, []);
 
+  // Cargar una muestra pequeña de participantes para la animación de la ruleta
+  useEffect(() => {
+    if (drawStatus === 'drawing' && participants.length === 0) {
+      const sampleRef = query(ref(db, 'participants'), limitToLast(30));
+      get(sampleRef).then((snapshot) => {
+        const data = snapshot.val();
+        if (data) setParticipants(Object.values(data));
+      });
+    } else if (drawStatus === 'waiting') {
+      setParticipants([]); // Limpiar para ahorrar memoria
+    }
+  }, [drawStatus]);
+
   useEffect(() => {
     let interval;
     if (drawStatus === 'drawing' && participants.length > 0) {
       interval = setInterval(() => {
         const randomP = participants[Math.floor(Math.random() * participants.length)];
-        setShuffledId(randomP.id.toString().padStart(3, '0'));
-        setShuffledName(randomP.name);
+        if (randomP) {
+          setShuffledId(randomP.id.toString().padStart(3, '0'));
+          setShuffledName(randomP.name);
+        }
       }, 70);
     }
     return () => clearInterval(interval);
@@ -82,11 +100,6 @@ const Register = () => {
     }
   }, [drawStatus, winnerId, participantId]);
 
-  // Participante actual calculado una sola vez cuando cambian participants o participantId
-  const currentParticipant = useMemo(
-    () => participants.find(p => Number(p.id) === Number(participantId)),
-    [participants, participantId]
-  );
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -99,12 +112,18 @@ const Register = () => {
       return;
     }
 
-    // Bloqueo de duplicados por WhatsApp (Normalizado)
-    const normalizedWp = phoneNumber.number; // Formato internacional +549...
-    const isDuplicate = participants.some(p => p.whatsapp_normalized === normalizedWp);
-    if (isDuplicate) {
-      alert("Este número de WhatsApp ya se encuentra registrado.");
-      return;
+    // Bloqueo de duplicados por WhatsApp (Ultra-rápido sin descargar lista)
+    const normalizedWp = phoneNumber.number;
+    const phoneCheckRef = ref(db, `phones/${normalizedWp.replace('+', '')}`);
+    
+    try {
+      const phoneSnap = await get(phoneCheckRef);
+      if (phoneSnap.exists()) {
+        alert("Este número de WhatsApp ya se encuentra registrado.");
+        return;
+      }
+    } catch (e) {
+      console.error("Error checking phone", e);
     }
 
     try {
@@ -116,13 +135,18 @@ const Register = () => {
       const nextId = counterSnapshot.val();
       const participantsRef = ref(db, `participants/${nextId}`);
       
-      await set(participantsRef, {
+      const participantData = {
         name,
         whatsapp,
         whatsapp_normalized: normalizedWp,
         id: nextId,
         timestamp: Date.now()
-      });
+      };
+
+      await set(participantsRef, participantData);
+      
+      // Registrar teléfono para evitar duplicados en el futuro
+      await set(phoneCheckRef, nextId);
 
       localStorage.setItem('participantId', nextId);
       localStorage.setItem('participantName', name);
@@ -130,7 +154,13 @@ const Register = () => {
         localStorage.setItem('sessionId', currentSessionId);
       }
       setParticipantId(nextId);
+      setUserData(participantData);
       setRegistered(true);
+
+      // Empezar a escuchar sus datos por si gana
+      onValue(participantsRef, (snapshot) => {
+        setUserData(snapshot.val());
+      });
     } catch (error) {
       console.error("Error al registrar:", error);
       alert("Error al registrar. Intenta de nuevo.");
@@ -180,8 +210,8 @@ const Register = () => {
           </>
         ) : (
           <div style={{ textAlign: 'center' }}>
-            {/* Lógica Persistente de Ganador - usa la variable memoizada */}
-            {currentParticipant?.isWinner ? (
+            {/* Lógica Persistente de Ganador */}
+            {userData?.isWinner ? (
               <div style={{ padding: '2rem 0', animation: 'winnerCelebrate 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)' }}>
                   <div style={{ fontSize: '5rem', marginBottom: '1rem' }}>🏆</div>
                   <h2 style={{ color: 'var(--primary)', fontSize: '3rem', fontWeight: '900', textShadow: '0 0 20px rgba(0,142,69,0.5)' }}>¡GANASTE! 🎉</h2>

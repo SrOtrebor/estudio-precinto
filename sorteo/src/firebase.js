@@ -23,3 +23,7 @@ export const push = realDatabase.push;
 export const set = realDatabase.set;
 export const update = realDatabase.update;
 export const runTransaction = realDatabase.runTransaction;
+export const get = realDatabase.get;
+export const query = realDatabase.query;
+export const limitToLast = realDatabase.limitToLast;
+export const child = realDatabase.child;
