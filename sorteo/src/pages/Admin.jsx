@@ -325,11 +325,37 @@ const Admin = () => {
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                   <div style={{ background: 'rgba(162, 138, 104, 0.1)', padding: '1rem', borderRadius: '8px' }}>
                     <p style={{ fontSize: '0.6rem' }}>TAGS NFC</p>
-                    <div style={{ fontSize: '1.5rem', fontWeight: '900' }}>{nfcStock}</div>
+                    <input 
+                      type="number" 
+                      value={nfcStock} 
+                      onChange={(e) => handleUpdateStock(e.target.value)}
+                      style={{ 
+                        background: 'transparent', 
+                        border: 'none', 
+                        color: 'white', 
+                        fontSize: '1.5rem', 
+                        fontWeight: '900', 
+                        width: '100%',
+                        outline: 'none'
+                      }}
+                    />
                   </div>
                   <div style={{ background: 'rgba(0, 176, 229, 0.1)', padding: '1rem', borderRadius: '8px' }}>
                     <p style={{ fontSize: '0.6rem' }}>ASESORÍAS</p>
-                    <div style={{ fontSize: '1.5rem', fontWeight: '900' }}>{asesoriaStock}</div>
+                    <input 
+                      type="number" 
+                      value={asesoriaStock} 
+                      onChange={(e) => handleUpdateAseStock(e.target.value)}
+                      style={{ 
+                        background: 'transparent', 
+                        border: 'none', 
+                        color: 'white', 
+                        fontSize: '1.5rem', 
+                        fontWeight: '900', 
+                        width: '100%',
+                        outline: 'none'
+                      }}
+                    />
                   </div>
                 </div>
               </section>
