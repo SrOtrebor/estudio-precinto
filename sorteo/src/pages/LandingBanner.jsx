@@ -38,19 +38,20 @@ const LandingBanner = () => {
 
     useEffect(() => {
         // 1. Identificar si ya está registrado en localStorage
-        const savedData = localStorage.getItem('sorteo_participant');
-        if (savedData) {
-            setParticipant(JSON.parse(savedData));
+        const savedId = localStorage.getItem('participantId');
+        const savedName = localStorage.getItem('participantName');
+        
+        if (savedId) {
+            setParticipant({ id: savedId, name: savedName });
         }
 
         // 2. Trackear Hit (visita anónima o identificada)
         const trackHit = async () => {
             const hitsRef = ref(db, 'banner_tracking/hits');
-            const data = JSON.parse(savedData || '{}');
             await push(hitsRef, {
                 timestamp: Date.now(),
-                participantId: data.id || 'anonymous',
-                participantName: data.name || 'anonymous',
+                participantId: savedId || 'anonymous',
+                participantName: savedName || 'anonymous',
                 userAgent: navigator.userAgent
             });
         };
