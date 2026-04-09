@@ -266,9 +266,10 @@ const Register = () => {
                       <div style={{ padding: '2rem 0' }}>
                         <h2 style={{ color: 'var(--accent)', fontSize: '2rem', marginBottom: '1rem' }}>¡Gracias por estar!</h2>
                         <p style={{ fontSize: '1.1rem', lineHeight: '1.6', opacity: 0.9 }}>
-                          Gracias por ser parte de <strong>Estudio Precinto</strong>. <br/>
-                          Es un placer que nos acompañes y nos escuches siempre. <br/>
-                          ¡Mucha suerte en los próximos sorteos!
+                          ¡Gracias por ser parte de <strong>La Troncal</strong>!<br/><br/>
+                          Valoramos mucho que estés acá compartiendo este día con nosotros.<br/>
+                          ¡No te vayas lejos, que todavía queda mucho por disfrutar!<br/>
+                          ¡Mucha suerte en lo que viene!
                         </p>
                       </div>
                     )}
