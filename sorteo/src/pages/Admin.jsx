@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { db, ref, onValue, update, set, runTransaction } from '../firebase';
-import logo from '../assets/logo-troncal.svg';
+import logo from '../assets/logo-precinto.svg';
 
 const Admin = () => {
   const [participants, setParticipants] = useState([]);
@@ -253,7 +253,7 @@ const Admin = () => {
   return (
     <div className="admin-view" style={{ padding: '2rem', width: '100%', maxWidth: '1400px', margin: '0 auto', color: 'white' }}>
       <header style={{ textAlign: 'center', marginBottom: '2rem' }}>
-        <img src={logo} alt="La Troncal" style={{ maxWidth: '280px', height: 'auto' }} />
+        <img src={logo} alt="Estudio Precinto" style={{ maxWidth: '280px', height: 'auto' }} />
         <h1 style={{ color: 'var(--accent)', fontSize: '1rem', marginTop: '0.5rem', letterSpacing: '4px' }}>DASHBOARD DE CONTROL</h1>
         
         <div style={{ 

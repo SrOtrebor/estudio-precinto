@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { db, ref, onValue } from '../firebase';
 import confetti from 'canvas-confetti';
-import logo from '../assets/logo-troncal.svg';
+import logo from '../assets/logo-precinto.svg';
 
 const Monitor = () => {
   const [participantsCount, setParticipantsCount] = useState(0);
@@ -94,7 +94,7 @@ const Monitor = () => {
       <header style={{ width: '100%', padding: '2vh 0' }}>
          <img 
            src={logo} 
-           alt="La Troncal" 
+           alt="Estudio Precinto" 
            style={{ 
              maxHeight: '15vh', 
              maxWidth: '80%', 
