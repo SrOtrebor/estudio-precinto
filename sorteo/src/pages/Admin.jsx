@@ -15,7 +15,6 @@ const Admin = () => {
   const [asesoriaStock, setAsesoriaStock] = useState(0);
   const [activeTab, setActiveTab] = useState('sorteo'); // 'sorteo' | 'banner'
   const [bannerHits, setBannerHits] = useState([]);
-  const [bannerHits, setBannerHits] = useState([]);
   const [bannerClicks, setBannerClicks] = useState([]);
   const [filter, setFilter] = useState('all'); // 'all' | 'winner' | 'tag' | 'ase' | 'candy'
 
