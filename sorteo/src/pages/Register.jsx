@@ -263,13 +263,13 @@ const Register = () => {
                         <button className="btn-primary" style={{ width: '100%', padding: '1.2rem', background: 'linear-gradient(45deg, var(--primary), var(--secondary))' }} onClick={() => window.location.reload()}>ENTENDIDO</button>
                       </div>
                     ) : (
-                      <div>
-                        <h2>¡Gracias por estar!</h2>
-                        <p style={{ margin: '1rem 0' }}>Esta vez no saliste, pero tenemos un regalo para vos por escucharnos:</p>
-                        <div style={{ border: '2px dashed var(--accent)', padding: '1.5rem', borderRadius: '12px', background: 'rgba(162, 138, 104, 0.1)' }}>
-                          <p style={{ color: 'var(--accent)', fontWeight: '800', fontSize: '1.2rem' }}>CUPÓN: TRONCAL10</p>
-                          <p style={{ fontSize: '0.8rem', marginTop: '0.5rem' }}>10% OFF EN GASTRONOMÍA DEL EVENTO</p>
-                        </div>
+                      <div style={{ padding: '2rem 0' }}>
+                        <h2 style={{ color: 'var(--accent)', fontSize: '2rem', marginBottom: '1rem' }}>¡Gracias por estar!</h2>
+                        <p style={{ fontSize: '1.1rem', lineHeight: '1.6', opacity: 0.9 }}>
+                          Gracias por ser parte de <strong>La Troncal</strong>. <br/>
+                          Es un placer que nos acompañes y nos escuches siempre. <br/>
+                          ¡Mucha suerte en los próximos sorteos!
+                        </p>
                       </div>
                     )}
                   </div>
