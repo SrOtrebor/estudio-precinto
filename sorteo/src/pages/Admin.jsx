@@ -174,18 +174,38 @@ const Admin = () => {
   };
 
   const exportCSV = () => {
-    const headers = "Nombre,WhatsApp,ID,Ganador Sorteo,Premio Ruleta\n";
-    const rows = participants.map(p => {
-        const raffle = p.isWinner ? `SI (#${p.prizeNumber})` : "NO";
-        const roulette = p.roulette_win || (p.ya_jugo_ruleta ? "DULCE (Default)" : "NO JUGO");
-        return `${p.name},${p.whatsapp},${p.id},${raffle},${roulette}`;
-    }).join("\n");
-    const blob = new Blob([headers + rows], { type: 'text/csv' });
+    // Escapar campos que puedan contener comas o caracteres especiales
+    const esc = (val) => {
+      if (val === null || val === undefined) return '';
+      const str = String(val);
+      return str.includes(',') || str.includes('"') || str.includes('\n')
+        ? `"${str.replace(/"/g, '""')}"` 
+        : str;
+    };
+
+    const headers = "N° Sorteo,Nombre y Apellido,Teléfono,Mail,Ganador Sorteo Principal\n";
+
+    const rows = [...participants]
+      .sort((a, b) => (a.id || 0) - (b.id || 0))
+      .map(p => {
+        const nro = p.id || '';
+        const nombre = esc(p.name || '');
+        const tel = esc(p.whatsapp || '');
+        const mail = esc(p.email || '');
+        const ganador = p.isWinner ? `SI (Premio #${p.prizeNumber})` : 'NO';
+        return `${nro},${nombre},${tel},${mail},${ganador}`;
+      })
+      .join("\n");
+
+    // BOM UTF-8 para que Excel abra el archivo con tildes y ñ correctamente
+    const BOM = '\uFEFF';
+    const blob = new Blob([BOM + headers + rows], { type: 'text/csv;charset=utf-8;' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `participantes_troncal_completo.csv`;
+    a.download = `participantes_troncal.csv`;
     a.click();
+    window.URL.revokeObjectURL(url);
   };
 
   if (!isAuthorized) {
