@@ -8,6 +8,7 @@ import logoPrecinto from '../assets/logo-precinto.svg';
 const Register = () => {
   const [name, setName] = useState('');
   const [whatsapp, setWhatsapp] = useState('');
+  const [email, setEmail] = useState('');
   const [registered, setRegistered] = useState(false);
   const [participantId, setParticipantId] = useState(null);
   const [drawStatus, setDrawStatus] = useState('waiting');
@@ -103,7 +104,7 @@ const Register = () => {
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    if (!name || !whatsapp) return;
+    if (!name || !whatsapp || !email) return;
 
     // Validación de Formato Profesional (AR - Argentina)
     const phoneNumber = parsePhoneNumberFromString(whatsapp, 'AR');
@@ -139,6 +140,7 @@ const Register = () => {
         name,
         whatsapp,
         whatsapp_normalized: normalizedWp,
+        email,
         id: nextId,
         timestamp: Date.now()
       };
@@ -198,6 +200,14 @@ const Register = () => {
                  placeholder="WhatsApp (Ej: 1122334455)" 
                  value={whatsapp}
                  onChange={(e) => setWhatsapp(e.target.value)}
+                 required
+               />
+               <input 
+                 className="input-field"
+                 type="email" 
+                 placeholder="Correo electrónico" 
+                 value={email}
+                 onChange={(e) => setEmail(e.target.value)}
                  required
                />
                <button type="submit" className="btn-primary" style={{ width: '100%', marginTop: '1rem' }}>
