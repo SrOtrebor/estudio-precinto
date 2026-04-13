@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { db, ref, onValue, update, set, runTransaction } from '../firebase';
 import logo from '../assets/logo-precinto.svg';
+import * as XLSX from 'xlsx';
 
 const Admin = () => {
   const [participants, setParticipants] = useState([]);
@@ -173,49 +174,47 @@ const Admin = () => {
     }
   };
 
-  const exportCSV = () => {
-    // Escapar campos que puedan contener comas o caracteres especiales
-    const esc = (val) => {
-      if (val === null || val === undefined) return '';
-      const str = String(val);
-      return str.includes(',') || str.includes('"') || str.includes('\n')
-        ? `"${str.replace(/"/g, '""')}"` 
-        : str;
-    };
-
+  const exportExcel = () => {
     const fecha = new Date().toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' });
     const hora = new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
 
-    const fileHeader = [
-      "ESTUDIO PRECINTO",
-      "www.estudioprecinto.com | info@estudioprecinto.com",
-      `Exportado el: ${fecha} a las ${hora}`,
-      "", // fila en blanco separadora
-    ].join("\n") + "\n";
+    const wb = XLSX.utils.book_new();
 
-    const headers = "N° Sorteo,Nombre y Apellido,Teléfono,Mail,Ganador Sorteo Principal\n";
+    // Filas de encabezado de empresa
+    const headerRows = [
+      ["ESTUDIO PRECINTO"],
+      ["www.estudioprecinto.com | info@estudioprecinto.com"],
+      [`Exportado el: ${fecha} a las ${hora}`],
+      [], // fila en blanco
+      ["N° Sorteo", "Nombre y Apellido", "Teléfono", "Mail", "Ganador Sorteo Principal"],
+    ];
 
-    const rows = [...participants]
+    // Filas de datos
+    const dataRows = [...participants]
       .sort((a, b) => (a.id || 0) - (b.id || 0))
-      .map(p => {
-        const nro = p.id || '';
-        const nombre = esc(p.name || '');
-        const tel = esc(p.whatsapp || '');
-        const mail = esc(p.email || '');
-        const ganador = p.isWinner ? `SI (Premio #${p.prizeNumber})` : 'NO';
-        return `${nro},${nombre},${tel},${mail},${ganador}`;
-      })
-      .join("\n");
+      .map(p => [
+        p.id || '',
+        p.name || '',
+        p.whatsapp || '',
+        p.email || '',
+        p.isWinner ? `SI (Premio #${p.prizeNumber})` : 'NO',
+      ]);
 
-    // BOM UTF-8 para que Excel abra el archivo con tildes y ñ correctamente
-    const BOM = '\uFEFF';
-    const blob = new Blob([BOM + fileHeader + headers + rows], { type: 'text/csv;charset=utf-8;' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `participantes_troncal.csv`;
-    a.click();
-    window.URL.revokeObjectURL(url);
+    const ws = XLSX.utils.aoa_to_sheet([...headerRows, ...dataRows]);
+
+    // Anchos de columna
+    ws['!cols'] = [
+      { wch: 10 },  // N° Sorteo
+      { wch: 30 },  // Nombre y Apellido
+      { wch: 18 },  // Teléfono
+      { wch: 32 },  // Mail
+      { wch: 25 },  // Ganador
+    ];
+
+    XLSX.utils.book_append_sheet(wb, ws, 'Participantes');
+
+    const fecha_archivo = new Date().toLocaleDateString('es-AR').replace(/\//g, '-');
+    XLSX.writeFile(wb, `participantes_troncal_${fecha_archivo}.xlsx`);
   };
 
   if (!isAuthorized) {
@@ -423,7 +422,7 @@ const Admin = () => {
           <section className="glass-card" style={{ flex: '2 1 600px', minWidth: '400px', padding: '2rem', display: 'flex', flexDirection: 'column', maxHeight: '75vh' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
               <h2 style={{ fontSize: '0.8rem', opacity: 0.7 }}>PARTICIPANTES ({participants.length})</h2>
-              <button onClick={exportCSV} className="btn-secondary" style={{ padding: '0.4rem 1rem', fontSize: '0.7rem' }}>EXPORTAR CSV</button>
+              <button onClick={exportExcel} className="btn-secondary" style={{ padding: '0.4rem 1rem', fontSize: '0.7rem' }}>📥 EXPORTAR EXCEL</button>
             </div>
 
             {/* BARRA DE FILTROS */}
