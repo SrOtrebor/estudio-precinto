@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { db, ref, onValue, update, set, runTransaction } from '../firebase';
 import logo from '../assets/logo-precinto.svg';
-import * as XLSX from 'xlsx';
+import logoPng from '../assets/logo-precinto-excel.png';
 
 const Admin = () => {
   const [participants, setParticipants] = useState([]);
@@ -174,47 +174,83 @@ const Admin = () => {
     }
   };
 
-  const exportExcel = () => {
+  const exportExcel = async () => {
+    const ExcelJS = (await import('exceljs')).default;
     const fecha = new Date().toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' });
     const hora = new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
 
-    const wb = XLSX.utils.book_new();
+    const wb = new ExcelJS.Workbook();
+    wb.creator = 'Estudio Precinto';
+    const ws = wb.addWorksheet('Participantes');
 
-    // Filas de encabezado de empresa
-    const headerRows = [
-      ["ESTUDIO PRECINTO"],
-      ["www.estudioprecinto.com | info@estudioprecinto.com"],
-      [`Exportado el: ${fecha} a las ${hora}`],
-      [], // fila en blanco
-      ["N° Sorteo", "Nombre y Apellido", "Teléfono", "Mail", "Ganador Sorteo Principal"],
+    // --- Anchos de columna ---
+    ws.columns = [
+      { key: 'id',      width: 12 },
+      { key: 'nombre',  width: 32 },
+      { key: 'tel',     width: 20 },
+      { key: 'mail',    width: 34 },
+      { key: 'ganador', width: 28 },
     ];
 
-    // Filas de datos
-    const dataRows = [...participants]
-      .sort((a, b) => (a.id || 0) - (b.id || 0))
-      .map(p => [
+    // --- Logo: cargar el PNG y embeber ---
+    const logoResp = await fetch(logoPng);
+    const logoBuffer = await logoResp.arrayBuffer();
+    const imageId = wb.addImage({ buffer: logoBuffer, extension: 'png' });
+    // Ocupa las primeras 4 filas (fila 1 a 4), columnas A a E
+    ws.addImage(imageId, {
+      tl: { col: 0, row: 0 },
+      br: { col: 5, row: 4 },
+    });
+
+    // Altura de las filas del logo
+    for (let i = 1; i <= 4; i++) ws.getRow(i).height = 18;
+
+    // --- Fila en blanco de separación ---
+    ws.addRow([]);
+
+    // --- Fila de metadatos ---
+    const metaRow = ws.addRow(['', `www.estudioprecinto.com | info@estudioprecinto.com`, '', '', `Exportado: ${fecha} ${hora}`]);
+    metaRow.font = { size: 9, italic: true, color: { argb: 'FF888888' } };
+    ws.getRow(metaRow.number).height = 14;
+
+    // --- Fila de encabezados de columna ---
+    const headerRow = ws.addRow(['N° Sorteo', 'Nombre y Apellido', 'Teléfono', 'Mail', 'Ganador Sorteo Principal']);
+    headerRow.font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 11 };
+    headerRow.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF0A5C2A' } };
+    headerRow.alignment = { vertical: 'middle', horizontal: 'center' };
+    ws.getRow(headerRow.number).height = 22;
+
+    // --- Filas de datos ---
+    const sorted = [...participants].sort((a, b) => (a.id || 0) - (b.id || 0));
+    sorted.forEach((p, idx) => {
+      const row = ws.addRow([
         p.id || '',
         p.name || '',
         p.whatsapp || '',
         p.email || '',
         p.isWinner ? `SI (Premio #${p.prizeNumber})` : 'NO',
       ]);
+      // Fondo alternado
+      const bgColor = idx % 2 === 0 ? 'FFFAFAFA' : 'FFF0F4F0';
+      row.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: bgColor } };
+      // Marcar ganadores
+      if (p.isWinner) {
+        row.getCell(5).font = { bold: true, color: { argb: 'FF0A5C2A' } };
+      }
+      row.alignment = { vertical: 'middle' };
+      ws.getRow(row.number).height = 18;
+    });
 
-    const ws = XLSX.utils.aoa_to_sheet([...headerRows, ...dataRows]);
-
-    // Anchos de columna
-    ws['!cols'] = [
-      { wch: 10 },  // N° Sorteo
-      { wch: 30 },  // Nombre y Apellido
-      { wch: 18 },  // Teléfono
-      { wch: 32 },  // Mail
-      { wch: 25 },  // Ganador
-    ];
-
-    XLSX.utils.book_append_sheet(wb, ws, 'Participantes');
-
+    // --- Descargar ---
+    const buffer = await wb.xlsx.writeBuffer();
+    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
     const fecha_archivo = new Date().toLocaleDateString('es-AR').replace(/\//g, '-');
-    XLSX.writeFile(wb, `participantes_troncal_${fecha_archivo}.xlsx`);
+    a.download = `participantes_troncal_${fecha_archivo}.xlsx`;
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   if (!isAuthorized) {
