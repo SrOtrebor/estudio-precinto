@@ -183,6 +183,16 @@ const Admin = () => {
         : str;
     };
 
+    const fecha = new Date().toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    const hora = new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+
+    const fileHeader = [
+      "ESTUDIO PRECINTO",
+      "www.estudioprecinto.com | info@estudioprecinto.com",
+      `Exportado el: ${fecha} a las ${hora}`,
+      "", // fila en blanco separadora
+    ].join("\n") + "\n";
+
     const headers = "N° Sorteo,Nombre y Apellido,Teléfono,Mail,Ganador Sorteo Principal\n";
 
     const rows = [...participants]
@@ -199,7 +209,7 @@ const Admin = () => {
 
     // BOM UTF-8 para que Excel abra el archivo con tildes y ñ correctamente
     const BOM = '\uFEFF';
-    const blob = new Blob([BOM + headers + rows], { type: 'text/csv;charset=utf-8;' });
+    const blob = new Blob([BOM + fileHeader + headers + rows], { type: 'text/csv;charset=utf-8;' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
