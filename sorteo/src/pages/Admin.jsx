@@ -196,14 +196,14 @@ const Admin = () => {
     const logoResp = await fetch(logoPng);
     const logoBuffer = await logoResp.arrayBuffer();
     const imageId = wb.addImage({ buffer: logoBuffer, extension: 'png' });
-    // Ocupa las primeras 4 filas (fila 1 a 4), columnas A a E
+    // ext = tamaño exacto en píxeles, sin deformar
     ws.addImage(imageId, {
       tl: { col: 0, row: 0 },
-      br: { col: 5, row: 4 },
+      ext: { width: 480, height: 150 },
     });
 
-    // Altura de las filas del logo
-    for (let i = 1; i <= 4; i++) ws.getRow(i).height = 18;
+    // Altura de las filas del logo (150px ÷ 4 filas ≈ 28pt por fila)
+    for (let i = 1; i <= 4; i++) ws.getRow(i).height = 28;
 
     // --- Fila en blanco de separación ---
     ws.addRow([]);
