@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { db, ref, onValue } from '../firebase';
 import confetti from 'canvas-confetti';
-import logo from '../assets/logo-precinto.svg';
+import logoTroncal from '../assets/logo-troncal.svg';
+import logoPrecinto from '../assets/logo-precinto.svg';
 
 const Monitor = () => {
   const [participantsCount, setParticipantsCount] = useState(0);
@@ -93,13 +94,13 @@ const Monitor = () => {
     }}>
       <header style={{ width: '100%', padding: '2vh 0' }}>
          <img 
-           src={logo} 
-           alt="Estudio Precinto" 
+           src={logoTroncal} 
+           alt="La Troncal" 
            style={{ 
              maxHeight: '15vh', 
              maxWidth: '80%', 
              height: 'auto', 
-             filter: 'drop-shadow(0 0 30px rgba(0, 176, 229, 0.4))' 
+             filter: 'drop-shadow(0 0 30px rgba(0, 110, 181, 0.3))' 
            }} 
          />
       </header>
@@ -173,8 +174,11 @@ const Monitor = () => {
         </section>
       )}
 
-      <footer style={{ width: '100%', padding: '2vh 0', borderTop: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '2rem' }}>
-        <p style={{ fontSize: '0.8rem', opacity: 0.4, letterSpacing: '2px' }}>Estudio Precinto</p>
+      <footer style={{ width: '100%', padding: '2vh 0', borderTop: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1.5rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', opacity: 0.6 }}>
+          <span style={{ fontSize: '0.8rem', letterSpacing: '2px', fontWeight: 'bold', color: 'white' }}>Estudio Precinto</span>
+          <img src={logoPrecinto} alt="Logo" style={{ height: '18px' }} />
+        </div>
         <div style={{ width: '1px', height: '1rem', background: 'rgba(255,255,255,0.2)' }}></div>
         <p style={{ fontSize: '0.8rem', opacity: 0.4, letterSpacing: '2px' }}>TECNOLOGÍA QUE RESUELVE</p>
       </footer>

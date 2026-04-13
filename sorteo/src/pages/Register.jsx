@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { db, ref, set, onValue, runTransaction, get, query, limitToLast, child } from '../firebase';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import confetti from 'canvas-confetti';
-import logo from '../assets/logo-precinto.svg';
+import logo from '../assets/logo-troncal.svg';
 import logoPrecinto from '../assets/logo-precinto.svg';
 
 const Register = () => {
@@ -172,7 +172,7 @@ const Register = () => {
       <header className="logo-container" style={{ textAlign: 'center', marginBottom: '1rem', padding: '1rem 0' }}>
         <img 
           src={logo} 
-          alt="Estudio Precinto" 
+          alt="La Troncal" 
           style={{ maxWidth: '280px', height: 'auto', marginBottom: '0.5rem' }} 
         />
       </header>

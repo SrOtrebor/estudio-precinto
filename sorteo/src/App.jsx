@@ -9,7 +9,7 @@ import logoPrecinto from './assets/logo-precinto.svg';
 
 function AppContent() {
   const location = useLocation();
-  const isLanding = location.pathname === '/diagnostico';
+  const isFullPrecinto = location.pathname === '/diagnostico' || location.pathname === '/ruleta';
 
   return (
     <div className="app-container" style={{ 
@@ -24,7 +24,7 @@ function AppContent() {
     }}>
       <main className="main-content" style={{ 
         flex: 1, 
-        overflowY: isLanding ? 'hidden' : 'auto', 
+        overflowY: isFullPrecinto ? 'hidden' : 'auto', 
         display: 'flex', 
         flexDirection: 'column', 
         alignItems: 'stretch', 
@@ -40,7 +40,7 @@ function AppContent() {
         </Routes>
       </main>
 
-      {!isLanding && (
+      {!isFullPrecinto && (
         <footer className="footer-banner" style={{ 
           padding: '1.2rem', 
           borderTop: '1px solid var(--glass-border)', 
