@@ -177,7 +177,6 @@ const Admin = () => {
   const exportExcel = async () => {
     const ExcelJS = (await import('exceljs')).default;
     const fecha = new Date().toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' });
-    const hora = new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
 
     const wb = new ExcelJS.Workbook();
     wb.creator = 'Estudio Precinto';
@@ -209,13 +208,6 @@ const Admin = () => {
       row.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF0C192B' } };
     }
 
-    // --- Fila en blanco de separación ---
-    ws.addRow([]);
-
-    // --- Fila de metadatos ---
-    const metaRow = ws.addRow(['', `www.estudioprecinto.com | info@estudioprecinto.com`, '', '', `Exportado: ${fecha} ${hora}`]);
-    metaRow.font = { size: 9, italic: true, color: { argb: 'FF888888' } };
-    ws.getRow(metaRow.number).height = 14;
 
     // --- Fila de encabezados de columna ---
     const headerRow = ws.addRow(['N° Sorteo', 'Nombre y Apellido', 'Teléfono', 'Mail', 'Ganador Sorteo Principal']);
