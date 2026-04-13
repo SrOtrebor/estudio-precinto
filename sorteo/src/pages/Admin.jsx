@@ -202,8 +202,12 @@ const Admin = () => {
       ext: { width: 480, height: 150 },
     });
 
-    // Altura de las filas del logo (150px ÷ 4 filas ≈ 28pt por fila)
-    for (let i = 1; i <= 4; i++) ws.getRow(i).height = 28;
+    // Altura y color de fondo de las filas del logo
+    for (let i = 1; i <= 4; i++) {
+      const row = ws.getRow(i);
+      row.height = 28;
+      row.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF0C192B' } };
+    }
 
     // --- Fila en blanco de separación ---
     ws.addRow([]);
@@ -216,7 +220,7 @@ const Admin = () => {
     // --- Fila de encabezados de columna ---
     const headerRow = ws.addRow(['N° Sorteo', 'Nombre y Apellido', 'Teléfono', 'Mail', 'Ganador Sorteo Principal']);
     headerRow.font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 11 };
-    headerRow.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF0A5C2A' } };
+    headerRow.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF0C192B' } };
     headerRow.alignment = { vertical: 'middle', horizontal: 'center' };
     ws.getRow(headerRow.number).height = 22;
 
@@ -235,7 +239,7 @@ const Admin = () => {
       row.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: bgColor } };
       // Marcar ganadores
       if (p.isWinner) {
-        row.getCell(5).font = { bold: true, color: { argb: 'FF0A5C2A' } };
+        row.getCell(5).font = { bold: true, color: { argb: 'FF0C192B' } };
       }
       row.alignment = { vertical: 'middle' };
       ws.getRow(row.number).height = 18;
