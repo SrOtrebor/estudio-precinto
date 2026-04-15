@@ -16,22 +16,22 @@ const LandingBanner = () => {
         {
             id: 1,
             title: "Pierdo mucho tiempo en Excel",
-            message: "Hola Rober! Siento que el Excel me está ganando. Necesito un diagnóstico de procesos."
+            message: "Hola Rober! Mi gestión en Excel llegó a un techo. Quiero que Estudio Precinto me ayude a dar el salto a un sistema profesional."
         },
         {
             id: 2,
             title: "Mi equipo no se comunica bien",
-            message: "Hola Rober! Tengo ruidos en la comunicación de mi equipo. ¿Cómo lo resolvemos?"
+            message: "Hola Rober! Noto fricciones en la comunicación de mi equipo. Necesito el diagnóstico para centralizar nuestra operativa."
         },
         {
             id: 3,
             title: "Quiero automatizar mis ventas",
-            message: "Hola Rober! Quiero que mis ventas fluyan solas. ¿Qué herramientas me recomendás?"
+            message: "Hola Rober! Mi proceso de ventas es muy manual. Quiero automatizar el flujo para no perder más leads."
         },
         {
             id: 4,
             title: "QUIERO MI DIAGNÓSTICO GENERAL",
-            message: "Hola Rober! Quiero que me diagnostiques de punta a punta. Vengo del banner.",
+            message: "Hola Rober! Vi el banner en La Troncal. Quiero realizar el Diagnóstico Estratégico Integral para optimizar mi negocio.",
             premium: true
         }
     ];
