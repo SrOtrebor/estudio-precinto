@@ -242,11 +242,52 @@ const Roulette = () => {
             </div>
           )}
 
-          {step === 'result' && (
+          {step === 'result' && prize === 'TAG_NFC' && (
             <div style={{ animation: 'winnerPop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)' }}>
-              <div style={{ fontSize: '5rem', marginBottom: '1rem' }}>{prize === 'TAG_NFC' ? '🏷️' : prize === 'ASESORIA' ? '💡' : '🍬'}</div>
+              <div style={{ fontSize: '4rem', marginBottom: '0.5rem' }}>🏷️</div>
+              <h3 style={{ color: 'var(--accent)', fontSize: '1.6rem', fontWeight: '900', marginBottom: '1rem' }}>¡GANASTE UN TAG NFC! 📱</h3>
+              <p style={{ margin: '0.8rem 0', opacity: 0.9, lineHeight: 1.6, fontSize: '0.95rem' }}>
+                Acercate al stand de Estudio Precinto a retirar tu sticker inteligente.
+              </p>
+              <p style={{ margin: '0.8rem 0', opacity: 0.85, lineHeight: 1.6, fontSize: '0.9rem' }}>
+                ¡Te lo programamos en el acto! Trae tu link de Instagram, web o WhatsApp y llevate tu negocio en el bolsillo.
+              </p>
+              <p style={{ margin: '1rem 0 1.5rem', fontWeight: '700', color: 'var(--accent)', fontSize: '1rem' }}>
+                ¡Te esperamos en el banner dorado! 🚀
+              </p>
+              <Link to="/"><button className="btn-primary" style={{ width: '100%' }}>TERMINAR</button></Link>
+            </div>
+          )}
+
+          {step === 'result' && prize === 'ASESORIA' && (
+            <div style={{ animation: 'winnerPop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)' }}>
+              <div style={{ fontSize: '4rem', marginBottom: '0.5rem' }}>⭐</div>
+              <h3 style={{ color: 'var(--accent)', fontSize: '1.6rem', fontWeight: '900', marginBottom: '0.5rem' }}>¡GANASTE EL PREMIO MAYOR! ⭐</h3>
+              <p style={{ margin: '0.3rem 0 0.8rem', fontStyle: 'italic', opacity: 0.7, fontSize: '0.85rem' }}>
+                Diagnóstico Estratégico — Valuado en 150 USD
+              </p>
+              <p style={{ margin: '0.8rem 0', opacity: 0.9, lineHeight: 1.6, fontSize: '0.9rem' }}>
+                ¡Es hora de profesionalizar tu negocio! Ganaste <strong>2 horas de ingeniería de procesos</strong> para automatizar tus ventas y recuperar tiempo real.
+              </p>
+              <a
+                href={`https://wa.me/5491164481943?text=${encodeURIComponent('¡Hola Rober! Gané el Premio Mayor en la ruleta de Estudio Precinto — el Diagnóstico Estratégico (150 USD). Quiero agendar mi sesión de 2 horas.')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ display: 'block', marginTop: '1.5rem' }}
+              >
+                <button className="btn-primary" style={{ width: '100%', background: '#25D366', fontSize: '1rem', fontWeight: '900', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                  <span>💬</span> RECLAMAR PREMIO
+                </button>
+              </a>
+              <Link to="/"><button style={{ width: '100%', marginTop: '0.8rem', background: 'transparent', border: '1px solid rgba(162,138,104,0.3)', color: 'rgba(255,255,255,0.5)', padding: '0.8rem', borderRadius: '8px', cursor: 'pointer', fontSize: '0.85rem' }}>VOLVER AL INICIO</button></Link>
+            </div>
+          )}
+
+          {step === 'result' && prize === 'CARAMELOS' && (
+            <div style={{ animation: 'winnerPop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)' }}>
+              <div style={{ fontSize: '5rem', marginBottom: '1rem' }}>🍬</div>
               <h3 style={{ color: 'var(--accent)', fontSize: '2rem', fontWeight: '900' }}>{segments.find(s => s.type === prize)?.label}</h3>
-              <p style={{ margin: '1.5rem 0', opacity: 0.8 }}>¡Felicidades! Reclamá tu premio con Rober ahora mismo.</p>
+              <p style={{ margin: '1.5rem 0', opacity: 0.8 }}>¡Felicidades! Reclamá tu dulce con Rober ahora mismo.</p>
               <Link to="/"><button className="btn-primary" style={{ width: '100%' }}>TERMINAR</button></Link>
             </div>
           )}
