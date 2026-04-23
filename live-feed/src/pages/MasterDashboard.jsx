@@ -397,13 +397,13 @@ export default function MasterDashboard() {
                 <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Nombre Público (ej: Los XV de Vale)</label>
                 <input type="text" className="mod-login-input" style={{ width: '100%' }} value={newEvent.name} onChange={e => setNewEvent({...newEvent, name: e.target.value})} required />
               </div>
+              <div style={{ background: 'rgba(var(--accent-rgb), 0.1)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--accent)' }}>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', fontWeight: 'bold' }}>🔑 Contraseña de Moderación</label>
+                <input type="text" className="mod-login-input" style={{ width: '100%', background: 'var(--bg-card)' }} placeholder="Si lo dejas vacío, usa el ID" value={newEvent.adminPassword} onChange={e => setNewEvent({...newEvent, adminPassword: e.target.value})} />
+              </div>
               <div>
                 <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Fecha y Hora</label>
                 <input type="datetime-local" className="mod-login-input" style={{ width: '100%' }} value={newEvent.date} onChange={e => setNewEvent({...newEvent, date: e.target.value})} required />
-              </div>
-              <div>
-                <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Contraseña del Panel de Moderación (ID Evento por defecto)</label>
-                <input type="text" className="mod-login-input" style={{ width: '100%' }} placeholder="Ej: mi-pass-123" value={newEvent.adminPassword} onChange={e => setNewEvent({...newEvent, adminPassword: e.target.value})} />
               </div>
               <div>
                 <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Pack</label>
