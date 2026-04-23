@@ -33,6 +33,14 @@ jobs:
           npm ci
           npm run build
 
+      - name: Build Live Feed App
+        working-directory: ./live-feed
+        env:
+          VITE_MASTER_PASSWORD: ${{ secrets.VITE_MASTER_PASSWORD }}
+        run: |
+          npm ci
+          npm run build
+
       - name: Create Final Build Structure
         run: |
           mkdir dist_final
@@ -49,6 +57,10 @@ jobs:
           # Copiamos el build de la app de sorteos a la subcarpeta /sorteo
           mkdir -p dist_final/sorteo
           cp -r sorteo/dist/* dist_final/sorteo/
+          
+          # Copiamos el build de Live Feed a la subcarpeta /live-feed
+          mkdir -p dist_final/live-feed
+          cp -r live-feed/dist/* dist_final/live-feed/
 
       - name: Setup Pages
         uses: actions/configure-pages@v4

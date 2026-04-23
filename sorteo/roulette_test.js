@@ -1,100 +1,113 @@
+// =====================================================
+//  SIMULACIÓN OFFLINE DE RULETA — sin tocar la DB real
+//  Uso: node roulette_test.js [cantidad]
+// =====================================================
 
-const PROJECT_ID = "sorteo-camino-emprendedor";
-const DB_URL = `https://${PROJECT_ID}-default-rtdb.firebaseio.com/`;
+const TOTAL_TIRADAS = parseInt(process.argv[2]) || 138;
 
-async function getParticipants() {
-    const res = await fetch(`${DB_URL}participants.json`);
-    const data = await res.json();
-    return data ? Object.values(data) : [];
+// ── Stocks iniciales (cambiá estos valores si es necesario) ──
+const STOCK_INICIAL = {
+  nfc:   9,
+  ase:   35,
+  candy: 100,
+};
+
+// ══════════════════════════════════════════════════════════════
+function simularTirada(tiradaNum, totalRestantes, stock) {
+  const pendingParticipants = Math.max(totalRestantes, 1);
+  const pTagLimit = (stock.nfc / pendingParticipants) * 100;
+  const pAseLimit = pTagLimit + ((stock.ase / pendingParticipants) * 100);
+
+  const rand = Math.random() * 100;
+  let winType = 'CARAMELOS';
+
+  if (rand < pTagLimit && stock.nfc > 0) {
+    winType = 'TAG_NFC';
+    stock.nfc--;
+  } else if (rand < pAseLimit && stock.ase > 0) {
+    winType = 'ASESORIA';
+    stock.ase--;
+  } else {
+    if (stock.candy > 0) stock.candy--;
+  }
+
+  return winType;
 }
 
-async function getStock() {
-    const nfcRes = await fetch(`${DB_URL}nfc_stock.json`);
-    const aseRes = await fetch(`${DB_URL}asesoria_stock.json`);
-    const candyRes = await fetch(`${DB_URL}candy_stock.json`);
-    return {
-        nfc: (await nfcRes.json()) || 0,
-        ase: (await aseRes.json()) || 0,
-        candy: (await candyRes.json()) || 0
-    };
+function formatBar(val, max, width = 30) {
+  const filled = Math.round((val / max) * width);
+  return '█'.repeat(filled) + '░'.repeat(width - filled);
 }
 
-async function playRoulette(participantId, participantsCount, stock) {
-    const pendingParticipants = Math.max(participantsCount, 1);
-    const pTagLimit = (stock.nfc / pendingParticipants) * 100;
-    const pAseLimit = pTagLimit + ((stock.ase / pendingParticipants) * 100);
+// ══════════════════════════════════════════════════════════════
+function runSimulacion(totalTiradas) {
+  console.log('\n══════════════════════════════════════════════');
+  console.log(`  🎰  SIMULACIÓN RULETA — ${totalTiradas} TIRADAS`);
+  console.log('══════════════════════════════════════════════');
+  console.log(`\n  Stock inicial:`);
+  console.log(`    🏷️  TAG NFC   : ${STOCK_INICIAL.nfc}`);
+  console.log(`    💡 ASESORÍA  : ${STOCK_INICIAL.ase}`);
+  console.log(`    🍬 CARAMELOS : ${STOCK_INICIAL.candy}`);
+  console.log(`\n  Ejecutando ${totalTiradas} tiradas...\n`);
 
-    const rand = Math.random() * 100;
-    let winType = 'CARAMELOS';
-    
-    if (rand < pTagLimit && stock.nfc > 0) {
-        winType = 'TAG_NFC';
-        stock.nfc--;
-    } else if (rand < pAseLimit && stock.ase > 0) {
-        winType = 'ASESORIA';
-        stock.ase--;
-    } else {
-        // En el test, si ganás caramelo, también bajamos stock
-        if (stock.candy > 0) {
-            stock.candy--;
-        }
+  const stock = { ...STOCK_INICIAL };
+  const winners = { TAG_NFC: 0, ASESORIA: 0, CARAMELOS: 0 };
+  const log = [];  // registro detallado
+  let stockAgotado = [];
+
+  for (let i = 0; i < totalTiradas; i++) {
+    const restantes = totalTiradas - i;
+    const antes = { ...stock };
+    const win = simularTirada(i + 1, restantes, stock);
+    winners[win]++;
+
+    // Detectar si algún stock llegó a 0 en esta tirada
+    if (antes.nfc > 0 && stock.nfc === 0) stockAgotado.push({ tirada: i + 1, tipo: 'TAG NFC' });
+    if (antes.ase > 0 && stock.ase === 0) stockAgotado.push({ tirada: i + 1, tipo: 'ASESORÍA' });
+
+    log.push({ tirada: i + 1, win, nfc: stock.nfc, ase: stock.ase, candy: stock.candy });
+
+    // Progreso cada 30 tiradas
+    if ((i + 1) % 30 === 0 || i + 1 === totalTiradas) {
+      console.log(`  Tirada ${String(i + 1).padStart(3)}  │  NFC: ${String(stock.nfc).padStart(2)}  ASE: ${String(stock.ase).padStart(2)}  CANDY: ${String(stock.candy).padStart(3)}  │  último: ${win}`);
     }
+  }
 
-    await fetch(`${DB_URL}participants/${participantId}.json`, {
-        method: 'PATCH',
-        body: JSON.stringify({
-            ya_jugo_ruleta: true,
-            roulette_win: winType
-        })
-    });
+  // ── RESULTADOS FINALES ──────────────────────────────────────
+  console.log('\n══════════════════════════════════════════════');
+  console.log('  📊  RESULTADOS FINALES');
+  console.log('══════════════════════════════════════════════\n');
 
-    if (winType === 'TAG_NFC') {
-        await fetch(`${DB_URL}nfc_stock.json`, { method: 'PUT', body: JSON.stringify(stock.nfc) });
-    } else if (winType === 'ASESORIA') {
-        await fetch(`${DB_URL}asesoria_stock.json`, { method: 'PUT', body: JSON.stringify(stock.ase) });
-    } else if (winType === 'CARAMELOS') {
-        await fetch(`${DB_URL}candy_stock.json`, { method: 'PUT', body: JSON.stringify(stock.candy) });
-    }
+  const maxW = Math.max(...Object.values(winners));
+  console.log(`  🏷️  TAG NFC   : ${String(winners.TAG_NFC).padStart(3)} jugadores  ${formatBar(winners.TAG_NFC, totalTiradas)}`);
+  console.log(`  💡 ASESORÍA  : ${String(winners.ASESORIA).padStart(3)} jugadores  ${formatBar(winners.ASESORIA, totalTiradas)}`);
+  console.log(`  🍬 CARAMELOS : ${String(winners.CARAMELOS).padStart(3)} jugadores  ${formatBar(winners.CARAMELOS, totalTiradas)}`);
 
-    return winType;
+  console.log('\n  Stock restante al final:');
+  console.log(`    🏷️  NFC   : ${stock.nfc} unidades`);
+  console.log(`    💡 ASE   : ${stock.ase} unidades`);
+  console.log(`    🍬 CANDY : ${stock.candy} unidades`);
+
+  if (stockAgotado.length > 0) {
+    console.log('\n  ⚠️  Stocks que llegaron a 0:');
+    stockAgotado.forEach(s => console.log(`    · ${s.tipo} se agotó en la tirada #${s.tirada}`));
+  } else {
+    console.log('\n  ✅  Ningún stock llegó a cero.');
+  }
+
+  // ── PORCENTAJES ─────────────────────────────────────────────
+  console.log('\n  📈 Distribución porcentual:');
+  console.log(`    🏷️  NFC      : ${((winners.TAG_NFC   / totalTiradas) * 100).toFixed(1)}%  (objetivo: ~${((STOCK_INICIAL.nfc / totalTiradas) * 100).toFixed(1)}%)`);
+  console.log(`    💡 ASESORÍA : ${((winners.ASESORIA  / totalTiradas) * 100).toFixed(1)}%  (objetivo: ~${((STOCK_INICIAL.ase / totalTiradas) * 100).toFixed(1)}%)`);
+  console.log(`    🍬 CARAMELOS: ${((winners.CARAMELOS / totalTiradas) * 100).toFixed(1)}%`);
+
+  // ── ALERTAS ─────────────────────────────────────────────────
+  console.log('\n══════════════════════════════════════════════');
+  const nfcOk    = winners.TAG_NFC <= STOCK_INICIAL.nfc;
+  const aseOk    = winners.ASESORIA <= STOCK_INICIAL.ase;
+  console.log(nfcOk  ? '  ✅ NFC no superó el stock.' : `  ❌ ERROR: se entregaron ${winners.TAG_NFC} NFC pero solo había ${STOCK_INICIAL.nfc}`);
+  console.log(aseOk  ? '  ✅ ASESORÍA no superó el stock.' : `  ❌ ERROR: se entregaron ${winners.ASESORIA} ASESORÍAS pero solo había ${STOCK_INICIAL.ase}`);
+  console.log('══════════════════════════════════════════════\n');
 }
 
-async function runRouletteTest(quantity = 100) {
-    console.log(`🎰 Iniciando simulación de ${quantity} jugadas de ruleta...`);
-    
-    let participants = await getParticipants();
-    let stock = await getStock();
-    
-    let eligible = participants.filter(p => p && !p.ya_jugo_ruleta);
-    
-    if (eligible.length === 0) {
-        console.log("❌ No hay participantes elegibles para jugar.");
-        return;
-    }
-
-    console.log(`📊 Stock Inicial: NFC: ${stock.nfc}, Asesorias: ${stock.ase}, Caramelos: ${stock.candy}`);
-    console.log(`👥 Participantes listos: ${eligible.length}`);
-
-    const iterations = Math.min(quantity, eligible.length);
-    const winners = { TAG_NFC: 0, ASESORIA: 0, CARAMELOS: 0 };
-
-    for (let i = 0; i < iterations; i++) {
-        const p = eligible[i];
-        const win = await playRoulette(p.id, eligible.length - i, stock);
-        winners[win]++;
-        
-        if ((i + 1) % 50 === 0) {
-            console.log(`✅ ${i + 1} jugadas procesadas... (Actual: NFC: ${stock.nfc}, ASE: ${stock.ase}, CANDY: ${stock.candy})`);
-        }
-    }
-
-    console.log(`\n✨ SIMULACIÓN COMPLETADA ✨`);
-    console.log(`🎁 Premios entregados en este lote:`);
-    console.log(`- Tags NFC: ${winners.TAG_NFC}`);
-    console.log(`- Asesorias: ${winners.ASESORIA}`);
-    console.log(`- Caramelos: ${winners.CARAMELOS}`);
-    console.log(`\n📊 Stock Final en DB: NFC: ${stock.nfc}, Asesorias: ${stock.ase}, Caramelos: ${stock.candy}`);
-}
-
-const qty = process.argv[2] ? parseInt(process.argv[2]) : 100;
-runRouletteTest(qty).catch(console.error);
+runSimulacion(TOTAL_TIRADAS);
