@@ -273,11 +273,12 @@ export default function LiveMonitor() {
         }
         .polaroid-photo-area { position: relative; width: 100%; flex-grow: 1; overflow: hidden; background: #000; }
         .photo-main { max-width: 100%; max-height: 70vh; display: block; object-fit: contain; }
-        .photo-watermark {
+        .polaroid-photo-area img.photo-watermark {
           position: absolute; bottom: 20px; right: 20px;
-          height: 40px; width: auto; object-fit: contain;
+          height: 35px !important; width: auto !important;
           opacity: 0.3; pointer-events: none;
           filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+          z-index: 100;
         }
         .polaroid-info-area { 
           margin-top: 15px; text-align: left; padding: 0 10px;
