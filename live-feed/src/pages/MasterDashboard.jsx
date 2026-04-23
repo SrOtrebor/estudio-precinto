@@ -402,6 +402,10 @@ export default function MasterDashboard() {
                 <input type="datetime-local" className="mod-login-input" style={{ width: '100%' }} value={newEvent.date} onChange={e => setNewEvent({...newEvent, date: e.target.value})} required />
               </div>
               <div>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Contraseña del Panel de Moderación (ID Evento por defecto)</label>
+                <input type="text" className="mod-login-input" style={{ width: '100%' }} placeholder="Ej: mi-pass-123" value={newEvent.adminPassword} onChange={e => setNewEvent({...newEvent, adminPassword: e.target.value})} />
+              </div>
+              <div>
                 <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Pack</label>
                 <select className="mod-login-input" style={{ width: '100%' }} value={newEvent.tier} onChange={e => setNewEvent({...newEvent, tier: e.target.value})}>
                   <option value="base">Pack Base</option>
@@ -459,9 +463,11 @@ export default function MasterDashboard() {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div>
-                  <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Link de Google Maps</label>
-                  <input type="url" className="mod-login-input" style={{ width: '100%' }} placeholder="Pegá el iframe de 'Insertar Mapa' o el link de compartir" value={newEvent.mapUrl} onChange={e => setNewEvent({...newEvent, mapUrl: e.target.value})} />
-                  <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '0.3rem' }}>* Ideal: Compartir &gt; Insertar un mapa y pegar todo el iframe.</p>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Ubicación (Mapa)</label>
+                  <input type="text" className="mod-login-input" style={{ width: '100%' }} placeholder="Pegá el iframe de Google Maps o la DIRECCIÓN EXACTA" value={newEvent.mapUrl} onChange={e => setNewEvent({...newEvent, mapUrl: e.target.value})} />
+                  <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '0.3rem' }}>
+                    * Tip: Lo mejor es ir a Maps &gt; Compartir &gt; Insertar Mapa y copiar el iframe. Sino, escribí la dirección exacta (ej: Av. Libertador 1234, CABA).
+                  </p>
                 </div>
                 <div>
                   <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Datos Bancarios (CVU/Alias)</label>
