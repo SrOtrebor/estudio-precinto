@@ -67,13 +67,13 @@ export default function AlbumPrint() {
       <section className="album-body">
         <div className="album-grid">
           {photos.map((photo, index) => (
-            <div key={photo.id} className="album-photo-card">
-              <div className="photo-wrapper">
+            <div key={photo.id} className="album-polaroid-card">
+              <div className="photo-inner">
                 <img src={photo.imageUrl} alt={`Foto ${index + 1}`} />
               </div>
-              <div className="photo-meta">
-                <span className="author">De: {photo.authorName}</span>
-                <span className="time">{new Date(photo.uploadedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} hs</span>
+              <div className="photo-footer">
+                <p className="author">{photo.authorName}</p>
+                <p className="time">{new Date(photo.uploadedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} hs</p>
               </div>
             </div>
           ))}
@@ -121,15 +121,24 @@ export default function AlbumPrint() {
         /* BODY */
         .album-body { width: 210mm; margin: 0 auto; background: white; padding: 20mm; box-shadow: 0 0 40px rgba(0,0,0,0.1); }
         .album-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15mm; }
-        .album-photo-card { 
+        .album-polaroid-card { 
           page-break-inside: avoid; 
-          display: flex; flex-direction: column; 
-          border-bottom: 1px solid #eee; padding-bottom: 5mm;
+          background: #fff;
+          padding: 10mm 10mm 20mm 10mm;
+          box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+          border: 1px solid #eee;
+          display: flex; flex-direction: column;
+          transform: rotate(var(--r));
         }
-        .photo-wrapper { width: 100%; aspect-ratio: 4/5; border-radius: 4px; overflow: hidden; background: #fafafa; }
-        .photo-wrapper img { width: 100%; height: 100%; object-fit: cover; }
-        .photo-meta { display: flex; justify-content: space-between; margin-top: 3mm; font-size: 0.85rem; color: #555; }
-        .photo-meta .author { font-weight: 700; color: #333; }
+        .album-polaroid-card:nth-child(even) { --r: 1deg; }
+        .album-polaroid-card:nth-child(odd) { --r: -1deg; }
+
+        .photo-inner { width: 100%; aspect-ratio: 1/1; overflow: hidden; background: #000; }
+        .photo-inner img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .photo-footer { margin-top: 5mm; text-align: left; }
+        .photo-footer .author { font-weight: 900; font-size: 1.2rem; margin: 0; color: #111; font-family: 'Playfair Display', serif; }
+        .photo-footer .time { font-size: 0.7rem; margin: 0; color: #999; text-transform: uppercase; letter-spacing: 1px; }
 
         .album-footer-all { text-align: center; padding: 2rem; color: #999; font-size: 0.7rem; }
 

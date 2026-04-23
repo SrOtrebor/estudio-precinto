@@ -199,11 +199,13 @@ export default function LiveMonitor() {
           </div>
         ) : currentPhoto ? (
           <div className="photo-display">
-            <div className="photo-frame">
-              <img src={currentPhoto.imageUrl} alt="Live Feed" className="photo-main" />
-              <div className="photo-info-modern">
-                <span className="info-label">Enviado por</span>
-                <span className="info-name">{currentPhoto.authorName}</span>
+            <div className="polaroid-frame-modern">
+              <div className="polaroid-photo-area">
+                <img src={currentPhoto.imageUrl} alt="Live Feed" className="photo-main" />
+              </div>
+              <div className="polaroid-info-area">
+                <div className="polaroid-label">ENVIADO POR</div>
+                <div className="polaroid-name">{currentPhoto.authorName}</div>
               </div>
             </div>
           </div>
@@ -245,32 +247,52 @@ export default function LiveMonitor() {
         .fade-in { opacity: 1; }
         .fade-out { opacity: 0; }
         .photo-display { width: 90%; height: 85%; display: flex; align-items: center; justify-content: center; }
-        .photo-frame { 
-          position: relative; max-width: 100%; max-height: 100%;
-          border-radius: 24px; overflow: hidden;
-          box-shadow: 0 30px 60px rgba(0,0,0,0.5);
-          border: 4px solid rgba(255,255,255,0.1);
-          background: #111;
+        
+        /* Single Photo Styles - MODERN POLAROID */
+        .photo-display { width: 90%; height: 90%; display: flex; align-items: center; justify-content: center; }
+        .polaroid-frame-modern { 
+          background: white; 
+          padding: 15px 15px 50px 15px;
+          box-shadow: 0 40px 80px rgba(0,0,0,0.6);
+          transform: rotate(-1deg);
+          max-width: 95%; max-height: 95%;
+          display: flex; flex-direction: column;
+          animation: polaroid-in 1.2s cubic-bezier(0.23, 1, 0.32, 1);
         }
-        .photo-main { max-width: 100%; max-height: 85vh; display: block; object-fit: contain; }
-        .photo-info-modern {
-          position: absolute; bottom: 0; left: 0; right: 0;
-          padding: 2rem; background: linear-gradient(transparent, rgba(0,0,0,0.8));
-          display: flex; flex-direction: column; gap: 0.2rem;
+        @keyframes polaroid-in {
+          from { opacity: 0; transform: translateY(50px) rotate(-5deg) scale(0.9); }
+          to { opacity: 1; transform: translateY(0) rotate(-1deg) scale(1); }
         }
-        .info-label { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0.7; color: var(--accent); }
-        .info-name { font-size: 2.5rem; font-weight: 800; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+        .polaroid-photo-area { width: 100%; flex-grow: 1; overflow: hidden; background: #000; }
+        .photo-main { max-width: 100%; max-height: 70vh; display: block; object-fit: contain; }
+        .polaroid-info-area { 
+          margin-top: 15px; text-align: left; padding: 0 10px;
+          display: flex; flex-direction: column; 
+        }
+        .polaroid-label { font-size: 0.7rem; color: #999; letter-spacing: 2px; font-weight: 700; }
+        .polaroid-name { font-size: 2rem; color: #222; font-weight: 900; line-height: 1.1; }
+
+        /* Collage Styles */
         .collage-container {
           width: 95%; height: 90%; display: grid;
           grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr;
-          gap: 20px; position: relative;
+          gap: 30px; position: relative;
         }
-        .collage-item { position: relative; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-        .collage-item img { width: 100%; height: 100%; object-fit: cover; }
+        .collage-item { 
+          position: relative; border-radius: 4px; overflow: hidden; 
+          box-shadow: 0 15px 35px rgba(0,0,0,0.4); 
+          background: white; padding: 10px 10px 30px 10px;
+          transform: rotate(var(--rot));
+        }
+        .collage-item.item-0 { --rot: -2deg; }
+        .collage-item.item-1 { --rot: 1.5deg; }
+        .collage-item.item-2 { --rot: 2.5deg; }
+        .collage-item.item-3 { --rot: -1.5deg; }
+        
+        .collage-item img { width: 100%; height: 100%; object-fit: cover; border-radius: 2px; }
         .collage-author { 
-          position: absolute; bottom: 10px; left: 10px; 
-          background: rgba(0,0,0,0.5); padding: 4px 12px; border-radius: 20px;
-          font-size: 0.8rem; font-weight: bold; backdrop-filter: blur(4px);
+          position: absolute; bottom: 8px; left: 15px; 
+          color: #666; font-size: 0.7rem; font-weight: 900; text-transform: uppercase;
         }
         .collage-title {
           position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
