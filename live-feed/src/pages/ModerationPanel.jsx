@@ -17,6 +17,7 @@ export default function ModerationPanel() {
   const [filter, setFilter] = useState("all");
   const [loadingAction, setLoadingAction] = useState(null);
   const [rsvps, setRsvps] = useState([]);
+  const [wishlist, setWishlist] = useState([]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -64,6 +65,18 @@ export default function ModerationPanel() {
       if (!data) { setRsvps([]); return; }
       const list = Object.entries(data).map(([id, r]) => ({ id, ...r }));
       setRsvps(list.sort((a, b) => b.timestamp - a.timestamp));
+    });
+    return () => unsub();
+  }, [authed, eventId]);
+
+  useEffect(() => {
+    if (!authed || !eventId) return;
+    const wishlistRef = ref(db, `livefeed/${eventId}/wishlist`);
+    const unsub = onValue(wishlistRef, (snap) => {
+      const data = snap.val();
+      if (!data) { setWishlist([]); return; }
+      const list = Object.entries(data).map(([id, w]) => ({ id, ...w }));
+      setWishlist(list);
     });
     return () => unsub();
   }, [authed, eventId]);
@@ -119,6 +132,29 @@ export default function ModerationPanel() {
     const link = document.createElement("a");
     link.setAttribute("href", url);
     link.setAttribute("download", `rsvps_${eventId}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const exportWishlistCSV = () => {
+    if (wishlist.length === 0) {
+      alert("No hay regalos en la lista.");
+      return;
+    }
+    
+    const headers = ["Regalo", "Reservado por"];
+    const rows = wishlist.map(w => [
+      `"${w.name}"`,
+      `"${w.reservedBy || 'Sin reservar'}"`
+    ]);
+    
+    const csvContent = [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `wishlist_${eventId}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -188,6 +224,17 @@ export default function ModerationPanel() {
             {eventConfig?.autoApprove ? '✅ Auto-Aprobar' : '🔒 Manual'}
           </button>
           <button className="mod-btn" onClick={() => navigate(`/monitor/${eventId}`)}>📺 Monitor</button>
+          
+          {(eventConfig?.tier === 'premium' || eventConfig?.tier === 'corporativo') && (
+            <button 
+              className="mod-btn" 
+              style={{ background: 'var(--accent)', color: '#000' }} 
+              onClick={() => window.open(`#/album/${eventId}`, '_blank')}
+            >
+              📖 Álbum PDF
+            </button>
+          )}
+
           <button className="mod-btn" style={{ background: 'transparent', border: '1px solid #444' }} onClick={() => { sessionStorage.removeItem(ADMIN_KEY); setAuthed(false); }}>Cerrar</button>
         </div>
       </header>
@@ -198,7 +245,8 @@ export default function ModerationPanel() {
           { id: 'all', label: 'Todas', count: photos.length },
           { id: 'pending', label: 'Pendientes', count: stats.pending, color: 'var(--warning)' },
           { id: 'approved', label: 'En Pantalla', count: stats.approved, color: 'var(--success)' },
-          { id: 'rsvps', label: 'RSVPs', count: stats.rsvps }
+          { id: 'rsvps', label: 'Asistencia', count: stats.rsvps },
+          { id: 'wishlist', label: 'Regalos', count: wishlist.filter(w => w.reservedBy).length }
         ].map(s => (
           <button 
             key={s.id}
@@ -234,6 +282,27 @@ export default function ModerationPanel() {
                   color: r.attending ? 'var(--success)' : 'var(--text-muted)' 
                 }}>
                   {r.attending ? '✅ Asiste' : '❌ No asiste'}
+                </div>
+              </div>
+            ))}
+          </>
+        ) : filter === 'wishlist' ? (
+          <>
+            <div style={{ gridColumn: '1 / -1', display: 'flex', justifyContent: 'flex-end', paddingBottom: '1rem' }}>
+              <button onClick={exportWishlistCSV} className="btn-approve" style={{ padding: '0.8rem 1.5rem', borderRadius: '12px', border: 'none', cursor: 'pointer', fontWeight: 'bold' }}>
+                📥 Exportar Regalos (CSV)
+              </button>
+            </div>
+            {wishlist.map(w => (
+              <div key={w.id} className="photo-card-premium" style={{ padding: '1.5rem', borderLeft: w.reservedBy ? '4px solid var(--success)' : '4px solid #333' }}>
+                <span className="photo-author">{w.name}</span>
+                <div style={{ 
+                  marginTop: '1rem', 
+                  fontSize: '0.9rem', 
+                  fontWeight: '700',
+                  color: w.reservedBy ? 'var(--success)' : 'var(--text-muted)' 
+                }}>
+                  {w.reservedBy ? `🎁 Reservado por: ${w.reservedBy}` : '⌛ Disponible'}
                 </div>
               </div>
             ))}
