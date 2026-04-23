@@ -41,7 +41,7 @@ export default function AlbumPrint() {
         <div className="header-inner">
           <div className="header-info">
             <h2>Álbum Final: {eventConfig?.eventName}</h2>
-            <p>Vista optimizada para guardar como PDF (A4).</p>
+            <p>Vista optimizada para A4. Al imprimir, seleccioná <b>"Guardar como PDF"</b> en la lista de impresoras.</p>
           </div>
           <button onClick={() => window.print()} className="print-btn">
             🖨️ Imprimir / Guardar PDF
