@@ -165,30 +165,47 @@ export default function AlbumPrint() {
         .album-footer-all { text-align: center; padding: 2rem; color: #999; font-size: 0.7rem; }
 
         @media print {
+          @page { size: A4; margin: 0; }
           html, body { 
-            height: auto !important; 
-            overflow: visible !important; 
+            background: white;
             margin: 0 !important; 
             padding: 0 !important;
+            height: auto !important;
+            overflow: visible !important;
           }
           .no-print, .album-footer-all { display: none !important; }
-          .album-print-page { width: 100%; height: auto; position: static; }
-          .album-cover, .album-body { 
-            margin: 0 !important; 
+          
+          .album-print-page { width: 100%; }
+          
+          .album-cover { 
+            width: 210mm; 
+            height: 297mm; 
+            margin: 0 auto !important; 
+            display: flex !important; 
+            align-items: center; 
+            justify-content: center;
+            box-shadow: none !important;
+            page-break-after: always;
+            position: relative;
+          }
+
+          .album-body { 
+            width: 210mm; 
+            margin: 0 auto !important; 
             box-shadow: none !important; 
-            width: 100% !important; 
+            padding: 15mm !important;
             display: block !important;
           }
-          .album-body { padding: 10mm !important; }
+
           .album-grid { 
-            display: block !important; /* Force block to allow better page breaking */
-            width: 100%;
+            display: grid !important; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 10mm; 
           }
+
           .album-polaroid-card { 
-            display: inline-block !important;
-            width: 45%;
-            margin: 2%;
             page-break-inside: avoid !important;
+            break-inside: avoid !important;
           }
         }
       `}</style>
