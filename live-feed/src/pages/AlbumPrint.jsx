@@ -165,11 +165,31 @@ export default function AlbumPrint() {
         .album-footer-all { text-align: center; padding: 2rem; color: #999; font-size: 0.7rem; }
 
         @media print {
-          body { background: white; }
-          .no-print, .album-footer-all { display: none; }
-          .album-cover, .album-body { margin: 0; box-shadow: none; width: 100%; }
-          .album-body { padding: 10mm; }
-          .album-grid { gap: 10mm; }
+          html, body { 
+            height: auto !important; 
+            overflow: visible !important; 
+            margin: 0 !important; 
+            padding: 0 !important;
+          }
+          .no-print, .album-footer-all { display: none !important; }
+          .album-print-page { width: 100%; height: auto; position: static; }
+          .album-cover, .album-body { 
+            margin: 0 !important; 
+            box-shadow: none !important; 
+            width: 100% !important; 
+            display: block !important;
+          }
+          .album-body { padding: 10mm !important; }
+          .album-grid { 
+            display: block !important; /* Force block to allow better page breaking */
+            width: 100%;
+          }
+          .album-polaroid-card { 
+            display: inline-block !important;
+            width: 45%;
+            margin: 2%;
+            page-break-inside: avoid !important;
+          }
         }
       `}</style>
     </div>
