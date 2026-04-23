@@ -32,11 +32,66 @@
 }
 .monitor-photo--in { animation: fadeIn 1.5s ease forwards; }
 .monitor-photo--out { animation: fadeOut 0.4s ease forwards; }
+@keyframes fadeOut { to { opacity: 0; transform: scale(0.95); } }
+
+/* Polaroid Frame */
+.polaroid-frame {
+  background: #fff;
+  padding: 2.5vh;
+  padding-bottom: 8vh;
+  box-shadow: 0 10vh 20vh rgba(0,0,0,0.5), 0 0 5vh rgba(255,255,255,0.1);
+  border-radius: 0.5vh;
+  position: relative;
+  max-width: 90vw;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  /* Rotación leve aleatoria para dar realismo (podes ajustarla) */
+  transform: rotate(-1deg);
+}
+.polaroid-photo-wrapper {
+  position: relative;
+  overflow: hidden;
+  background: #111;
+  display: flex;
+  align-items: center; justify-content: center;
+}
 .monitor-photo {
-  width: 100%; height: 100%;
+  max-width: 100%;
+  max-height: 65vh;
+  display: block;
   object-fit: contain;
 }
-@keyframes fadeOut { to { opacity: 0; } }
+.polaroid-author-badge {
+  position: absolute;
+  top: 1.5vh;
+  right: 1.5vh;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  padding: 0.8vh 1.5vh;
+  border-radius: 5vh;
+  font-size: 1.8vh;
+  font-weight: 600;
+}
+.polaroid-footer {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 8vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 2vh;
+}
+.polaroid-event-name {
+  font-family: 'Dancing Script', cursive, serif; /* O una similar */
+  font-size: 3.5vh;
+  color: #222;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 /* Footer zócalo */
 .monitor-footer {

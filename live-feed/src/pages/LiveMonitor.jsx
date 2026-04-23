@@ -165,39 +165,31 @@ export default function LiveMonitor() {
         </div>
       )}
 
-      {/* Foto principal */}
+      {/* Foto principal Estilo Polaroid */}
       {currentPhoto && (
         <div
           className={`monitor-photo-container ${transitioning ? "monitor-photo--out" : "monitor-photo--in"}`}
         >
-          <img
-            src={currentPhoto.imageUrl}
-            alt={`Foto de ${currentPhoto.authorName}`}
-            className="monitor-photo"
-          />
-        </div>
-      )}
-
-      {/* Zócalo inferior */}
-      {currentPhoto && (
-        <div className="monitor-footer" style={{ "--accent": accentColor }}>
-          <div className="monitor-footer-content">
-            <div className="monitor-author">
-              <span className="monitor-author-label">Foto de</span>
-              <span className="monitor-author-name">{currentPhoto.authorName}</span>
+          <div className="polaroid-frame">
+            <div className="polaroid-photo-wrapper">
+              <img
+                src={currentPhoto.imageUrl}
+                alt={`Foto de ${currentPhoto.authorName}`}
+                className="monitor-photo"
+              />
+              <div className="polaroid-author-badge">
+                Foto de: {currentPhoto.authorName}
+              </div>
             </div>
-            <div className="monitor-branding">
-              {eventConfig?.logoUrl ? (
-                <img src={eventConfig.logoUrl} alt="Logo" className="monitor-branding-logo" />
-              ) : (
-                <span className="monitor-branding-text" style={{ color: accentColor }}>
-                  {eventConfig?.eventName}
-                </span>
-              )}
+            <div className="polaroid-footer">
+              <span className="polaroid-event-name">
+                {eventConfig?.eventName}
+              </span>
             </div>
           </div>
         </div>
       )}
+
 
       {/* Indicadores de estado */}
       <div className="monitor-status">

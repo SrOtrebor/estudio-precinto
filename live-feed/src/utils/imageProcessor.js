@@ -18,15 +18,19 @@ function loadImage(url, crossOrigin = false) {
 }
 
 /**
- * Carga una imagen desde un File y la dibuja en un canvas.
+ * Pipeline de paso único: carga la foto original y genera el archivo comprimido.
+ * Ya no aplica marca de agua por código para favorecer el diseño dinámico en el monitor.
  */
-export async function compressImage(file, maxWidth = DEFAULT_MAX_WIDTH, quality = DEFAULT_QUALITY) {
-  const url = URL.createObjectURL(file);
+export async function processPhoto(file, watermarkUrl) {
+  const photoUrl = URL.createObjectURL(file);
+  
   try {
-    const img = await loadImage(url);
-    URL.revokeObjectURL(url);
+    const img = await loadImage(photoUrl);
+    URL.revokeObjectURL(photoUrl);
 
+    // Calculamos dimensiones finales
     let { width, height } = img;
+    const maxWidth = DEFAULT_MAX_WIDTH;
     if (width > maxWidth) {
       height = Math.round((height * maxWidth) / width);
       width = maxWidth;
@@ -35,84 +39,40 @@ export async function compressImage(file, maxWidth = DEFAULT_MAX_WIDTH, quality 
     const canvas = document.createElement("canvas");
     canvas.width = width;
     canvas.height = height;
-
     const ctx = canvas.getContext("2d");
+
+    // Dibujamos la FOTO
     ctx.drawImage(img, 0, 0, width, height);
 
+    // Generamos el Blob final
     return new Promise((resolve, reject) => {
       canvas.toBlob(
         (blob) => {
           if (blob) resolve(blob);
-          else reject(new Error("Error al generar blob de imagen"));
+          else reject(new Error("Error al generar el archivo final"));
         },
         "image/jpeg",
-        quality
+        DEFAULT_QUALITY
       );
     });
+
   } catch (err) {
-    URL.revokeObjectURL(url);
-    throw err;
+    URL.revokeObjectURL(photoUrl);
+    console.error("Error en el procesador de imagen:", err);
+    return file; 
   }
 }
 
 /**
- * Superpone un PNG de marca de agua sobre la imagen ya comprimida.
+ * Mantenemos estas para compatibilidad si se usan por separado, 
+ * pero el flujo principal ahora usa processPhoto simplificado.
  */
+export async function compressImage(file, maxWidth = DEFAULT_MAX_WIDTH, quality = DEFAULT_QUALITY) {
+  return processPhoto(file, null);
+}
+
 export async function applyWatermark(imageBlob, watermarkUrl, quality = DEFAULT_QUALITY) {
-  const baseUrl = URL.createObjectURL(imageBlob);
-  try {
-    const baseImg = await loadImage(baseUrl);
-    URL.revokeObjectURL(baseUrl);
-
-    let watermarkImg;
-    try {
-      watermarkImg = await loadImage(watermarkUrl, true);
-    } catch (e) {
-      console.warn("No se pudo cargar el watermark, devolviendo imagen original", e);
-      return imageBlob;
-    }
-
-    const canvas = document.createElement("canvas");
-    canvas.width = baseImg.width;
-    canvas.height = baseImg.height;
-
-    const ctx = canvas.getContext("2d");
-    // 1. Dibujamos la foto (Aseguramos que esté primero)
-    ctx.drawImage(baseImg, 0, 0, canvas.width, canvas.height);
-    
-    // 2. Dibujamos el watermark encima
-    ctx.drawImage(watermarkImg, 0, 0, canvas.width, canvas.height);
-
-    return new Promise((resolve, reject) => {
-      canvas.toBlob(
-        (blob) => {
-          if (blob) resolve(blob);
-          else reject(new Error("Error al generar blob con marca de agua"));
-        },
-        "image/jpeg",
-        quality
-      );
-    });
-  } catch (err) {
-    URL.revokeObjectURL(baseUrl);
-    throw err;
-  }
-}
-
-/**
- * Pipeline completo: comprime + aplica marca de agua.
- */
-export async function processPhoto(file, watermarkUrl) {
-  const compressed = await compressImage(file);
-  if (watermarkUrl) {
-    try {
-      return await applyWatermark(compressed, watermarkUrl);
-    } catch (err) {
-      console.error("Fallo al aplicar watermark:", err);
-      return compressed;
-    }
-  }
-  return compressed;
+  return processPhoto(imageBlob, watermarkUrl);
 }
 
 /**
