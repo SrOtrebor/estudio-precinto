@@ -719,3 +719,138 @@
   color: rgba(255,255,255,0.2);
 }
 .mod-empty-state i { font-size: 4rem; display: block; margin-bottom: 1rem; }
+
+/* -- THEMES & PILL UI (Fixdate Aesthetic) --------------------------------- */
+.theme-light {
+  background: #f4f4f6;
+  color: #1a1a24;
+}
+.theme-light .invitation-title {
+  background: linear-gradient(to bottom, #1a1a24, #444);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.theme-light .invitation-subtitle {
+  color: #555;
+}
+.theme-light .invitation-date-pill {
+  background: rgba(0,0,0,0.05);
+  border: 1px solid rgba(0,0,0,0.1);
+  color: #1a1a24;
+}
+.theme-light .countdown-box {
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.05);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  color: #1a1a24;
+}
+.theme-light .countdown-label { opacity: 0.7; }
+
+.theme-light .invitation-card {
+  background: #fff;
+  border: none;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.06);
+}
+.theme-light .invitation-card p {
+  color: #666;
+}
+.theme-light .invitation-card--accent {
+  background: #fff;
+  border: 2px solid rgba(var(--accent-rgb), 0.2);
+  box-shadow: 0 20px 50px rgba(var(--accent-rgb), 0.15);
+}
+
+.theme-light .rsvp-input-pill {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  color: #1a1a24;
+}
+
+/* Base Dark Theme Overrides */
+.theme-dark {
+  background: #050508;
+  color: #fff;
+}
+.theme-dark .rsvp-input-pill {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: #fff;
+}
+
+/* UI Elements */
+.btn-pill {
+  width: 100%;
+  padding: 1.2rem;
+  border-radius: 50px;
+  border: none;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 0.8rem;
+  transition: all 0.3s ease;
+  background: #333;
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+.theme-light .btn-pill {
+  background: #1a1a24;
+}
+
+.btn-pill:hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(0,0,0,0.15); }
+.btn-pill:disabled { background: #ccc; color: #888; cursor: not-allowed; transform: none; box-shadow: none; }
+
+.btn-pill-accent {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 10px 25px rgba(var(--accent-rgb), 0.3);
+}
+.theme-light .btn-pill-accent {
+  background: var(--accent);
+  color: #fff;
+}
+.btn-pill-accent:hover {
+  transform: scale(1.02); filter: brightness(1.05);
+}
+
+.rsvp-input-pill {
+  width: 100%;
+  padding: 1.2rem 1.5rem;
+  border-radius: 50px;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  outline: none;
+  transition: all 0.3s ease;
+}
+.rsvp-input-pill:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.2); }
+
+.card-badge {
+  display: inline-block;
+  background: var(--accent);
+  color: #fff;
+  padding: 0.3rem 1rem;
+  border-radius: 50px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  margin-bottom: 1rem;
+}
+
+/* -- WISHLIST --------------------------------- */
+.wishlist-item {
+  padding: 1rem;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+.theme-light .wishlist-item {
+  background: #f8f9fa;
+  border-color: #e9ecef;
+}
+.wishlist-item:hover {
+  border-color: var(--accent);
+}
+.wishlist-item-reserved {
+  opacity: 0.7;
+  background: rgba(0,0,0,0.02);
+}

@@ -21,7 +21,13 @@ export default function MasterDashboard() {
     date: "",
     tier: "base",
     adminPassword: "",
-    accentColor: "#a28a68"
+    accentColor: "#a28a68",
+    theme: "dark",
+    font: "Inter",
+    preset: "boliche",
+    mapUrl: "",
+    bankInfo: "",
+    wishlistText: ""
   });
   const [logoFile, setLogoFile] = useState(null);
   const [heroFile, setHeroFile] = useState(null);
@@ -65,6 +71,32 @@ export default function MasterDashboard() {
     });
     return () => unsub();
   }, [authed]);
+
+  // ── Handlers de Presets ───────────────────────────────────────────────────
+  const PRESETS = {
+    boliche: { name: "Boliche / Nocturno", theme: "dark", font: "Inter", accentColor: "#a28a68" },
+    boda: { name: "Boda Elegante", theme: "light", font: "Playfair Display", accentColor: "#d4af37" },
+    quince_clasico: { name: "15 Años Clásico", theme: "light", font: "Poppins", accentColor: "#ffb6c1" },
+    quince_urbano: { name: "15 Años Urbano", theme: "dark", font: "Montserrat", accentColor: "#00ffff" },
+    infantil: { name: "Infantil", theme: "light", font: "Quicksand", accentColor: "#ff4500" },
+    corporativo: { name: "Corporativo (Personalizado)", theme: "light", font: "Inter", accentColor: "#0056b3" }
+  };
+
+  const handlePresetChange = (e) => {
+    const presetId = e.target.value;
+    const presetData = PRESETS[presetId];
+    if (presetData) {
+      setNewEvent(prev => ({
+        ...prev,
+        preset: presetId,
+        theme: presetData.theme,
+        font: presetData.font,
+        accentColor: presetData.accentColor
+      }));
+    } else {
+      setNewEvent(prev => ({ ...prev, preset: presetId }));
+    }
+  };
 
   // ── Crear Evento ──────────────────────────────────────────────────────────
   const handleCreateOrUpdateEvent = async (e) => {
@@ -129,6 +161,12 @@ export default function MasterDashboard() {
         tier: newEvent.tier,
         adminPassword: newEvent.adminPassword || (isEdit ? editingEvent.adminPassword : ""),
         accentColor: newEvent.accentColor,
+        theme: newEvent.theme || "dark",
+        font: newEvent.font || "Inter",
+        preset: newEvent.preset || "boliche",
+        mapUrl: newEvent.mapUrl || "",
+        bankInfo: newEvent.bankInfo || "",
+        wishlistText: newEvent.wishlistText || "",
         cameraEnabled: isEdit ? (editingEvent.cameraEnabled ?? true) : true,
         autoApprove: isEdit ? (editingEvent.autoApprove ?? true) : true,
         logoUrl,
@@ -139,6 +177,20 @@ export default function MasterDashboard() {
       };
 
       await set(eventRef, configData);
+
+      // Si es un evento nuevo y tiene wishlist, inicializar la base de datos
+      if (!isEdit && newEvent.wishlistText) {
+        const items = newEvent.wishlistText.split(',').map(s => s.trim()).filter(s => s);
+        if (items.length > 0) {
+          const wishlistRef = ref(db, `livefeed/${targetId}/wishlist`);
+          const wishlistData = {};
+          items.forEach((item, idx) => {
+            wishlistData[`item_${idx}`] = { name: item, reservedBy: null };
+          });
+          await set(wishlistRef, wishlistData);
+        }
+      }
+
       closeModal();
     } catch (err) {
       console.error(err);
@@ -151,7 +203,11 @@ export default function MasterDashboard() {
   const closeModal = () => {
     setShowCreateModal(false);
     setEditingEvent(null);
-    setNewEvent({ id: "", name: "", date: "", tier: "base", adminPassword: "", accentColor: "#a28a68" });
+    setNewEvent({ 
+      id: "", name: "", date: "", tier: "base", adminPassword: "", 
+      accentColor: "#a28a68", theme: "dark", font: "Inter", preset: "boliche",
+      mapUrl: "", bankInfo: "", wishlistText: "" 
+    });
     setLogoFile(null);
     setHeroFile(null);
     setBannerFiles([]);
@@ -166,7 +222,13 @@ export default function MasterDashboard() {
       date: ev.date || "",
       tier: ev.tier || "base",
       adminPassword: ev.adminPassword || "",
-      accentColor: ev.accentColor || "#a28a68"
+      accentColor: ev.accentColor || "#a28a68",
+      theme: ev.theme || "dark",
+      font: ev.font || "Inter",
+      preset: ev.preset || "boliche",
+      mapUrl: ev.mapUrl || "",
+      bankInfo: ev.bankInfo || "",
+      wishlistText: ev.wishlistText || ""
     });
     setShowCreateModal(true);
   };
@@ -305,6 +367,38 @@ export default function MasterDashboard() {
                   <option value="corporativo">Pack Corporativo</option>
                 </select>
               </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Plantilla / Modelo</label>
+                <select className="mod-login-input" style={{ width: '100%', border: '1px solid var(--accent)' }} value={newEvent.preset} onChange={handlePresetChange}>
+                  {Object.entries(PRESETS).map(([k, v]) => (
+                    <option key={k} value={k}>{v.name}</option>
+                  ))}
+                </select>
+                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.4rem' }}>
+                  Elegir una plantilla configura automáticamente los colores, fuentes y tema, pero podés afinarlos abajo.
+                </p>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Tema Base</label>
+                  <select className="mod-login-input" style={{ width: '100%' }} value={newEvent.theme} onChange={e => setNewEvent({...newEvent, theme: e.target.value})}>
+                    <option value="light">Claro (Social)</option>
+                    <option value="dark">Oscuro (Nocturno)</option>
+                  </select>
+                </div>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Tipografía Principal</label>
+                  <select className="mod-login-input" style={{ width: '100%' }} value={newEvent.font} onChange={e => setNewEvent({...newEvent, font: e.target.value})}>
+                    <option value="Inter">Inter (Moderna/Legible)</option>
+                    <option value="Poppins">Poppins (Redondeada/Apps)</option>
+                    <option value="Playfair Display">Playfair (Elegante/Serif)</option>
+                    <option value="Montserrat">Montserrat (Urbana/Gruesa)</option>
+                    <option value="Quicksand">Quicksand (Amigable/Infantil)</option>
+                  </select>
+                </div>
+              </div>
+
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div>
                   <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Logo del Evento</label>
@@ -320,6 +414,32 @@ export default function MasterDashboard() {
                 <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Imagen Portada Invitación (Hero)</label>
                 <input type="file" accept="image/*" onChange={e => setHeroFile(e.target.files[0])} style={{ fontSize: '0.8rem' }} />
               </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Link de Google Maps</label>
+                  <input type="url" className="mod-login-input" style={{ width: '100%' }} placeholder="https://maps.app.goo.gl/..." value={newEvent.mapUrl} onChange={e => setNewEvent({...newEvent, mapUrl: e.target.value})} />
+                </div>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Datos Bancarios (CVU/Alias)</label>
+                  <input type="text" className="mod-login-input" style={{ width: '100%' }} placeholder="Alias: mis15.regalo" value={newEvent.bankInfo} onChange={e => setNewEvent({...newEvent, bankInfo: e.target.value})} />
+                </div>
+              </div>
+
+              {(newEvent.tier === 'premium' || newEvent.tier === 'corporativo') && (
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Lista de Regalos Interactiva (Separados por coma)</label>
+                  <textarea 
+                    className="mod-login-input" 
+                    style={{ width: '100%', minHeight: '60px', resize: 'vertical' }} 
+                    placeholder="Ej: Licuadora, Set de copas, Viaje" 
+                    value={newEvent.wishlistText} 
+                    onChange={e => setNewEvent({...newEvent, wishlistText: e.target.value})}
+                    disabled={!!editingEvent}
+                  />
+                  {editingEvent && <p style={{ fontSize: '0.75rem', color: 'var(--warning)', marginTop: '0.4rem' }}>La lista de regalos solo se puede crear al iniciar el evento para evitar conflictos con reservas ya hechas.</p>}
+                </div>
+              )}
 
               <div>
                 <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Banners Publicitarios (Imágenes o Video)</label>

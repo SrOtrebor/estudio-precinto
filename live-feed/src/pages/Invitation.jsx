@@ -11,8 +11,13 @@ export default function Invitation() {
 
   // RSVP state
   const [rsvpName, setRsvpName] = useState("");
+  const [rsvpPhone, setRsvpPhone] = useState("");
   const [hasRsvped, setHasRsvped] = useState(false);
+  const [isAttending, setIsAttending] = useState(null);
   const [rsvpLoading, setRsvpLoading] = useState(false);
+  
+  // Wishlist state
+  const [wishlist, setWishlist] = useState([]);
 
   // Camera Status
   const [cameraEnabled, setCameraEnabled] = useState(true);
@@ -34,13 +39,25 @@ export default function Invitation() {
       }
     });
 
-    return () => unsub();
+    const wishlistRef = ref(db, `livefeed/${eventId}/wishlist`);
+    const unsubWishlist = onValue(wishlistRef, (snap) => {
+      if (snap.exists()) {
+        const data = snap.val();
+        setWishlist(Object.entries(data).map(([id, val]) => ({ id, ...val })));
+      } else {
+        setWishlist([]);
+      }
+    });
+
+    return () => { unsub(); unsubWishlist(); };
   }, [eventId]);
 
   // ── Manejar RSVP ──────────────────────────────────────────────────────────
-  const handleRSVP = async (e) => {
-    e.preventDefault();
-    if (!rsvpName.trim()) return;
+  const handleRSVP = async (attendingStatus) => {
+    if (!rsvpName.trim() || !rsvpPhone.trim()) {
+      alert("Por favor, completá tu nombre y teléfono.");
+      return;
+    }
 
     setRsvpLoading(true);
     const rsvpRef = ref(db, `livefeed/${eventId}/rsvps`);
@@ -48,16 +65,33 @@ export default function Invitation() {
     try {
       await set(push(rsvpRef), {
         name: rsvpName,
-        attending: true,
+        phone: rsvpPhone,
+        attending: attendingStatus,
         timestamp: Date.now()
       });
       setHasRsvped(true);
+      setIsAttending(attendingStatus);
       localStorage.setItem("livefeed_guest_name", rsvpName);
     } catch (err) {
       console.error(err);
       alert("Hubo un error al confirmar. Intentá de nuevo.");
     } finally {
       setRsvpLoading(false);
+    }
+  };
+
+  // ── Reservar Regalo ───────────────────────────────────────────────────────
+  const handleReserveGift = async (itemId) => {
+    if (!hasRsvped) {
+      alert("Por favor completá el formulario de asistencia arriba primero para poder reservar un regalo a tu nombre.");
+      return;
+    }
+    
+    try {
+      const itemRef = ref(db, `livefeed/${eventId}/wishlist/${itemId}`);
+      await update(itemRef, { reservedBy: rsvpName });
+    } catch (err) {
+      alert("No se pudo reservar el regalo.");
     }
   };
 
@@ -101,8 +135,15 @@ export default function Invitation() {
     return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : "162, 138, 104";
   };
 
+  const themeClass = eventConfig?.theme === 'light' ? 'theme-light' : 'theme-dark';
+  const fontFamily = eventConfig?.font || 'Inter';
+
   return (
-    <div className="invitation-screen" style={{ "--accent": accentColor, "--accent-rgb": hexToRgb(accentColor) }}>
+    <div className={`invitation-screen ${themeClass}`} style={{ 
+      "--accent": accentColor, 
+      "--accent-rgb": hexToRgb(accentColor),
+      fontFamily: `"${fontFamily}", sans-serif`
+    }}>
       
       {/* Hero Section */}
       <section className="invitation-hero">
@@ -110,8 +151,18 @@ export default function Invitation() {
           className="invitation-hero-bg" 
           style={{ backgroundImage: `url(${eventConfig.heroUrl || 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&q=80&w=1200'})` }}
         />
-        <div className="invitation-hero-overlay" />
+        <div className="invitation-hero-overlay" style={{
+           background: eventConfig?.theme === 'light' ? `linear-gradient(to bottom, rgba(255,255,255,0.2), rgba(255,255,255,0.9))` : `linear-gradient(to bottom, rgba(10,10,15,0.2), rgba(10,10,15,0.9))`
+        }} />
         
+        {/* SVG Wave */}
+        <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', overflow: 'hidden', lineHeight: 0 }}>
+          <svg viewBox="0 0 1200 120" preserveAspectRatio="none" style={{ display: 'block', width: '100%', height: '80px', transform: 'rotate(180deg)' }}>
+            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" 
+                  fill={eventConfig?.theme === 'light' ? '#f4f4f6' : '#0a0a0f'}></path>
+          </svg>
+        </div>
+
         <div className="invitation-header-content">
           <span className="invitation-subtitle">Estás invitado</span>
           <h1 className="invitation-title">{eventConfig.eventName}</h1>
@@ -138,13 +189,14 @@ export default function Invitation() {
         
         {/* Photo Section */}
         <div className="invitation-card invitation-card--accent">
-          <h2>📸 Social Live Feed</h2>
+          <div className="card-badge">NUEVA FUNCIÓN</div>
+          <h2 style={{ fontSize: '1.8rem', fontWeight: '800' }}>📸 Live Feed</h2>
           <p>
             ¡Queremos ver el evento a través de tus ojos! Sacá fotos y compartilas 
             en tiempo real para que todos las vean en las pantallas del salón.
           </p>
           <button 
-            className="btn-premium"
+            className="btn-pill btn-pill-accent"
             onClick={() => cameraEnabled && navigate(`/foto/${eventId}`)}
             disabled={!cameraEnabled}
           >
@@ -158,29 +210,114 @@ export default function Invitation() {
 
         {/* RSVP Section */}
         <div className="invitation-card">
-          <h2>Confirmar Asistencia</h2>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: '700' }}>Confirmar Asistencia</h2>
           {hasRsvped ? (
             <div style={{ textAlign: 'center', padding: '1rem' }}>
-              <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>✨</div>
-              <p style={{ color: 'var(--accent)', fontWeight: '700', marginBottom: 0 }}>¡Confirmado! Te esperamos.</p>
+              <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>{isAttending ? '✨' : '🥺'}</div>
+              <p style={{ color: 'var(--accent)', fontWeight: '800', fontSize: '1.2rem', marginBottom: 0 }}>
+                {isAttending ? '¡Confirmado! Te esperamos.' : 'Qué lástima, te vamos a extrañar.'}
+              </p>
             </div>
           ) : (
-            <form onSubmit={handleRSVP}>
-              <p>Por favor, confirmanos si vas a poder acompañarnos en este momento tan especial.</p>
+            <div>
+              <p style={{ color: 'var(--text-muted)' }}>Por favor, confirmanos si vas a poder acompañarnos.</p>
               <input 
                 type="text" 
-                className="rsvp-input" 
+                className="rsvp-input-pill" 
                 placeholder="Tu nombre y apellido" 
                 value={rsvpName}
                 onChange={e => setRsvpName(e.target.value)}
                 required
               />
-              <button type="submit" className="btn-premium" style={{ background: 'rgba(255,255,255,0.1)', color: '#fff', boxShadow: 'none' }} disabled={rsvpLoading}>
-                {rsvpLoading ? 'Procesando...' : 'Sí, asistiré'}
-              </button>
-            </form>
+              <input 
+                type="tel" 
+                className="rsvp-input-pill" 
+                placeholder="Tu WhatsApp / Teléfono" 
+                value={rsvpPhone}
+                onChange={e => setRsvpPhone(e.target.value)}
+                required
+              />
+              <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+                <button type="button" className="btn-pill" onClick={() => handleRSVP(false)} disabled={rsvpLoading} style={{ background: 'transparent', border: '1px solid var(--text-muted)', color: 'var(--text-muted)' }}>
+                  {rsvpLoading ? '...' : 'No podré ir'}
+                </button>
+                <button type="button" className="btn-pill btn-pill-accent" onClick={() => handleRSVP(true)} disabled={rsvpLoading}>
+                  {rsvpLoading ? 'Procesando...' : 'Sí, asistiré'}
+                </button>
+              </div>
+            </div>
           )}
         </div>
+
+        {/* Map Section */}
+        {eventConfig?.mapUrl && (
+          <div className="invitation-card">
+            <h2 style={{ fontSize: '1.5rem', fontWeight: '700' }}>Ubicación</h2>
+            <p style={{ color: 'var(--text-muted)' }}>Te esperamos para festejar a lo grande.</p>
+            
+            <div style={{ borderRadius: '20px', overflow: 'hidden', margin: '1.5rem 0', height: '250px', background: 'var(--bg-card)' }}>
+               {/* Asumiendo que pueden pegar un link largo o corto, lo ideal sería un iframe, pero si pegan URL directa, mostramos un mapa ilustrativo o un iframe si es compatible */}
+               <iframe 
+                  src={eventConfig.mapUrl.includes('embed') ? eventConfig.mapUrl : `https://maps.google.com/maps?q=${encodeURIComponent(eventConfig.mapUrl)}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
+                  width="100%" 
+                  height="100%" 
+                  style={{ border: 0 }} 
+                  allowFullScreen="" 
+                  loading="lazy"
+               ></iframe>
+            </div>
+
+            <button className="btn-pill" onClick={() => window.open(eventConfig.mapUrl, '_blank')}>
+              📍 Ver en Google Maps
+            </button>
+          </div>
+        )}
+
+        {/* Bank / Regalos Section */}
+        {eventConfig?.bankInfo && (
+          <div className="invitation-card">
+            <h2 style={{ fontSize: '1.5rem', fontWeight: '700' }}>Regalos 🎁</h2>
+            <p style={{ color: 'var(--text-muted)' }}>El mejor regalo es tu presencia. Pero si deseás ayudarnos con un regalito, podés hacerlo acá:</p>
+            
+            <div style={{ background: 'rgba(0,0,0,0.05)', border: '1px dashed var(--accent)', padding: '1.5rem', borderRadius: '20px', textAlign: 'center', marginTop: '1.5rem' }}>
+              <div style={{ fontSize: '1.2rem', fontWeight: '800', letterSpacing: '2px' }}>{eventConfig.bankInfo}</div>
+              <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', margin: '0.5rem 0 0' }}>Alias / CVU / CBU</p>
+            </div>
+          </div>
+        )}
+
+        {/* Wishlist Section */}
+        {(eventConfig?.tier === 'premium' || eventConfig?.tier === 'corporativo') && wishlist.length > 0 && (
+          <div className="invitation-card">
+            <h2 style={{ fontSize: '1.5rem', fontWeight: '700' }}>Lista de Regalos</h2>
+            <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>Elegí un regalo de la lista y marcalo para que no se repita. (Asegurate de confirmar asistencia primero).</p>
+            
+            <div className="wishlist-container" style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+              {wishlist.map(item => (
+                <div key={item.id} className={`wishlist-item ${item.reservedBy ? 'wishlist-item-reserved' : ''}`}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span style={{ fontWeight: '600', textDecoration: item.reservedBy ? 'line-through' : 'none', opacity: item.reservedBy ? 0.5 : 1 }}>
+                      {item.name}
+                    </span>
+                    
+                    {item.reservedBy ? (
+                      <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontStyle: 'italic' }}>
+                        🎁 Reservado por {item.reservedBy}
+                      </span>
+                    ) : (
+                      <button 
+                        onClick={() => handleReserveGift(item.id)}
+                        style={{ padding: '0.4rem 1rem', background: 'transparent', border: '1px solid var(--accent)', color: 'var(--accent)', borderRadius: '50px', fontSize: '0.8rem', fontWeight: '700', cursor: 'pointer' }}
+                      >
+                        Reservar
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div style={{ textAlign: 'center', opacity: 0.4, fontSize: '0.8rem', padding: '1rem' }}>
           Realizado por Estudio Precinto

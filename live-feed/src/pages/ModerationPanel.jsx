@@ -99,6 +99,31 @@ export default function ModerationPanel() {
     await update(ref(db, `livefeed/${eventId}/config`), { cameraEnabled: newVal });
   };
 
+  const exportToCSV = () => {
+    if (rsvps.length === 0) {
+      alert("No hay confirmaciones para exportar.");
+      return;
+    }
+    
+    const headers = ["Nombre", "Teléfono", "Asiste", "Fecha"];
+    const rows = rsvps.map(r => [
+      `"${r.name}"`,
+      `"${r.phone || 'N/A'}"`,
+      r.attending ? "Sí" : "No",
+      `"${new Date(r.timestamp).toLocaleString()}"`
+    ]);
+    
+    const csvContent = [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `rsvps_${eventId}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const filteredPhotos = photos.filter((p) => {
     if (filter === "pending") return p.status === "pending";
     if (filter === "approved") return p.status === "approved" && !p.hidden;
@@ -191,13 +216,28 @@ export default function ModerationPanel() {
 
       <main className="mod-grid-premium">
         {filter === 'rsvps' ? (
-          rsvps.map(r => (
-            <div key={r.id} className="photo-card-premium" style={{ padding: '1.5rem' }}>
-              <span className="photo-author">{r.name}</span>
-              <span className="photo-time">{new Date(r.timestamp).toLocaleString()}</span>
-              <div style={{ marginTop: '1rem', fontSize: '0.8rem', color: 'var(--accent)' }}>Confirmado ✓</div>
+          <>
+            <div style={{ gridColumn: '1 / -1', display: 'flex', justifyContent: 'flex-end', paddingBottom: '1rem' }}>
+              <button onClick={exportToCSV} className="btn-approve" style={{ padding: '0.8rem 1.5rem', borderRadius: '12px', border: 'none', cursor: 'pointer', fontWeight: 'bold' }}>
+                📥 Exportar Excel (CSV)
+              </button>
             </div>
-          ))
+            {rsvps.map(r => (
+              <div key={r.id} className="photo-card-premium" style={{ padding: '1.5rem' }}>
+                <span className="photo-author">{r.name}</span>
+                <span className="photo-time" style={{ display: 'block', margin: '0.5rem 0' }}>📱 {r.phone || 'N/A'}</span>
+                <span className="photo-time">{new Date(r.timestamp).toLocaleString()}</span>
+                <div style={{ 
+                  marginTop: '1rem', 
+                  fontSize: '0.9rem', 
+                  fontWeight: '700',
+                  color: r.attending ? 'var(--success)' : 'var(--text-muted)' 
+                }}>
+                  {r.attending ? '✅ Asiste' : '❌ No asiste'}
+                </div>
+              </div>
+            ))}
+          </>
         ) : filteredPhotos.length === 0 ? (
           <div className="mod-empty-state">
             <i>📂</i>
