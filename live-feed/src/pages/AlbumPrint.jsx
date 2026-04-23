@@ -142,7 +142,7 @@ export default function AlbumPrint() {
         .photo-inner { position: relative; width: 100%; display: flex; justify-content: center; background: #000; }
         .photo-inner img { max-width: 100%; height: auto; max-height: 180mm; object-fit: contain; }
         .album-watermark { 
-          position: absolute; top: 10px; right: 10px; 
+          position: absolute; bottom: 10px; right: 10px; 
           height: 30px; width: auto; opacity: 0.5; 
           filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5));
         }

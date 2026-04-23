@@ -274,7 +274,7 @@ export default function LiveMonitor() {
         .polaroid-photo-area { position: relative; width: 100%; flex-grow: 1; overflow: hidden; background: #000; }
         .photo-main { max-width: 100%; max-height: 70vh; display: block; object-fit: contain; }
         .photo-watermark {
-          position: absolute; top: 20px; right: 20px;
+          position: absolute; bottom: 20px; right: 20px;
           height: 60px; width: auto; object-fit: contain;
           opacity: 0.6; pointer-events: none;
           filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
