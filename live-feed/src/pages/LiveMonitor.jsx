@@ -147,13 +147,16 @@ export default function LiveMonitor() {
       {/* Banner corporativo (superpuesto) */}
       {showBanner && eventConfig?.bannerUrls?.length > 0 && (
         <div className="monitor-banner-overlay">
-          {eventConfig.bannerUrls[currentBannerIndex]?.toLowerCase().includes('.mp4') ? (
+          {(eventConfig.bannerUrls[currentBannerIndex]?.toLowerCase().includes('.mp4') || 
+            eventConfig.bannerUrls[currentBannerIndex]?.toLowerCase().includes('.mov') ||
+            eventConfig.bannerUrls[currentBannerIndex]?.includes('video')) ? (
             <video
               src={eventConfig.bannerUrls[currentBannerIndex]}
               className="monitor-banner-img"
               autoPlay
               muted
               loop
+              playsInline
             />
           ) : (
             <img
