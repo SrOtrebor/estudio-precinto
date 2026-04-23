@@ -334,3 +334,164 @@
   .gallery-grid { columns: 2 140px; }
   .mod-header { flex-direction: column; align-items: flex-start; }
 }
+
+/* ── INVITATION PREMIUM ───────────────────────────────── */
+.invitation-screen {
+  min-height: 100vh;
+  background: #050508;
+  color: #fff;
+  font-family: 'Outfit', sans-serif;
+  overflow-x: hidden;
+}
+
+.invitation-hero {
+  position: relative;
+  height: 60vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  padding-bottom: 5vh;
+  overflow: hidden;
+}
+
+.invitation-hero-bg {
+  position: absolute; inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: brightness(0.6) saturate(1.2);
+  transform: scale(1.1);
+  transition: transform 10s linear;
+}
+.invitation-hero:hover .invitation-hero-bg { transform: scale(1.2); }
+
+.invitation-hero-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom, transparent 40%, #050508 100%);
+}
+
+.invitation-header-content {
+  position: relative; z-index: 2;
+  text-align: center;
+  padding: 0 2rem;
+  animation: slideUpFade 1.2s ease-out;
+}
+
+.invitation-subtitle {
+  font-size: 1rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+  font-weight: 400;
+  opacity: 0.8;
+}
+
+.invitation-title {
+  font-size: clamp(2.5rem, 8vw, 4.5rem);
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: 1rem;
+  background: linear-gradient(to bottom, #fff, #aaa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.invitation-date-pill {
+  display: inline-block;
+  padding: 0.5rem 1.5rem;
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 50px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* Countdown Glass */
+.invitation-countdown {
+  display: flex; gap: 1rem;
+  justify-content: center;
+  margin: -2.5rem 0 3rem;
+  position: relative; z-index: 3;
+}
+.countdown-box {
+  background: rgba(20,20,25,0.6);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.08);
+  width: 75px; height: 75px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+.countdown-num { font-size: 1.8rem; font-weight: 800; line-height: 1; }
+.countdown-label { font-size: 0.6rem; text-transform: uppercase; opacity: 0.5; margin-top: 0.2rem; }
+
+/* Action Cards */
+.invitation-main {
+  width: 100%; maxWidth: 500px;
+  margin: 0 auto;
+  padding: 0 1.5rem 5rem;
+  display: flex; flex-direction: column; gap: 2rem;
+}
+
+.invitation-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 24px;
+  padding: 2.5rem 2rem;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+.invitation-card:hover { transform: translateY(-5px); border-color: rgba(255,255,255,0.1); }
+
+.invitation-card--accent {
+  background: radial-gradient(circle at top right, rgba(var(--accent-rgb), 0.15), transparent);
+  border: 1px solid rgba(var(--accent-rgb), 0.3);
+}
+
+.invitation-card h2 { font-size: 1.4rem; font-weight: 700; margin-bottom: 0.8rem; }
+.invitation-card p { font-size: 0.95rem; color: rgba(255,255,255,0.6); margin-bottom: 1.5rem; line-height: 1.6; }
+
+.btn-premium {
+  width: 100%;
+  padding: 1.2rem;
+  border-radius: 16px;
+  border: none;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 0.8rem;
+  transition: all 0.3s ease;
+  background: linear-gradient(135deg, var(--accent), #c4a97a);
+  color: #000;
+  box-shadow: 0 10px 25px rgba(var(--accent-rgb), 0.3);
+}
+.btn-premium:hover { transform: scale(1.02); filter: brightness(1.1); box-shadow: 0 15px 35px rgba(var(--accent-rgb), 0.4); }
+.btn-premium:disabled { background: #333; color: #666; cursor: not-allowed; transform: none; box-shadow: none; }
+
+.rsvp-input {
+  width: 100%;
+  padding: 1.2rem;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px;
+  color: #fff;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+.rsvp-input:focus { border-color: var(--accent); }
+
+@keyframes slideUpFade {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 600px) {
+  .invitation-title { font-size: 2.8rem; }
+}

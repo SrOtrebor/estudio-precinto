@@ -21,16 +21,15 @@ export default function Invitation() {
   useEffect(() => {
     if (!eventId) return;
     
-    // Escuchar la config en tiempo real para el estado de la cámara
     const configRef = ref(db, `livefeed/${eventId}/config`);
     const unsub = onValue(configRef, (snap) => {
       if (snap.exists()) {
         const data = snap.val();
         setEventConfig(data);
-        setCameraEnabled(data.cameraEnabled !== false); // default a true si no existe
+        setCameraEnabled(data.cameraEnabled !== false);
         setLoading(false);
       } else {
-        setError("El evento no existe.");
+        setError("El evento no existe o la URL es incorrecta.");
         setLoading(false);
       }
     });
@@ -53,7 +52,6 @@ export default function Invitation() {
         timestamp: Date.now()
       });
       setHasRsvped(true);
-      // Guardar nombre para que PhotoUpload no lo vuelva a pedir
       localStorage.setItem("livefeed_guest_name", rsvpName);
     } catch (err) {
       console.error(err);
@@ -64,27 +62,26 @@ export default function Invitation() {
   };
 
   // ── Cuenta Regresiva ──────────────────────────────────────────────────────
-  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  const [timeLeft, setTimeLeft] = useState({ dias: 0, hs: 0, min: 0, seg: 0 });
 
   useEffect(() => {
     if (!eventConfig?.date) return;
 
     const targetDate = new Date(eventConfig.date).getTime();
-
     const updateTimer = () => {
       const now = new Date().getTime();
       const difference = targetDate - now;
 
       if (difference <= 0) {
-        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+        setTimeLeft({ dias: 0, hs: 0, min: 0, seg: 0 });
         return;
       }
 
       setTimeLeft({
-        days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-        hours: Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-        minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
-        seconds: Math.floor((difference % (1000 * 60)) / 1000)
+        dias: Math.floor(difference / (1000 * 60 * 60 * 24)),
+        hs: Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+        min: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
+        seg: Math.floor((difference % (1000 * 60)) / 1000)
       });
     };
 
@@ -93,91 +90,102 @@ export default function Invitation() {
     return () => clearInterval(timerId);
   }, [eventConfig?.date]);
 
-  // ── Render: Loading / Error ───────────────────────────────────────────────
-  if (loading) return <div className="upload-screen"><div className="spinner" /></div>;
-  if (error) return <div className="upload-screen"><h2>{error}</h2></div>;
+  if (loading) return <div className="monitor-screen"><div className="pulse-ring" /></div>;
+  if (error) return <div className="not-found"><h1>Oops</h1><p>{error}</p></div>;
 
   const accentColor = eventConfig?.accentColor || "#a28a68";
+  
+  // Convertir Hex a RGB para variables CSS
+  const hexToRgb = (hex) => {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : "162, 138, 104";
+  };
 
   return (
-    <div className="invitation-screen" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', backgroundColor: 'var(--bg-deep)' }}>
-      {/* Hero Header */}
-      <div style={{ width: '100%', padding: '4rem 2rem', textAlign: 'center', background: `linear-gradient(to bottom, ${accentColor}40, transparent)` }}>
-        <h3 style={{ color: 'var(--text-secondary)', letterSpacing: '0.1em', marginBottom: '1rem', textTransform: 'uppercase', fontSize: '0.9rem' }}>Estás invitado a</h3>
-        <h1 style={{ fontSize: '3.5rem', fontWeight: '800', color: accentColor, marginBottom: '1rem', lineHeight: '1.1' }}>
-          {eventConfig.eventName}
-        </h1>
-        {eventConfig.date && (
-          <p style={{ fontSize: '1.2rem', color: 'var(--text)' }}>
-            {new Date(eventConfig.date).toLocaleDateString("es-AR", { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
-          </p>
-        )}
-      </div>
+    <div className="invitation-screen" style={{ "--accent": accentColor, "--accent-rgb": hexToRgb(accentColor) }}>
+      
+      {/* Hero Section */}
+      <section className="invitation-hero">
+        <div 
+          className="invitation-hero-bg" 
+          style={{ backgroundImage: `url(${eventConfig.heroUrl || 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&q=80&w=1200'})` }}
+        />
+        <div className="invitation-hero-overlay" />
+        
+        <div className="invitation-header-content">
+          <span className="invitation-subtitle">Estás invitado</span>
+          <h1 className="invitation-title">{eventConfig.eventName}</h1>
+          <div className="invitation-date-pill">
+            📅 {new Date(eventConfig.date).toLocaleDateString("es-AR", { weekday: 'long', day: 'numeric', month: 'long' })}
+          </div>
+        </div>
+      </section>
 
       {/* Countdown */}
-      {eventConfig.date && new Date(eventConfig.date).getTime() > Date.now() && (
-        <div style={{ display: 'flex', gap: '1rem', marginBottom: '3rem', marginTop: '-1rem' }}>
+      {new Date(eventConfig.date).getTime() > Date.now() && (
+        <div className="invitation-countdown">
           {Object.entries(timeLeft).map(([unit, value]) => (
-            <div key={unit} style={{ background: 'var(--bg-card)', padding: '1rem', borderRadius: 'var(--radius)', border: '1px solid var(--border)', textAlign: 'center', minWidth: '80px' }}>
-              <span style={{ display: 'block', fontSize: '2rem', fontWeight: '700', color: accentColor }}>{value}</span>
-              <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', textTransform: 'uppercase' }}>{unit}</span>
+            <div key={unit} className="countdown-box">
+              <span className="countdown-num">{value}</span>
+              <span className="countdown-label">{unit}</span>
             </div>
           ))}
         </div>
       )}
 
-      {/* Acciones principales */}
-      <div style={{ width: '100%', maxWidth: '480px', padding: '0 1.5rem', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+      {/* Main Content */}
+      <main className="invitation-main">
         
-        {/* Módulo de Cámara */}
-        <div style={{ background: 'var(--bg-card)', padding: '2rem', borderRadius: 'var(--radius)', border: `1px solid ${accentColor}50`, textAlign: 'center', boxShadow: `0 8px 32px ${accentColor}15` }}>
-          <h2 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>📸 Social Live Feed</h2>
-          <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem', fontSize: '0.9rem' }}>Compartí tus fotos durante el evento y míralas en pantalla gigante.</p>
-          
+        {/* Photo Section */}
+        <div className="invitation-card invitation-card--accent">
+          <h2>📸 Social Live Feed</h2>
+          <p>
+            ¡Queremos ver el evento a través de tus ojos! Sacá fotos y compartilas 
+            en tiempo real para que todos las vean en las pantallas del salón.
+          </p>
           <button 
-            className={`btn-primary ${!cameraEnabled ? 'btn-camera--disabled' : ''}`}
+            className="btn-premium"
             onClick={() => cameraEnabled && navigate(`/foto/${eventId}`)}
             disabled={!cameraEnabled}
-            style={{ padding: '1.2rem', fontSize: '1.1rem', background: cameraEnabled ? `linear-gradient(135deg, ${accentColor}, #c4a97a)` : 'var(--bg-glass)' }}
           >
-            {cameraEnabled ? '📷 Abrir Cámara del Evento' : '⏸️ Cámara pausada'}
+            {cameraEnabled ? (
+              <><span>📷</span> Abrir Cámara del Evento</>
+            ) : (
+              <><span>⏸️</span> Subida pausada</>
+            )}
           </button>
-          {!cameraEnabled && (
-            <p style={{ color: 'var(--warning)', fontSize: '0.8rem', marginTop: '1rem' }}>El organizador ha pausado la subida de fotos por el momento.</p>
-          )}
         </div>
 
-        {/* Módulo RSVP */}
-        <div style={{ background: 'var(--bg-card)', padding: '2rem', borderRadius: 'var(--radius)', border: '1px solid var(--border)' }}>
-          <h2 style={{ fontSize: '1.3rem', marginBottom: '1.5rem', textAlign: 'center' }}>Confirmar Asistencia</h2>
-          
+        {/* RSVP Section */}
+        <div className="invitation-card">
+          <h2>Confirmar Asistencia</h2>
           {hasRsvped ? (
-            <div style={{ textAlign: 'center', color: 'var(--success)' }}>
-              <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>✅</div>
-              <p style={{ fontWeight: '600' }}>¡Gracias por confirmar!</p>
-              <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginTop: '0.5rem' }}>Te esperamos.</p>
+            <div style={{ textAlign: 'center', padding: '1rem' }}>
+              <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>✨</div>
+              <p style={{ color: 'var(--accent)', fontWeight: '700', marginBottom: 0 }}>¡Confirmado! Te esperamos.</p>
             </div>
           ) : (
-            <form onSubmit={handleRSVP} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <form onSubmit={handleRSVP}>
+              <p>Por favor, confirmanos si vas a poder acompañarnos en este momento tan especial.</p>
               <input 
                 type="text" 
-                className="name-input" 
-                placeholder="Nombre y Apellido" 
+                className="rsvp-input" 
+                placeholder="Tu nombre y apellido" 
                 value={rsvpName}
                 onChange={e => setRsvpName(e.target.value)}
                 required
               />
-              <button type="submit" className="btn-primary" disabled={rsvpLoading} style={{ background: 'var(--text-muted)' }}>
-                {rsvpLoading ? 'Enviando...' : 'Sí, asistiré'}
+              <button type="submit" className="btn-premium" style={{ background: 'rgba(255,255,255,0.1)', color: '#fff', boxShadow: 'none' }} disabled={rsvpLoading}>
+                {rsvpLoading ? 'Procesando...' : 'Sí, asistiré'}
               </button>
             </form>
           )}
         </div>
-      </div>
-      
-      <div style={{ padding: '3rem', color: 'var(--text-muted)', fontSize: '0.8rem' }}>
-        Desarrollado por Estudio Precinto
-      </div>
+
+        <div style={{ textAlign: 'center', opacity: 0.4, fontSize: '0.8rem', padding: '1rem' }}>
+          Realizado por Estudio Precinto
+        </div>
+      </main>
     </div>
   );
 }

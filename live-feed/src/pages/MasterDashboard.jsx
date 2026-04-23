@@ -24,6 +24,7 @@ export default function MasterDashboard() {
     accentColor: "#a28a68"
   });
   const [logoFile, setLogoFile] = useState(null);
+  const [heroFile, setHeroFile] = useState(null);
   const [bannerFiles, setBannerFiles] = useState([]);
   const [uploadProgress, setUploadProgress] = useState("");
 
@@ -85,6 +86,7 @@ export default function MasterDashboard() {
 
     try {
       let logoUrl = null;
+      let heroUrl = null;
       let bannerUrls = [];
 
       // 1. Subir Logo si existe
@@ -93,6 +95,14 @@ export default function MasterDashboard() {
         const logoRef = storageRef(storage, `livefeed/${newEvent.id}/logo_${Date.now()}`);
         await uploadBytes(logoRef, logoFile);
         logoUrl = await getDownloadURL(logoRef);
+      }
+
+      // 1.5 Subir Imagen Invitación si existe
+      if (heroFile) {
+        setUploadProgress("Subiendo imagen invitación...");
+        const heroRef = storageRef(storage, `livefeed/${newEvent.id}/hero_${Date.now()}`);
+        await uploadBytes(heroRef, heroFile);
+        heroUrl = await getDownloadURL(heroRef);
       }
 
       // 2. Subir Banners si existen
@@ -115,6 +125,7 @@ export default function MasterDashboard() {
         cameraEnabled: true,
         autoApprove: true,
         logoUrl: logoUrl,
+        heroUrl: heroUrl,
         bannerUrls: bannerUrls,
         createdAt: Date.now()
       };
@@ -123,6 +134,7 @@ export default function MasterDashboard() {
       setShowCreateModal(false);
       setNewEvent({ id: "", name: "", date: "", tier: "base", adminPassword: "", accentColor: "#a28a68" });
       setLogoFile(null);
+      setHeroFile(null);
       setBannerFiles([]);
       setUploadProgress("");
     } catch (err) {
@@ -273,6 +285,11 @@ export default function MasterDashboard() {
                   <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Color Acento</label>
                   <input type="color" value={newEvent.accentColor} onChange={e => setNewEvent({...newEvent, accentColor: e.target.value})} style={{ width: '100%', height: '35px', border: 'none', borderRadius: '4px', cursor: 'pointer' }} />
                 </div>
+              </div>
+
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Imagen Portada Invitación (Hero)</label>
+                <input type="file" accept="image/*" onChange={e => setHeroFile(e.target.files[0])} style={{ fontSize: '0.8rem' }} />
               </div>
 
               <div>
