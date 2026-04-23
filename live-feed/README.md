@@ -35,16 +35,24 @@ VITE_MASTER_PASSWORD=tu_contraseña_maestra
 npm run dev
 ```
 
-## 📌 Funcionalidades Principales
+## 📌 Módulos Implementados
 
-*   **Dashboard Maestro:** Creación de eventos, gestión de Packs y contraseñas.
-*   **Monitor en Vivo:** Diseño moderno con fondo desenfocado, **Modo Collage Automático** cada 8 fotos y branding de Estudio Precinto.
-*   **Invitación Interactiva:** Mapa dinámico (Iframe o dirección), RSVP y **Wishlist (Lista de Regalos)** con reserva en tiempo real.
-*   **Panel de Moderación:** Control total de fotos, exportación de asistentes y regalos en CSV.
-*   **Generador de Álbum PDF:** Exportación de fotolibro digital listo para entregar al cliente.
+*   **Dashboard Maestro:** Gestión centralizada de eventos, packs y contraseñas.
+*   **Monitor en Vivo:** Diseño premium con fondo blur, modo collage automático y branding dinámico.
+*   **Invitación Interactiva:** RSVP, Mapa y Wishlist con reserva en tiempo real.
+*   **Moderación:** Control de fotos y exportación de reportes (CSV).
+*   **Álbum PDF:** Generación automática de fotolibro digital optimizado para A4.
 
-## ☁️ Notas de Firebase
-El proyecto utiliza Firebase en modo cliente. Asegúrate de que las reglas de seguridad permitan la escritura en `livefeed/` y que el plan de Storage sea Blaze si esperas mucho tráfico de imágenes.
+## 🛠 Tareas Pendientes (Roadmap)
+
+### 1. Control de Acceso por RSVP (Seguridad)
+Implementar una validación cruzada para que solo los invitados registrados puedan subir fotos:
+- Crear una lógica que compare el número de teléfono ingresado en el acceso a la cámara con los datos almacenados en el nodo `rsvp` del evento.
+- El teléfono debe actuar como ID único para la validación.
+- Impedir el acceso a la cámara si el teléfono no figura como "Confirmado".
+
+### 2. Notificaciones en Tiempo Real
+- Avisar al moderador cuando ingresa una nueva foto para aprobación.
 
 ---
-*Mantenido por Estudio Precinto*
+*Mantenido por Estudio Precinto - 2024*
