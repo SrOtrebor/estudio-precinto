@@ -276,23 +276,31 @@ export default function LiveMonitor() {
         .collage-container {
           width: 95%; height: 90%; display: grid;
           grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr;
-          gap: 30px; position: relative;
+          gap: 40px; position: relative;
+          align-items: center; justify-items: center;
         }
         .collage-item { 
-          position: relative; border-radius: 4px; overflow: hidden; 
-          box-shadow: 0 15px 35px rgba(0,0,0,0.4); 
+          position: relative; border-radius: 4px; 
+          box-shadow: 0 15px 40px rgba(0,0,0,0.4); 
           background: white; padding: 10px 10px 30px 10px;
           transform: rotate(var(--rot));
+          max-width: 90%; max-height: 90%;
+          display: flex; flex-direction: column;
         }
-        .collage-item.item-0 { --rot: -2deg; }
-        .collage-item.item-1 { --rot: 1.5deg; }
-        .collage-item.item-2 { --rot: 2.5deg; }
-        .collage-item.item-3 { --rot: -1.5deg; }
+        .collage-item.item-0 { --rot: -3deg; }
+        .collage-item.item-1 { --rot: 2deg; }
+        .collage-item.item-2 { --rot: 4deg; }
+        .collage-item.item-3 { --rot: -2.5deg; }
         
-        .collage-item img { width: 100%; height: 100%; object-fit: cover; border-radius: 2px; }
+        .collage-item img { 
+          max-width: 100%; max-height: 35vh; 
+          object-fit: contain; /* Respetar encuadre original */
+          display: block;
+        }
         .collage-author { 
-          position: absolute; bottom: 8px; left: 15px; 
-          color: #666; font-size: 0.7rem; font-weight: 900; text-transform: uppercase;
+          margin-top: 10px;
+          color: #444; font-size: 0.8rem; font-weight: 900; 
+          text-transform: uppercase; text-align: left;
         }
         .collage-title {
           position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);

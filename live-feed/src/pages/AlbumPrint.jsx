@@ -133,8 +133,8 @@ export default function AlbumPrint() {
         .album-polaroid-card:nth-child(even) { --r: 1deg; }
         .album-polaroid-card:nth-child(odd) { --r: -1deg; }
 
-        .photo-inner { width: 100%; aspect-ratio: 1/1; overflow: hidden; background: #000; }
-        .photo-inner img { width: 100%; height: 100%; object-fit: cover; }
+        .photo-inner { width: 100%; display: flex; justify-content: center; background: #000; }
+        .photo-inner img { max-width: 100%; height: auto; max-height: 180mm; object-fit: contain; }
         
         .photo-footer { margin-top: 5mm; text-align: left; }
         .photo-footer .author { font-weight: 900; font-size: 1.2rem; margin: 0; color: #111; font-family: 'Playfair Display', serif; }
