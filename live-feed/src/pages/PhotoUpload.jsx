@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { db, ref, onValue, get, push, set, storage, storageRef, uploadBytes, getDownloadURL } from "../firebase";
 import CameraCapture from "../components/CameraCapture";
 
@@ -7,6 +7,7 @@ const GUEST_NAME_KEY = "livefeed_guest_name";
 
 export default function PhotoUpload() {
   const { eventId } = useParams();
+  const navigate = useNavigate();
   const [eventConfig, setEventConfig] = useState(null);
   const [loadingEvent, setLoadingEvent] = useState(true);
   const [eventError, setEventError] = useState(null);
@@ -21,9 +22,6 @@ export default function PhotoUpload() {
   const [uploadError, setUploadError] = useState(null);
   const [photoCount, setPhotoCount] = useState(0);
 
-  // Cola offline: fotos pendientes de subir guardadas en localStorage
-  const offlineQueueRef = useRef([]);
-
   // ── Cargar configuración del evento ──────────────────────────────────────
   useEffect(() => {
     if (!eventId) {
@@ -33,19 +31,22 @@ export default function PhotoUpload() {
     }
 
     const configRef = ref(db, `livefeed/${eventId}/config`);
-    get(configRef)
-      .then((snap) => {
-        if (!snap.exists()) {
-          setEventError("Este evento no existe o el link es incorrecto.");
-        } else {
-          setEventConfig(snap.val());
-        }
-      })
-      .catch(() => setEventError("Error al cargar el evento. Revisá tu conexión."))
-      .finally(() => setLoadingEvent(false));
+    const unsub = onValue(configRef, (snap) => {
+      if (snap.exists()) {
+        setEventConfig(snap.val());
+        setLoadingEvent(false);
+      } else {
+        setEventError("Este evento no existe o el link es incorrecto.");
+        setLoadingEvent(false);
+      }
+    }, (err) => {
+      setEventError("Error de conexión con Firebase.");
+      setLoadingEvent(false);
+    });
+
+    return () => unsub();
   }, [eventId]);
 
-  // ── Confirmar nombre ──────────────────────────────────────────────────────
   const handleConfirmName = (e) => {
     e.preventDefault();
     const name = nameInput.trim();
@@ -55,14 +56,12 @@ export default function PhotoUpload() {
     setNameConfirmed(true);
   };
 
-  // ── Callback cuando la foto está lista (comprimida + watermark) ───────────
   const handlePhotoReady = useCallback((blob) => {
     setPendingBlob(blob);
     setUploadSuccess(false);
     setUploadError(null);
   }, []);
 
-  // ── Subir foto a Firebase ─────────────────────────────────────────────────
   const handleUpload = async () => {
     if (!pendingBlob || !guestName || !eventId) return;
 
@@ -74,12 +73,10 @@ export default function PhotoUpload() {
       const filename = `${timestamp}_${guestName.replace(/\s+/g, "-")}.jpg`;
       const photoRef = storageRef(storage, `events/${eventId}/photos/${filename}`);
 
-      // Subir imagen
       await uploadBytes(photoRef, pendingBlob, { contentType: "image/jpeg" });
       const imageUrl = await getDownloadURL(photoRef);
 
-      // Guardar metadata en Realtime DB
-      const autoApprove = eventConfig?.autoApprove !== false; // default true
+      const autoApprove = eventConfig?.autoApprove !== false;
       const newPhotoRef = ref(db, `livefeed/${eventId}/photos`);
       await set(push(newPhotoRef), {
         authorName: guestName,
@@ -95,206 +92,106 @@ export default function PhotoUpload() {
       setPendingBlob(null);
     } catch (err) {
       console.error(err);
-      // Guardar en cola offline
-      if (pendingBlob) {
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-          const queue = JSON.parse(localStorage.getItem("livefeed_offline_queue") || "[]");
-          queue.push({ dataUrl: ev.target.result, guestName, eventId, ts: Date.now() });
-          localStorage.setItem("livefeed_offline_queue", JSON.stringify(queue));
-          offlineQueueRef.current = queue;
-        };
-        reader.readAsDataURL(pendingBlob);
-      }
-      setUploadError("Sin conexión. La foto se guardó localmente y se subirá cuando vuelva la señal.");
+      setUploadError("Error al subir. Revisá tu conexión.");
     } finally {
       setUploading(false);
     }
   };
 
-  // ── Reintentar cola offline cuando vuelve la conexión ────────────────────
-  useEffect(() => {
-    const retryOfflineQueue = async () => {
-      const queue = JSON.parse(localStorage.getItem("livefeed_offline_queue") || "[]");
-      if (!queue.length) return;
+  if (loadingEvent) return <div className="monitor-screen"><div className="pulse-ring" /></div>;
+  
+  if (eventError) return (
+    <div className="not-found">
+      <h1>⚠️</h1>
+      <p>{eventError}</p>
+      <button className="mod-btn" onClick={() => navigate('/')}>Volver al inicio</button>
+    </div>
+  );
 
-      const remaining = [];
-      for (const item of queue) {
-        try {
-          const res = await fetch(item.dataUrl);
-          const blob = await res.blob();
-          const filename = `${item.ts}_offline_${item.guestName.replace(/\s+/g, "-")}.jpg`;
-          const photoRef = storageRef(storage, `events/${item.eventId}/photos/${filename}`);
-          await uploadBytes(photoRef, blob, { contentType: "image/jpeg" });
-          const imageUrl = await getDownloadURL(photoRef);
-          const newPhotoRef = ref(db, `livefeed/${item.eventId}/photos`);
-          await set(push(newPhotoRef), {
-            authorName: item.guestName,
-            imageUrl,
-            status: "approved",
-            hidden: false,
-            uploadedAt: item.ts,
-            storagePath: `events/${item.eventId}/photos/${filename}`,
-          });
-        } catch {
-          remaining.push(item);
-        }
-      }
-      localStorage.setItem("livefeed_offline_queue", JSON.stringify(remaining));
-    };
+  const accentColor = eventConfig?.accentColor || "#a28a68";
+  const hexToRgb = (hex) => {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : "162, 138, 104";
+  };
 
-    window.addEventListener("online", retryOfflineQueue);
-    return () => window.removeEventListener("online", retryOfflineQueue);
-  }, []);
-
-  // ── Render: loading ───────────────────────────────────────────────────────
-  if (loadingEvent) {
-    return (
-      <div className="upload-screen upload-screen--loading">
-        <div className="spinner spinner--large" />
-        <p>Cargando evento...</p>
-      </div>
-    );
-  }
-
-  if (eventError) {
-    return (
-      <div className="upload-screen upload-screen--error">
-        <div className="error-icon">⚠️</div>
-        <h2>Algo salió mal</h2>
-        <p>{eventError}</p>
-      </div>
-    );
-  }
-
-  if (eventConfig && eventConfig.cameraEnabled === false) {
-    return (
-      <div className="upload-screen">
-        <div className="error-icon">⏸️</div>
-        <h2>Cámara Pausada</h2>
-        <p>El organizador ha pausado la subida de fotos por el momento. Intentá de nuevo en un rato.</p>
-      </div>
-    );
-  }
-
-  // ── Render: pantalla de nombre ────────────────────────────────────────────
-  if (!nameConfirmed) {
-    return (
-      <div className="upload-screen">
-        <div className="event-header">
-          {eventConfig.logoUrl && (
-            <img src={eventConfig.logoUrl} alt={eventConfig.eventName} className="event-logo" />
-          )}
-          <h1 className="event-name">{eventConfig.eventName || "¡Bienvenido!"}</h1>
-          <p className="event-tagline">{eventConfig.tagline || "Compartí tus fotos del evento"}</p>
-        </div>
-
-        <form className="name-form" onSubmit={handleConfirmName}>
-          <label htmlFor="name-input" className="name-label">
-            ¿Cómo te llamás?
-          </label>
-          <input
-            id="name-input"
-            type="text"
-            className="name-input"
-            placeholder="Tu nombre..."
-            value={nameInput}
-            onChange={(e) => setNameInput(e.target.value)}
-            maxLength={40}
-            autoFocus
-            required
-          />
-          <button type="submit" className="btn-primary" disabled={!nameInput.trim()}>
-            ¡Listo, quiero sacar fotos!
-          </button>
-        </form>
-      </div>
-    );
-  }
-
-  // ── Render: pantalla principal ────────────────────────────────────────────
   return (
-    <div className="upload-screen">
-      <div className="event-header event-header--compact">
-        {eventConfig.logoUrl && (
-          <img src={eventConfig.logoUrl} alt={eventConfig.eventName} className="event-logo event-logo--small" />
+    <div className="guest-app" style={{ "--accent": accentColor, "--accent-rgb": hexToRgb(accentColor) }}>
+      
+      <header className="guest-nav">
+        <div className="guest-logo-circle" onClick={() => navigate(`/invitacion/${eventId}`)}>
+          {eventConfig.logoUrl ? (
+            <img src={eventConfig.logoUrl} alt="Logo" />
+          ) : (
+            <span>📸</span>
+          )}
+        </div>
+        <div className="guest-nav-info">
+          <h1>{eventConfig.eventName}</h1>
+          <p>{nameConfirmed ? `Hola, ${guestName}` : 'Cámara del evento'}</p>
+        </div>
+      </header>
+
+      <main className="guest-container">
+        {!nameConfirmed ? (
+          <div className="welcome-card">
+            <span className="welcome-icon">👋</span>
+            <h2>¡Hola!</h2>
+            <p>Para que sepamos quién saca la foto, por favor ingresá tu nombre.</p>
+            <form onSubmit={handleConfirmName}>
+              <input 
+                type="text" 
+                className="guest-input" 
+                placeholder="Tu nombre..."
+                value={nameInput}
+                onChange={e => setNameInput(e.target.value)}
+                required
+                autoFocus
+              />
+              <button type="submit" className="btn-premium">
+                Comenzar a sacar fotos
+              </button>
+            </form>
+          </div>
+        ) : (
+          <>
+            {uploadSuccess ? (
+              <div className="success-overlay">
+                <div className="success-check">✨</div>
+                <h2>¡Foto enviada!</h2>
+                <p>Tu foto ya está volando hacia la pantalla principal.</p>
+                <button className="btn-premium" style={{ marginTop: '2rem' }} onClick={() => setUploadSuccess(false)}>
+                  Sacar otra foto
+                </button>
+              </div>
+            ) : (
+              <div style={{ position: 'relative', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                <CameraCapture 
+                  disabled={uploading}
+                  onPhotoReady={handlePhotoReady}
+                />
+                
+                {pendingBlob && !uploading && (
+                  <button className="btn-floating-send" onClick={handleUpload}>
+                    📤 ENVIAR AL SALÓN
+                  </button>
+                )}
+
+                {uploading && (
+                  <div className="uploading-indicator" style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.7)', borderRadius: '20px', zIndex: 110, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                    <div className="pulse-ring" />
+                    <p style={{ marginTop: '1rem', fontWeight: '700' }}>Subiendo...</p>
+                  </div>
+                )}
+              </div>
+            )}
+          </>
         )}
-        <div>
-          <h1 className="event-name event-name--small">{eventConfig.eventName}</h1>
-          <p className="guest-greeting">
-            Hola, <strong>{guestName}</strong>!
-            <button
-              className="btn-change-name"
-              onClick={() => {
-                localStorage.removeItem(GUEST_NAME_KEY);
-                setNameConfirmed(false);
-                setNameInput("");
-                setGuestName("");
-              }}
-            >
-              (cambiar)
-            </button>
-          </p>
-        </div>
-      </div>
-
-      {/* Éxito de upload */}
-      {uploadSuccess && (
-        <div className="upload-success">
-          <div className="success-icon">🎉</div>
-          <h2>¡Foto enviada!</h2>
-          <p>Ya está apareciendo en la pantalla del salón</p>
-          {photoCount > 1 && <p className="photo-count">Mandaste {photoCount} fotos</p>}
-        </div>
-      )}
-
-      {/* Captura de cámara */}
-      {!uploadSuccess && (
-        <CameraCapture
-          watermarkUrl={["premium", "corporativo"].includes(eventConfig.tier) ? eventConfig.watermarkUrl : null}
-          onPhotoReady={handlePhotoReady}
-          disabled={uploading}
-        />
-      )}
-
-      {/* Botón de enviar */}
-      {pendingBlob && !uploading && !uploadSuccess && (
-        <button className="btn-upload" onClick={handleUpload}>
-          📤 Enviar foto al salón
-        </button>
-      )}
-
-      {uploading && (
-        <div className="uploading-indicator">
-          <div className="spinner" />
-          <p>Enviando al salón...</p>
-        </div>
-      )}
+      </main>
 
       {uploadError && (
-        <div className="upload-error">
-          <p>{uploadError}</p>
+        <div style={{ position: 'fixed', top: '5rem', left: '1rem', right: '1rem', background: 'var(--danger)', color: '#fff', padding: '1rem', borderRadius: '12px', textAlign: 'center', zIndex: 1000 }}>
+          {uploadError}
         </div>
-      )}
-
-      {/* Botón para sacar otra */}
-      {uploadSuccess && (
-        <button
-          className="btn-primary btn-another"
-          onClick={() => {
-            setUploadSuccess(false);
-            setPendingBlob(null);
-          }}
-        >
-          📷 Sacar otra foto
-        </button>
-      )}
-
-      {/* Modo moderación info */}
-      {eventConfig.autoApprove === false && !uploadSuccess && (
-        <p className="moderation-notice">
-          📋 Tus fotos serán revisadas antes de aparecer en pantalla
-        </p>
       )}
     </div>
   );

@@ -185,6 +185,9 @@ export default function LiveMonitor() {
               <span className="polaroid-event-name">
                 {eventConfig?.eventName}
               </span>
+              {eventConfig?.logoUrl && (
+                <img src={eventConfig.logoUrl} alt="Logo" className="polaroid-mini-logo" />
+              )}
             </div>
           </div>
         </div>

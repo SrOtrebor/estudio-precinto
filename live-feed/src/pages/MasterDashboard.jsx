@@ -27,6 +27,7 @@ export default function MasterDashboard() {
   const [heroFile, setHeroFile] = useState(null);
   const [bannerFiles, setBannerFiles] = useState([]);
   const [uploadProgress, setUploadProgress] = useState("");
+  const [editingEvent, setEditingEvent] = useState(null); // Para el modo edición
 
   // ── Auth ──────────────────────────────────────────────────────────────────
   const handleLogin = (e) => {
@@ -66,50 +67,56 @@ export default function MasterDashboard() {
   }, [authed]);
 
   // ── Crear Evento ──────────────────────────────────────────────────────────
-  const handleCreateEvent = async (e) => {
+  const handleCreateOrUpdateEvent = async (e) => {
     e.preventDefault();
-    if (!newEvent.id.match(/^[a-z0-9-]+$/)) {
+    const isEdit = !!editingEvent;
+    
+    if (!isEdit && !newEvent.id.match(/^[a-z0-9-]+$/)) {
       alert("El ID del evento solo puede contener letras minúsculas, números y guiones.");
       return;
     }
     
     setLoading(true);
-    setUploadProgress("Validando...");
+    setUploadProgress("Procesando...");
     
-    const eventRef = ref(db, `livefeed/${newEvent.id}/config`);
-    const snap = await get(eventRef);
-    if (snap.exists()) {
-      alert("Ya existe un evento con ese ID.");
-      setLoading(false);
-      return;
+    const targetId = isEdit ? editingEvent.id : newEvent.id;
+    const eventRef = ref(db, `livefeed/${targetId}/config`);
+    
+    if (!isEdit) {
+      const snap = await get(eventRef);
+      if (snap.exists()) {
+        alert("Ya existe un evento con ese ID.");
+        setLoading(false);
+        return;
+      }
     }
 
     try {
-      let logoUrl = null;
-      let heroUrl = null;
-      let bannerUrls = [];
+      let logoUrl = isEdit ? editingEvent.logoUrl : null;
+      let heroUrl = isEdit ? editingEvent.heroUrl : null;
+      let bannerUrls = isEdit ? (editingEvent.bannerUrls || []) : [];
 
-      // 1. Subir Logo si existe
+      // Subir Logo si hay archivo nuevo
       if (logoFile) {
         setUploadProgress("Subiendo logo...");
-        const logoRef = storageRef(storage, `livefeed/${newEvent.id}/logo_${Date.now()}`);
+        const logoRef = storageRef(storage, `livefeed/${targetId}/logo_${Date.now()}`);
         await uploadBytes(logoRef, logoFile);
         logoUrl = await getDownloadURL(logoRef);
       }
 
-      // 1.5 Subir Imagen Invitación si existe
+      // Subir Hero si hay archivo nuevo
       if (heroFile) {
-        setUploadProgress("Subiendo imagen invitación...");
-        const heroRef = storageRef(storage, `livefeed/${newEvent.id}/hero_${Date.now()}`);
+        setUploadProgress("Subiendo portada...");
+        const heroRef = storageRef(storage, `livefeed/${targetId}/hero_${Date.now()}`);
         await uploadBytes(heroRef, heroFile);
         heroUrl = await getDownloadURL(heroRef);
       }
 
-      // 2. Subir Banners si existen
+      // Subir Banners si hay archivos nuevos
       if (bannerFiles.length > 0) {
         setUploadProgress(`Subiendo ${bannerFiles.length} banners...`);
         for (let i = 0; i < bannerFiles.length; i++) {
-          const bRef = storageRef(storage, `livefeed/${newEvent.id}/banner_${i}_${Date.now()}`);
+          const bRef = storageRef(storage, `livefeed/${targetId}/banner_${i}_${Date.now()}`);
           await uploadBytes(bRef, bannerFiles[i]);
           const bUrl = await getDownloadURL(bRef);
           bannerUrls.push(bUrl);
@@ -120,29 +127,48 @@ export default function MasterDashboard() {
         eventName: newEvent.name,
         date: newEvent.date,
         tier: newEvent.tier,
-        adminPassword: newEvent.adminPassword,
+        adminPassword: newEvent.adminPassword || (isEdit ? editingEvent.adminPassword : ""),
         accentColor: newEvent.accentColor,
-        cameraEnabled: true,
-        autoApprove: true,
-        logoUrl: logoUrl,
-        heroUrl: heroUrl,
-        bannerUrls: bannerUrls,
-        createdAt: Date.now()
+        cameraEnabled: isEdit ? (editingEvent.cameraEnabled ?? true) : true,
+        autoApprove: isEdit ? (editingEvent.autoApprove ?? true) : true,
+        logoUrl,
+        heroUrl,
+        bannerUrls,
+        createdAt: isEdit ? editingEvent.createdAt : Date.now(),
+        updatedAt: Date.now()
       };
 
       await set(eventRef, configData);
-      setShowCreateModal(false);
-      setNewEvent({ id: "", name: "", date: "", tier: "base", adminPassword: "", accentColor: "#a28a68" });
-      setLogoFile(null);
-      setHeroFile(null);
-      setBannerFiles([]);
-      setUploadProgress("");
+      closeModal();
     } catch (err) {
       console.error(err);
-      alert("Error al crear evento: " + err.message);
+      alert("Error: " + err.message);
     } finally {
       setLoading(false);
     }
+  };
+
+  const closeModal = () => {
+    setShowCreateModal(false);
+    setEditingEvent(null);
+    setNewEvent({ id: "", name: "", date: "", tier: "base", adminPassword: "", accentColor: "#a28a68" });
+    setLogoFile(null);
+    setHeroFile(null);
+    setBannerFiles([]);
+    setUploadProgress("");
+  };
+
+  const openEdit = (ev) => {
+    setEditingEvent(ev);
+    setNewEvent({
+      id: ev.id,
+      name: ev.eventName,
+      date: ev.date || "",
+      tier: ev.tier || "base",
+      adminPassword: ev.adminPassword || "",
+      accentColor: ev.accentColor || "#a28a68"
+    });
+    setShowCreateModal(true);
   };
 
   const handleDeleteEvent = async (eventId) => {
@@ -243,7 +269,8 @@ export default function MasterDashboard() {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginTop: '0.5rem' }}>
                 <button className="mod-btn" style={{ padding: '0.7rem' }} onClick={() => window.open(`${window.location.pathname}#/invitacion/${ev.id}`, '_blank')}>🎟️ Invitación</button>
                 <button className="mod-btn" style={{ padding: '0.7rem' }} onClick={() => window.open(`${window.location.pathname}#/monitor/${ev.id}`, '_blank')}>📺 Monitor</button>
-                <button className="mod-btn" style={{ padding: '0.7rem', gridColumn: '1 / -1' }} onClick={() => window.open(`${window.location.pathname}#/moderar/${ev.id}`, '_blank')}>🛠️ Gestionar Evento (Mod)</button>
+                <button className="mod-btn" style={{ padding: '0.7rem' }} onClick={() => openEdit(ev)}>⚙️ Editar Config</button>
+                <button className="mod-btn" style={{ padding: '0.7rem' }} onClick={() => window.open(`${window.location.pathname}#/moderar/${ev.id}`, '_blank')}>🛠️ Moderación</button>
               </div>
             </div>
           ))
@@ -252,14 +279,16 @@ export default function MasterDashboard() {
 
       {/* Modal de Creación */}
       {showCreateModal && (
-        <div className="lightbox" onClick={() => setShowCreateModal(false)}>
+        <div className="lightbox" onClick={closeModal}>
           <div className="mod-login-card" onClick={e => e.stopPropagation()} style={{ maxWidth: '500px', textAlign: 'left' }}>
-            <h2 style={{ marginBottom: '1.5rem', color: 'var(--accent)' }}>Crear Nuevo Evento</h2>
-            <form onSubmit={handleCreateEvent} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <div>
-                <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>ID del Evento (URL, ej: xv-vale)</label>
-                <input type="text" className="mod-login-input" style={{ width: '100%' }} value={newEvent.id} onChange={e => setNewEvent({...newEvent, id: e.target.value.toLowerCase()})} required />
-              </div>
+            <h2 style={{ marginBottom: '1.5rem', color: 'var(--accent)' }}>{editingEvent ? 'Editar Evento' : 'Crear Nuevo Evento'}</h2>
+            <form onSubmit={handleCreateOrUpdateEvent} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              {!editingEvent && (
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>ID del Evento (URL, ej: xv-vale)</label>
+                  <input type="text" className="mod-login-input" style={{ width: '100%' }} value={newEvent.id} onChange={e => setNewEvent({...newEvent, id: e.target.value.toLowerCase()})} required />
+                </div>
+              )}
               <div>
                 <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Nombre Público (ej: Los XV de Vale)</label>
                 <input type="text" className="mod-login-input" style={{ width: '100%' }} value={newEvent.name} onChange={e => setNewEvent({...newEvent, name: e.target.value})} required />
