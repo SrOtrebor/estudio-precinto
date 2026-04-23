@@ -138,6 +138,21 @@ export default function Invitation() {
   const themeClass = eventConfig?.theme === 'light' ? 'theme-light' : 'theme-dark';
   const fontFamily = eventConfig?.font || 'Inter';
 
+  // ── Helper para extraer iframe src ────────────────────────────────────────
+  const getMapEmbedSrc = (urlOrIframe) => {
+    if (!urlOrIframe) return null;
+    if (urlOrIframe.includes('<iframe')) {
+      const match = urlOrIframe.match(/src="([^"]+)"/);
+      return match ? match[1] : null;
+    }
+    if (urlOrIframe.includes('/embed')) {
+      return urlOrIframe;
+    }
+    return null; // Si es un link normal (goo.gl), no lo podemos embeber directamente sin que tire error.
+  };
+
+  const mapEmbedSrc = getMapEmbedSrc(eventConfig?.mapUrl);
+
   return (
     <div className={`invitation-screen ${themeClass}`} style={{ 
       "--accent": accentColor, 
@@ -255,19 +270,29 @@ export default function Invitation() {
             <h2 style={{ fontSize: '1.5rem', fontWeight: '700' }}>Ubicación</h2>
             <p style={{ color: 'var(--text-muted)' }}>Te esperamos para festejar a lo grande.</p>
             
-            <div style={{ borderRadius: '20px', overflow: 'hidden', margin: '1.5rem 0', height: '250px', background: 'var(--bg-card)' }}>
-               {/* Asumiendo que pueden pegar un link largo o corto, lo ideal sería un iframe, pero si pegan URL directa, mostramos un mapa ilustrativo o un iframe si es compatible */}
-               <iframe 
-                  src={eventConfig.mapUrl.includes('embed') ? eventConfig.mapUrl : `https://maps.google.com/maps?q=${encodeURIComponent(eventConfig.mapUrl)}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
-                  width="100%" 
-                  height="100%" 
-                  style={{ border: 0 }} 
-                  allowFullScreen="" 
-                  loading="lazy"
-               ></iframe>
-            </div>
+            {mapEmbedSrc && (
+              <div style={{ borderRadius: '20px', overflow: 'hidden', margin: '1.5rem 0', height: '250px', background: 'var(--bg-card)' }}>
+                 <iframe 
+                    src={mapEmbedSrc}
+                    width="100%" 
+                    height="100%" 
+                    style={{ border: 0 }} 
+                    allowFullScreen="" 
+                    loading="lazy"
+                 ></iframe>
+              </div>
+            )}
 
-            <button className="btn-pill" onClick={() => window.open(eventConfig.mapUrl, '_blank')}>
+            <button 
+              className="btn-pill" 
+              onClick={() => {
+                // Si pegaron todo el iframe, limpiamos para intentar sacar solo el src para abrirlo, 
+                // o mejor, si no tiene 'http', no hacemos nada. Pero un iframe siempre tiene http en el src.
+                const linkToOpen = mapEmbedSrc || eventConfig.mapUrl;
+                window.open(linkToOpen, '_blank');
+              }}
+              style={{ marginTop: mapEmbedSrc ? '0' : '1.5rem' }}
+            >
               📍 Ver en Google Maps
             </button>
           </div>

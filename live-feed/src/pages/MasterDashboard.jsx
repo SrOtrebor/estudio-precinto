@@ -98,6 +98,43 @@ export default function MasterDashboard() {
     }
   };
 
+  // ── Utilidad de Compresión ────────────────────────────────────────────────
+  const compressImage = (file, maxWidth = 1920, quality = 0.8) => {
+    return new Promise((resolve, reject) => {
+      if (!file.type.startsWith('image/')) {
+        resolve(file); // No comprimir videos ni otros archivos
+        return;
+      }
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (e) => {
+        const img = new Image();
+        img.src = e.target.result;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+          
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          canvas.toBlob((blob) => {
+            resolve(blob);
+          }, file.type === 'image/png' ? 'image/png' : 'image/jpeg', quality);
+        };
+        img.onerror = reject;
+      };
+      reader.onerror = reject;
+    });
+  };
+
   // ── Crear Evento ──────────────────────────────────────────────────────────
   const handleCreateOrUpdateEvent = async (e) => {
     e.preventDefault();
@@ -130,26 +167,30 @@ export default function MasterDashboard() {
 
       // Subir Logo si hay archivo nuevo
       if (logoFile) {
-        setUploadProgress("Subiendo logo...");
+        setUploadProgress("Optimizando y subiendo logo...");
+        const compressedLogo = await compressImage(logoFile, 800, 0.9);
         const logoRef = storageRef(storage, `livefeed/${targetId}/logo_${Date.now()}`);
-        await uploadBytes(logoRef, logoFile);
+        await uploadBytes(logoRef, compressedLogo);
         logoUrl = await getDownloadURL(logoRef);
       }
 
       // Subir Hero si hay archivo nuevo
       if (heroFile) {
-        setUploadProgress("Subiendo portada...");
+        setUploadProgress("Optimizando y subiendo portada...");
+        const compressedHero = await compressImage(heroFile, 1920, 0.8);
         const heroRef = storageRef(storage, `livefeed/${targetId}/hero_${Date.now()}`);
-        await uploadBytes(heroRef, heroFile);
+        await uploadBytes(heroRef, compressedHero);
         heroUrl = await getDownloadURL(heroRef);
       }
 
       // Subir Banners si hay archivos nuevos
       if (bannerFiles.length > 0) {
-        setUploadProgress(`Subiendo ${bannerFiles.length} banners...`);
+        setUploadProgress(`Procesando y subiendo ${bannerFiles.length} banners...`);
         for (let i = 0; i < bannerFiles.length; i++) {
+          const file = bannerFiles[i];
+          const fileToUpload = await compressImage(file, 1920, 0.8);
           const bRef = storageRef(storage, `livefeed/${targetId}/banner_${i}_${Date.now()}`);
-          await uploadBytes(bRef, bannerFiles[i]);
+          await uploadBytes(bRef, fileToUpload);
           const bUrl = await getDownloadURL(bRef);
           bannerUrls.push(bUrl);
         }
@@ -342,7 +383,7 @@ export default function MasterDashboard() {
       {/* Modal de Creación */}
       {showCreateModal && (
         <div className="lightbox" onClick={closeModal}>
-          <div className="mod-login-card" onClick={e => e.stopPropagation()} style={{ maxWidth: '500px', textAlign: 'left' }}>
+          <div className="mod-login-card" onClick={e => e.stopPropagation()} style={{ maxWidth: '500px', textAlign: 'left', maxHeight: '90vh', overflowY: 'auto' }}>
             <h2 style={{ marginBottom: '1.5rem', color: 'var(--accent)' }}>{editingEvent ? 'Editar Evento' : 'Crear Nuevo Evento'}</h2>
             <form onSubmit={handleCreateOrUpdateEvent} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               {!editingEvent && (
@@ -418,7 +459,8 @@ export default function MasterDashboard() {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div>
                   <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Link de Google Maps</label>
-                  <input type="url" className="mod-login-input" style={{ width: '100%' }} placeholder="https://maps.app.goo.gl/..." value={newEvent.mapUrl} onChange={e => setNewEvent({...newEvent, mapUrl: e.target.value})} />
+                  <input type="url" className="mod-login-input" style={{ width: '100%' }} placeholder="Pegá el iframe de 'Insertar Mapa' o el link de compartir" value={newEvent.mapUrl} onChange={e => setNewEvent({...newEvent, mapUrl: e.target.value})} />
+                  <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '0.3rem' }}>* Ideal: Compartir &gt; Insertar un mapa y pegar todo el iframe.</p>
                 </div>
                 <div>
                   <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Datos Bancarios (CVU/Alias)</label>

@@ -62,6 +62,39 @@ export default function PhotoUpload() {
     setUploadError(null);
   }, []);
 
+  // ── Utilidad de Compresión ────────────────────────────────────────────────
+  const compressImage = (fileOrBlob, maxWidth = 1200, quality = 0.8) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(fileOrBlob);
+      reader.onload = (e) => {
+        const img = new Image();
+        img.src = e.target.result;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+          
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          canvas.toBlob((blob) => {
+            resolve(blob);
+          }, 'image/jpeg', quality);
+        };
+        img.onerror = reject;
+      };
+      reader.onerror = reject;
+    });
+  };
+
   const handleUpload = async () => {
     if (!pendingBlob || !guestName || !eventId) return;
 
@@ -73,7 +106,10 @@ export default function PhotoUpload() {
       const filename = `${timestamp}_${guestName.replace(/\s+/g, "-")}.jpg`;
       const photoRef = storageRef(storage, `events/${eventId}/photos/${filename}`);
 
-      await uploadBytes(photoRef, pendingBlob, { contentType: "image/jpeg" });
+      // Comprimir antes de subir (Max 1200px) para ahorrar datos y acelerar Live Monitor
+      const compressedBlob = await compressImage(pendingBlob, 1200, 0.75);
+
+      await uploadBytes(photoRef, compressedBlob, { contentType: "image/jpeg" });
       const imageUrl = await getDownloadURL(photoRef);
 
       const autoApprove = eventConfig?.autoApprove !== false;
