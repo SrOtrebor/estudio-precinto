@@ -202,6 +202,9 @@ export default function LiveMonitor() {
             <div className="polaroid-frame-modern">
               <div className="polaroid-photo-area">
                 <img src={currentPhoto.imageUrl} alt="Live Feed" className="photo-main" />
+                {eventConfig?.logoUrl && (
+                  <img src={eventConfig.logoUrl} alt="Watermark" className="photo-watermark" />
+                )}
               </div>
               <div className="polaroid-info-area">
                 <div className="polaroid-info-left">
@@ -209,10 +212,7 @@ export default function LiveMonitor() {
                   <div className="polaroid-name">{currentPhoto.authorName}</div>
                 </div>
                 <div className="polaroid-info-right">
-                  <span className="polaroid-event-name-mini">{eventConfig?.eventName}</span>
-                  {eventConfig?.logoUrl && (
-                    <img src={eventConfig.logoUrl} alt="Logo" className="polaroid-mini-logo" />
-                  )}
+                  <span className="polaroid-event-name-highlight">{eventConfig?.eventName}</span>
                 </div>
               </div>
             </div>
@@ -271,19 +271,28 @@ export default function LiveMonitor() {
           from { opacity: 0; transform: translateY(50px) rotate(-5deg) scale(0.9); }
           to { opacity: 1; transform: translateY(0) rotate(-1deg) scale(1); }
         }
-        .polaroid-photo-area { width: 100%; flex-grow: 1; overflow: hidden; background: #000; }
+        .polaroid-photo-area { position: relative; width: 100%; flex-grow: 1; overflow: hidden; background: #000; }
         .photo-main { max-width: 100%; max-height: 70vh; display: block; object-fit: contain; }
+        .photo-watermark {
+          position: absolute; top: 20px; right: 20px;
+          height: 60px; width: auto; object-fit: contain;
+          opacity: 0.6; pointer-events: none;
+          filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
         .polaroid-info-area { 
           margin-top: 15px; text-align: left; padding: 0 10px;
           display: flex; justify-content: space-between; align-items: flex-end;
         }
         .polaroid-info-left { display: flex; flex-direction: column; }
         .polaroid-label { font-size: 0.7rem; color: #999; letter-spacing: 2px; font-weight: 700; }
-        .polaroid-name { font-size: 2rem; color: #222; font-weight: 900; line-height: 1.1; }
+        .polaroid-name { font-size: 2.2rem; color: #111; font-weight: 900; line-height: 1.1; font-family: 'Playfair Display', serif; }
         
-        .polaroid-info-right { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
-        .polaroid-event-name-mini { font-size: 0.8rem; font-weight: 700; color: var(--accent); text-transform: uppercase; }
-        .polaroid-mini-logo { height: 35px; width: auto; object-fit: contain; }
+        .polaroid-info-right { display: flex; flex-direction: column; align-items: flex-end; }
+        .polaroid-event-name-highlight { 
+          font-size: 1.4rem; font-weight: 900; color: var(--accent); 
+          text-transform: uppercase; letter-spacing: -1px;
+          line-height: 1; text-align: right;
+        }
 
         /* Collage Styles */
         .collage-container {
