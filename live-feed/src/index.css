@@ -1,0 +1,190 @@
+/* ═══════════════════════════════════════════════════════
+   LIVE FEED — CSS Core (variables, reset, base)
+   ═══════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --accent: #a28a68;
+  --accent-glow: rgba(162, 138, 104, 0.25);
+  --bg-deep: #0a0a0f;
+  --bg-card: #111118;
+  --bg-glass: rgba(255, 255, 255, 0.04);
+  --border: rgba(255, 255, 255, 0.08);
+  --border-accent: rgba(162, 138, 104, 0.3);
+  --text: #f0ede8;
+  --text-secondary: #8a8a9a;
+  --text-muted: #4a4a5a;
+  --success: #4caf7d;
+  --danger: #e05c5c;
+  --warning: #e0a84a;
+  --pending: #5b8dee;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--bg-deep);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* ── Spinner ─────────────────────────────────────────── */
+.spinner {
+  width: 36px; height: 36px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+.spinner--large { width: 56px; height: 56px; border-width: 4px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Buttons ─────────────────────────────────────────── */
+.btn-primary {
+  display: block; width: 100%;
+  padding: 1rem 1.5rem;
+  background: linear-gradient(135deg, var(--accent), #c4a97a);
+  color: #0a0a0f; font-weight: 700; font-size: 1rem;
+  border: none; border-radius: var(--radius); cursor: pointer;
+  transition: var(--transition); letter-spacing: 0.02em;
+  box-shadow: 0 4px 20px var(--accent-glow);
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px var(--accent-glow); }
+.btn-primary:active { transform: translateY(0); }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+/* ── 404 / Home ──────────────────────────────────────── */
+.not-found, .home-screen {
+  min-height: 100vh; display: flex;
+  align-items: center; justify-content: center;
+  padding: 2rem;
+}
+.home-card {
+  max-width: 480px; width: 100%;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 2.5rem; text-align: center;
+}
+.home-card h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+.home-card > p { color: var(--accent); margin-bottom: 1.5rem; }
+.home-hint { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 2rem; }
+.home-routes { display: flex; flex-direction: column; gap: 0.75rem; text-align: left; }
+.home-route-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.75rem 1rem; background: var(--bg-glass);
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+}
+.home-route-item code { color: var(--accent); font-size: 0.8rem; }
+.home-route-item span { color: var(--text-secondary); font-size: 0.85rem; }
+
+/* ══════════════════════════════════════════════════════
+   PHOTO UPLOAD — App del invitado
+   ══════════════════════════════════════════════════════ */
+.upload-screen {
+  min-height: 100vh; display: flex; flex-direction: column;
+  align-items: center; padding: 1.5rem 1.25rem 2rem;
+  gap: 1.5rem; max-width: 480px; margin: 0 auto;
+}
+.upload-screen--loading, .upload-screen--error {
+  justify-content: center; text-align: center; gap: 1rem;
+}
+.error-icon { font-size: 3rem; }
+.upload-screen--error h2 { color: var(--danger); }
+
+/* Event header */
+.event-header {
+  width: 100%; text-align: center;
+  padding: 1.5rem 0 0.5rem; animation: fadeDown 0.5s ease;
+}
+.event-header--compact { display: flex; align-items: center; gap: 1rem; text-align: left; padding: 0; }
+.event-logo { max-height: 80px; object-fit: contain; margin-bottom: 0.75rem; }
+.event-logo--small { max-height: 44px; margin: 0; }
+.event-name { font-size: 1.6rem; font-weight: 800; color: var(--accent); line-height: 1.2; }
+.event-name--small { font-size: 1rem; font-weight: 700; color: var(--text); }
+.event-tagline { color: var(--text-secondary); font-size: 0.95rem; margin-top: 0.4rem; }
+
+/* Name form */
+.name-form { width: 100%; display: flex; flex-direction: column; gap: 1rem; }
+.name-label { font-size: 1.1rem; font-weight: 600; color: var(--text); text-align: center; }
+.name-input {
+  width: 100%; padding: 1rem 1.25rem; font-size: 1.1rem;
+  background: var(--bg-card); border: 2px solid var(--border);
+  border-radius: var(--radius); color: var(--text); outline: none;
+  transition: var(--transition);
+}
+.name-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+
+/* Guest greeting */
+.guest-greeting { color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.2rem; }
+.btn-change-name {
+  background: none; border: none; color: var(--accent);
+  cursor: pointer; font-size: 0.8rem; padding: 0 0 0 0.25rem;
+  text-decoration: underline;
+}
+
+/* Camera */
+.camera-capture { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+.camera-trigger { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 0.75rem; }
+.btn-camera {
+  display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+  width: 100%; padding: 2rem; cursor: pointer;
+  background: var(--bg-card); border: 2px dashed var(--border-accent);
+  border-radius: var(--radius); color: var(--text);
+  transition: var(--transition); font-size: 1rem; font-weight: 600;
+}
+.btn-camera:hover { border-color: var(--accent); background: rgba(162,138,104,0.08); }
+.btn-camera--disabled { opacity: 0.5; cursor: not-allowed; }
+.camera-icon { font-size: 3rem; }
+.camera-hint { color: var(--text-muted); font-size: 0.8rem; }
+
+/* Processing */
+.camera-processing { display: flex; flex-direction: column; align-items: center; gap: 0.75rem; padding: 2rem; }
+.processing-sub { color: var(--text-muted); font-size: 0.8rem; }
+
+/* Preview */
+.camera-preview { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+.preview-wrapper { position: relative; width: 100%; border-radius: var(--radius); overflow: hidden; }
+.preview-image { width: 100%; display: block; border-radius: var(--radius); }
+.preview-badge { position: absolute; bottom: 0.5rem; left: 0.5rem; }
+.size-tag {
+  background: rgba(0,0,0,0.7); color: var(--success);
+  padding: 0.3rem 0.6rem; border-radius: 6px; font-size: 0.75rem;
+}
+.btn-retake {
+  background: none; border: 1px solid var(--border); color: var(--text-secondary);
+  padding: 0.6rem 1.2rem; border-radius: var(--radius-sm); cursor: pointer;
+  transition: var(--transition); font-size: 0.9rem;
+}
+.btn-retake:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Upload button */
+.btn-upload {
+  width: 100%; padding: 1.1rem; font-size: 1rem; font-weight: 700;
+  background: linear-gradient(135deg, #4caf7d, #3a9e6a);
+  color: white; border: none; border-radius: var(--radius);
+  cursor: pointer; transition: var(--transition);
+  box-shadow: 0 4px 20px rgba(76, 175, 125, 0.3);
+}
+.btn-upload:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(76,175,125,0.4); }
+
+.uploading-indicator { display: flex; flex-direction: column; align-items: center; gap: 0.75rem; }
+.upload-success { width: 100%; text-align: center; padding: 1.5rem; animation: fadeIn 0.4s ease; }
+.success-icon { font-size: 3.5rem; margin-bottom: 0.5rem; }
+.upload-success h2 { font-size: 1.5rem; color: var(--success); margin-bottom: 0.5rem; }
+.photo-count { color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.5rem; }
+.upload-error { color: var(--warning); font-size: 0.85rem; text-align: center; padding: 0.75rem; background: rgba(224,168,74,0.1); border-radius: var(--radius-sm); }
+.camera-error { color: var(--danger); text-align: center; }
+.btn-retry { margin-top: 0.5rem; background: none; border: 1px solid var(--danger); color: var(--danger); padding: 0.4rem 0.8rem; border-radius: 8px; cursor: pointer; }
+.btn-another { margin-top: 0.5rem; }
+.moderation-notice { color: var(--text-muted); font-size: 0.8rem; text-align: center; }
+
+@keyframes fadeDown { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
