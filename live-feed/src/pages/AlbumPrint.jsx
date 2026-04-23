@@ -11,13 +11,11 @@ export default function AlbumPrint() {
   useEffect(() => {
     if (!eventId) return;
 
-    // Cargar Config
     const configRef = ref(db, `livefeed/${eventId}/config`);
     onValue(configRef, (snap) => {
       setEventConfig(snap.val());
     });
 
-    // Cargar Fotos Aprobadas
     const photosRef = ref(db, `livefeed/${eventId}/photos`);
     const unsub = onValue(photosRef, (snap) => {
       const data = snap.val();
@@ -33,65 +31,114 @@ export default function AlbumPrint() {
     return () => unsub();
   }, [eventId]);
 
-  if (loading) return <div style={{ padding: '2rem', textAlign: 'center' }}>Generando Álbum...</div>;
+  if (loading) return <div style={{ padding: '2rem', textAlign: 'center' }}>Generando Álbum Digital...</div>;
+
+  const accentColor = eventConfig?.accentColor || "#a28a68";
 
   return (
     <div className="album-print-page">
-      <header className="no-print" style={{ padding: '1rem', background: '#333', color: '#fff', textAlign: 'center' }}>
-        <h2>Vista Previa del Álbum - {eventConfig?.eventName}</h2>
-        <p>Presioná Ctrl+P (o Cmd+P) y seleccioná "Guardar como PDF" en el destino de la impresora.</p>
-        <button onClick={() => window.print()} style={{ padding: '0.8rem 2rem', fontSize: '1.1rem', cursor: 'pointer', background: '#a28a68', border: 'none', color: '#fff', borderRadius: '8px' }}>
-          🖨️ Abrir Diálogo de Impresión
-        </button>
+      <header className="no-print">
+        <div className="header-inner">
+          <div className="header-info">
+            <h2>Álbum Final: {eventConfig?.eventName}</h2>
+            <p>Vista optimizada para guardar como PDF (A4).</p>
+          </div>
+          <button onClick={() => window.print()} className="print-btn">
+            🖨️ Imprimir / Guardar PDF
+          </button>
+        </div>
       </header>
 
-      <div className="album-container">
-        <h1 className="album-main-title">{eventConfig?.eventName}</h1>
-        <p className="album-meta">Álbum de fotos del evento - {new Date().toLocaleDateString()}</p>
+      {/* PORTADA */}
+      <section className="album-cover">
+        <div className="cover-content">
+          {eventConfig?.logoUrl && <img src={eventConfig.logoUrl} alt="Logo" className="cover-logo" />}
+          <h1 style={{ color: accentColor }}>{eventConfig?.eventName}</h1>
+          <div className="cover-line" style={{ background: accentColor }}></div>
+          <p className="cover-date">{eventConfig?.date ? new Date(eventConfig.date).toLocaleDateString('es-AR', { dateStyle: 'long' }) : ''}</p>
+          <div className="cover-footer">
+            <p>Álbum de Fotos Digital</p>
+            <p className="studio-brand">by ESTUDIO PRECINTO</p>
+          </div>
+        </div>
+      </section>
 
+      {/* GRILLA DE FOTOS */}
+      <section className="album-body">
         <div className="album-grid">
           {photos.map((photo, index) => (
-            <div key={photo.id} className="album-item">
-              <img src={photo.imageUrl} alt={`Foto ${index + 1}`} />
-              <div className="album-footer">
-                <span>Por: {photo.authorName}</span>
-                <span>{new Date(photo.uploadedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+            <div key={photo.id} className="album-photo-card">
+              <div className="photo-wrapper">
+                <img src={photo.imageUrl} alt={`Foto ${index + 1}`} />
+              </div>
+              <div className="photo-meta">
+                <span className="author">De: {photo.authorName}</span>
+                <span className="time">{new Date(photo.uploadedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} hs</span>
               </div>
             </div>
           ))}
         </div>
-      </div>
+      </section>
+
+      <footer className="album-footer-all">
+        <p>Generado por Social Live Feed - {eventConfig?.eventName} - Página oficial del evento</p>
+      </footer>
 
       <style>{`
-        body { background: white; color: black; margin: 0; font-family: 'Inter', sans-serif; }
-        .album-container { max-width: 1000px; margin: 0 auto; padding: 2rem; }
-        .album-main-title { text-align: center; font-size: 3rem; margin-bottom: 0.5rem; color: #a28a68; }
-        .album-meta { text-align: center; font-style: italic; color: #666; margin-bottom: 3rem; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Playfair+Display:ital,wght@0,700;1,700&display=swap');
+
+        body { background: #f5f5f5; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
         
-        .album-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
-        .album-item { 
+        .no-print { 
+          position: sticky; top: 0; z-index: 1000;
+          background: #1a1a1a; color: white; padding: 1rem 0;
+          box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .header-inner { max-width: 1000px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 2rem; }
+        .header-info h2 { margin: 0; font-size: 1.2rem; }
+        .header-info p { margin: 0; font-size: 0.8rem; opacity: 0.7; }
+        .print-btn { 
+          background: #a28a68; color: white; border: none; padding: 0.8rem 1.5rem; 
+          border-radius: 8px; cursor: pointer; font-weight: bold; transition: transform 0.2s;
+        }
+        .print-btn:hover { transform: scale(1.05); }
+
+        /* PORTADA */
+        .album-cover { 
+          background: white; width: 210mm; min-height: 297mm; 
+          margin: 40px auto; display: flex; align-items: center; justify-content: center;
+          position: relative; box-shadow: 0 0 40px rgba(0,0,0,0.1);
+          page-break-after: always;
+        }
+        .cover-content { text-align: center; max-width: 80%; }
+        .cover-logo { height: 150px; margin-bottom: 3rem; }
+        .album-cover h1 { font-family: 'Playfair Display', serif; font-size: 4.5rem; margin: 0; line-height: 1.1; }
+        .cover-line { height: 4px; width: 100px; margin: 2rem auto; }
+        .cover-date { font-size: 1.5rem; letter-spacing: 2px; text-transform: uppercase; color: #666; }
+        .cover-footer { position: absolute; bottom: 3rem; width: 100%; left: 0; color: #999; }
+        .studio-brand { font-weight: 900; letter-spacing: 3px; color: #333; margin-top: 0.5rem; }
+
+        /* BODY */
+        .album-body { width: 210mm; margin: 0 auto; background: white; padding: 20mm; box-shadow: 0 0 40px rgba(0,0,0,0.1); }
+        .album-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15mm; }
+        .album-photo-card { 
           page-break-inside: avoid; 
-          border: 1px solid #eee; 
-          padding: 10px; 
-          border-radius: 4px;
-          display: flex;
-          flex-direction: column;
+          display: flex; flex-direction: column; 
+          border-bottom: 1px solid #eee; padding-bottom: 5mm;
         }
-        .album-item img { width: 100%; height: 400px; object-fit: cover; border-radius: 2px; }
-        .album-footer { 
-          display: flex; 
-          justify-content: space-between; 
-          font-size: 0.8rem; 
-          margin-top: 10px; 
-          color: #555;
-          font-weight: 600;
-        }
+        .photo-wrapper { width: 100%; aspect-ratio: 4/5; border-radius: 4px; overflow: hidden; background: #fafafa; }
+        .photo-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+        .photo-meta { display: flex; justify-content: space-between; margin-top: 3mm; font-size: 0.85rem; color: #555; }
+        .photo-meta .author { font-weight: 700; color: #333; }
+
+        .album-footer-all { text-align: center; padding: 2rem; color: #999; font-size: 0.7rem; }
 
         @media print {
-          .no-print { display: none; }
-          body { padding: 0; }
-          .album-container { max-width: 100%; width: 100%; padding: 0; }
-          .album-grid { gap: 20px; }
+          body { background: white; }
+          .no-print, .album-footer-all { display: none; }
+          .album-cover, .album-body { margin: 0; box-shadow: none; width: 100%; }
+          .album-body { padding: 10mm; }
+          .album-grid { gap: 10mm; }
         }
       `}</style>
     </div>

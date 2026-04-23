@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { db, ref, onValue, get } from "../firebase";
 
-const SLIDE_INTERVAL_DEFAULT = 7000; // ms
 const BUFFER_SIZE = 20;
 const TRANSITION_DURATION = 1500; // ms
 
@@ -16,7 +15,9 @@ export default function LiveMonitor() {
   const [isOffline, setIsOffline] = useState(false);
   const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
   const [showBanner, setShowBanner] = useState(false);
-  const [photoCounter, setPhotoCounter] = useState(0); // para trigger de banners
+  const [photoCounter, setPhotoCounter] = useState(0); 
+  const [collageMode, setCollageMode] = useState(false);
+  const [collagePhotos, setCollagePhotos] = useState([]);
 
   const intervalRef = useRef(null);
   const photoBufferRef = useRef([]); // cache en memoria
@@ -56,7 +57,6 @@ export default function LiveMonitor() {
         .filter((p) => p.status === "approved" && !p.hidden)
         .sort((a, b) => a.uploadedAt - b.uploadedAt);
 
-      // Actualizar buffer manteniendo las últimas BUFFER_SIZE
       const buffered = approved.slice(-BUFFER_SIZE);
       photoBufferRef.current = buffered;
       setPhotos(buffered);
@@ -68,32 +68,38 @@ export default function LiveMonitor() {
   // ── Función para avanzar slide ────────────────────────────────────────────
   const advanceSlide = useCallback(() => {
     const buf = photoBufferRef.current;
-    if (buf.length === 0) return;
+    if (buf.length === 0 || collageMode) return;
 
     setTransitioning(true);
     setTimeout(() => {
       setCurrentIndex((prev) => {
         const next = (prev + 1) % buf.length;
+        const newCount = photoCounter + 1;
+        setPhotoCounter(newCount);
 
+        // Lógica de COLLAGE (cada 8 fotos)
+        if (newCount > 0 && newCount % 8 === 0 && buf.length >= 4) {
+          const shuffled = [...buf].sort(() => 0.5 - Math.random());
+          setCollagePhotos(shuffled.slice(0, 4));
+          setCollageMode(true);
+          setTimeout(() => setCollageMode(false), 12000); 
+        }
+        
         // Lógica de banners corporativos cada N fotos
-        if (eventConfig?.tier === "corporativo" && eventConfig?.bannerUrls?.length > 0) {
-          setPhotoCounter((c) => {
-            const newCount = c + 1;
-            const bannerEvery = eventConfig.bannerIntervalPhotos || 5;
-            if (newCount % bannerEvery === 0) {
-              setShowBanner(true);
-              setCurrentBannerIndex((bi) => (bi + 1) % eventConfig.bannerUrls.length);
-              setTimeout(() => setShowBanner(false), (eventConfig.bannerDurationSeconds || 10) * 1000);
-            }
-            return newCount;
-          });
+        else if (eventConfig?.tier === "corporativo" && eventConfig?.bannerUrls?.length > 0) {
+          const bannerEvery = eventConfig.bannerIntervalPhotos || 5;
+          if (newCount % bannerEvery === 0) {
+            setShowBanner(true);
+            setCurrentBannerIndex((bi) => (bi + 1) % eventConfig.bannerUrls.length);
+            setTimeout(() => setShowBanner(false), (eventConfig.bannerDurationSeconds || 10) * 1000);
+          }
         }
 
         return next;
       });
       setTransitioning(false);
     }, TRANSITION_DURATION);
-  }, [eventConfig]);
+  }, [eventConfig, photoCounter, collageMode]);
 
   // ── Rotación automática ────────────────────────────────────────────────────
   useEffect(() => {
@@ -122,95 +128,167 @@ export default function LiveMonitor() {
 
   if (photos.length === 0) {
     return (
-      <div className="monitor-screen monitor-screen--empty">
+      <div className="monitor-screen monitor-screen--empty" style={{ "--accent": accentColor }}>
         <div className="monitor-waiting">
           {eventConfig?.logoUrl && (
             <img src={eventConfig.logoUrl} alt={eventConfig?.eventName} className="monitor-event-logo" />
           )}
-          <h1 className="monitor-event-name" style={{ color: accentColor }}>
+          <h1 className="monitor-event-name">
             {eventConfig?.eventName || "Live Feed"}
           </h1>
           <div className="monitor-pulse">
             <div className="pulse-ring" style={{ borderColor: accentColor }} />
             <p>Esperando fotos de los invitados...</p>
           </div>
-          <p className="monitor-hint">
-            📱 Escaneá el QR o ingresá a la web para subir tu foto
-          </p>
+          <p className="monitor-hint">📱 Escaneá el QR para subir tu foto</p>
         </div>
+        <div className="monitor-footer">
+          <div className="monitor-footer-brand">
+            <span className="tech-by">TECNOLOGÍA DE</span>
+            <span className="studio-name">ESTUDIO PRECINTO</span>
+          </div>
+        </div>
+        <style>{`
+          .monitor-screen--empty { background: #000; color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; font-family: 'Inter', sans-serif; }
+          .monitor-waiting { text-align: center; }
+          .monitor-event-logo { height: 120px; margin-bottom: 2rem; }
+          .monitor-event-name { font-size: 4rem; font-weight: 900; margin-bottom: 3rem; color: var(--accent); }
+          .monitor-pulse { position: relative; display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+          .pulse-ring { width: 80px; height: 80px; border: 4px solid; border-radius: 50%; animation: pulse 2s infinite; }
+          @keyframes pulse { 0% { transform: scale(0.8); opacity: 0; } 50% { opacity: 1; } 100% { transform: scale(1.5); opacity: 0; } }
+          .monitor-footer { position: absolute; bottom: 30px; right: 40px; opacity: 0.6; }
+          .monitor-footer-brand { display: flex; flex-direction: column; align-items: flex-end; }
+          .tech-by { font-size: 0.7rem; letter-spacing: 4px; }
+          .studio-name { font-size: 1.2rem; font-weight: 900; color: var(--accent); }
+        `}</style>
       </div>
     );
   }
 
   return (
-    <div className="monitor-screen" onClick={() => setIsPaused((p) => !p)}>
-      {/* Banner corporativo (superpuesto) */}
-      {showBanner && eventConfig?.bannerUrls?.length > 0 && (
-        <div className="monitor-banner-overlay">
-          {(eventConfig.bannerUrls[currentBannerIndex]?.toLowerCase().includes('.mp4') || 
-            eventConfig.bannerUrls[currentBannerIndex]?.toLowerCase().includes('.mov') ||
-            eventConfig.bannerUrls[currentBannerIndex]?.includes('video')) ? (
-            <video
-              src={eventConfig.bannerUrls[currentBannerIndex]}
-              className="monitor-banner-img"
-              autoPlay
-              muted
-              loop
-              playsInline
-            />
-          ) : (
-            <img
-              src={eventConfig.bannerUrls[currentBannerIndex]}
-              alt="Banner"
-              className="monitor-banner-img"
-            />
-          )}
-        </div>
+    <div className="monitor-screen" style={{ "--accent": accentColor }} onClick={() => setIsPaused((p) => !p)}>
+      {/* Fondo dinámico desenfocado */}
+      {currentPhoto && !showBanner && (
+        <div 
+          className="monitor-bg-blur" 
+          style={{ backgroundImage: `url(${currentPhoto.imageUrl})` }} 
+        />
       )}
 
-      {/* Foto principal Estilo Polaroid */}
-      {currentPhoto && (
-        <div
-          className={`monitor-photo-container ${transitioning ? "monitor-photo--out" : "monitor-photo--in"}`}
-        >
-          <div className="polaroid-frame">
-            <div className="polaroid-photo-wrapper">
-              <img
-                src={currentPhoto.imageUrl}
-                alt={`Foto de ${currentPhoto.authorName}`}
-                className="monitor-photo"
-              />
-              <div className="polaroid-author-badge">
-                Foto de: {currentPhoto.authorName}
+      {/* Main Content */}
+      <div className={`monitor-main ${transitioning ? "fade-out" : "fade-in"}`}>
+        {collageMode ? (
+          <div className="collage-container">
+            {collagePhotos.map((p, i) => (
+              <div key={p.id} className={`collage-item item-${i}`}>
+                <img src={p.imageUrl} alt="Collage" />
+                <div className="collage-author">{p.authorName}</div>
+              </div>
+            ))}
+            <div className="collage-title">Momentos del Evento ✨</div>
+          </div>
+        ) : showBanner ? (
+          <div className="banner-display">
+             {eventConfig.bannerUrls[currentBannerIndex]?.toLowerCase().includes('.mp4') || 
+              eventConfig.bannerUrls[currentBannerIndex]?.toLowerCase().includes('.mov') ||
+              eventConfig.bannerUrls[currentBannerIndex]?.includes('video') ? (
+              <video src={eventConfig.bannerUrls[currentBannerIndex]} autoPlay loop muted className="banner-media" />
+            ) : (
+              <img src={eventConfig.bannerUrls[currentBannerIndex]} alt="Banner" className="banner-media" />
+            )}
+          </div>
+        ) : currentPhoto ? (
+          <div className="photo-display">
+            <div className="photo-frame">
+              <img src={currentPhoto.imageUrl} alt="Live Feed" className="photo-main" />
+              <div className="photo-info-modern">
+                <span className="info-label">Enviado por</span>
+                <span className="info-name">{currentPhoto.authorName}</span>
               </div>
             </div>
-            <div className="polaroid-footer">
-              <span className="polaroid-event-name">
-                {eventConfig?.eventName}
-              </span>
-              {eventConfig?.logoUrl && (
-                <img src={eventConfig.logoUrl} alt="Logo" className="polaroid-mini-logo" />
-              )}
-            </div>
           </div>
+        ) : null}
+      </div>
+
+      {/* Branding Footer */}
+      <div className="monitor-footer">
+        <div className="monitor-footer-brand">
+          <span className="tech-by">TECNOLOGÍA DE</span>
+          <span className="studio-name">ESTUDIO PRECINTO</span>
         </div>
-      )}
-
-
-      {/* Indicadores de estado */}
-      <div className="monitor-status">
-        {isPaused && (
-          <div className="monitor-badge monitor-badge--paused">⏸ PAUSADO</div>
-        )}
-        {isOffline && (
-          <div className="monitor-badge monitor-badge--offline">📵 Modo sin señal — buffer local</div>
-        )}
       </div>
 
-      {/* Contador de fotos */}
-      <div className="monitor-counter">
-        {currentIndex + 1} / {photos.length}
-      </div>
+      {isPaused && <div className="pause-overlay">⏸️ PAUSA</div>}
+      {isOffline && <div className="offline-toast">⚠️ Sin conexión. Reintentando...</div>}
+
+      <style>{`
+        .monitor-screen {
+          width: 100vw; height: 100vh;
+          background: #000; overflow: hidden;
+          position: relative; color: white;
+          font-family: 'Inter', sans-serif;
+          cursor: pointer;
+        }
+        .monitor-bg-blur {
+          position: absolute; top: -10%; left: -10%;
+          width: 120%; height: 120%;
+          background-size: cover; background-position: center;
+          filter: blur(80px) brightness(0.4);
+          z-index: 1; transition: background-image 2s ease-in-out;
+        }
+        .monitor-main {
+          position: relative; z-index: 10;
+          width: 100%; height: 100%;
+          display: flex; align-items: center; justify-content: center;
+          transition: opacity 1.5s ease-in-out;
+        }
+        .fade-in { opacity: 1; }
+        .fade-out { opacity: 0; }
+        .photo-display { width: 90%; height: 85%; display: flex; align-items: center; justify-content: center; }
+        .photo-frame { 
+          position: relative; max-width: 100%; max-height: 100%;
+          border-radius: 24px; overflow: hidden;
+          box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+          border: 4px solid rgba(255,255,255,0.1);
+          background: #111;
+        }
+        .photo-main { max-width: 100%; max-height: 85vh; display: block; object-fit: contain; }
+        .photo-info-modern {
+          position: absolute; bottom: 0; left: 0; right: 0;
+          padding: 2rem; background: linear-gradient(transparent, rgba(0,0,0,0.8));
+          display: flex; flex-direction: column; gap: 0.2rem;
+        }
+        .info-label { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0.7; color: var(--accent); }
+        .info-name { font-size: 2.5rem; font-weight: 800; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+        .collage-container {
+          width: 95%; height: 90%; display: grid;
+          grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr;
+          gap: 20px; position: relative;
+        }
+        .collage-item { position: relative; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .collage-item img { width: 100%; height: 100%; object-fit: cover; }
+        .collage-author { 
+          position: absolute; bottom: 10px; left: 10px; 
+          background: rgba(0,0,0,0.5); padding: 4px 12px; border-radius: 20px;
+          font-size: 0.8rem; font-weight: bold; backdrop-filter: blur(4px);
+        }
+        .collage-title {
+          position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+          background: var(--accent); color: #000; padding: 1.5rem 3rem; border-radius: 100px;
+          font-weight: 900; font-size: 3rem; box-shadow: 0 15px 50px rgba(0,0,0,0.6);
+          animation: pop-in 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+          white-space: nowrap; z-index: 50;
+        }
+        @keyframes pop-in { from { transform: translate(-50%, -50%) scale(0); } to { transform: translate(-50%, -50%) scale(1); } }
+        .banner-display { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #000; }
+        .banner-media { width: 100%; height: 100%; object-fit: contain; }
+        .monitor-footer { position: absolute; bottom: 30px; right: 40px; z-index: 100; opacity: 0.5; }
+        .monitor-footer-brand { display: flex; flex-direction: column; align-items: flex-end; }
+        .tech-by { font-size: 0.6rem; letter-spacing: 4px; }
+        .studio-name { font-size: 1.1rem; font-weight: 900; color: var(--accent); }
+        .pause-overlay { position: absolute; top: 30px; right: 40px; background: rgba(0,0,0,0.5); padding: 0.5rem 1.5rem; border-radius: 10px; color: var(--accent); font-weight: bold; z-index: 1000; }
+        .offline-toast { position: absolute; top: 30px; left: 50%; transform: translateX(-50%); background: rgba(224,92,92,0.9); padding: 0.8rem 2rem; border-radius: 50px; z-index: 1000; font-weight: bold; }
+      `}</style>
     </div>
   );
 }
