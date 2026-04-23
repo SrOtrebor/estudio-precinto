@@ -158,9 +158,9 @@ export default function MasterDashboard() {
                 Fecha: {ev.date ? new Date(ev.date).toLocaleString() : 'No definida'}
               </p>
               <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                <button className="mod-btn" onClick={() => window.open(`/#/invitacion/${ev.id}`, '_blank')}>🎟️ Invitación</button>
-                <button className="mod-btn" onClick={() => window.open(`/#/monitor/${ev.id}`, '_blank')}>📺 Monitor</button>
-                <button className="mod-btn" onClick={() => window.open(`/#/moderar/${ev.id}`, '_blank')}>🎛️ Moderación</button>
+                <button className="mod-btn" onClick={() => window.open(`${window.location.pathname}#/invitacion/${ev.id}`, '_blank')}>🎟️ Invitación</button>
+                <button className="mod-btn" onClick={() => window.open(`${window.location.pathname}#/monitor/${ev.id}`, '_blank')}>📺 Monitor</button>
+                <button className="mod-btn" onClick={() => window.open(`${window.location.pathname}#/moderar/${ev.id}`, '_blank')}>🎛️ Moderación</button>
               </div>
             </div>
           ))
