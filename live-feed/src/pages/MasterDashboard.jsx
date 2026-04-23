@@ -367,6 +367,7 @@ export default function MasterDashboard() {
               <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
                 <p>📅 <strong>Fecha:</strong> {ev.date ? new Date(ev.date).toLocaleString('es-AR') : 'No definida'}</p>
                 <p>🎥 <strong>Banners:</strong> {ev.bannerUrls?.length || 0} cargados</p>
+                <p>🔑 <strong>Contraseña Mod:</strong> {ev.adminPassword || 'No definida'}</p>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginTop: '0.5rem' }}>

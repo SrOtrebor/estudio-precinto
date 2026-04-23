@@ -71,7 +71,7 @@ export default function Invitation() {
       });
       setHasRsvped(true);
       setIsAttending(attendingStatus);
-      localStorage.setItem("livefeed_guest_name", rsvpName);
+      localStorage.setItem(`livefeed_guest_name_${eventId}`, rsvpName);
     } catch (err) {
       console.error(err);
       alert("Hubo un error al confirmar. Intentá de nuevo.");
@@ -148,19 +148,26 @@ export default function Invitation() {
     if (urlOrIframe.includes('/embed')) {
       return urlOrIframe;
     }
-    return null; // Si es un link normal (goo.gl), no lo podemos embeber directamente sin que tire error.
+    // Fallback: intentar armar un link embebible con la query
+    return `https://maps.google.com/maps?q=${encodeURIComponent(urlOrIframe)}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
   };
 
   const mapEmbedSrc = getMapEmbedSrc(eventConfig?.mapUrl);
 
   return (
-    <div className={`invitation-screen ${themeClass}`} style={{ 
-      "--accent": accentColor, 
-      "--accent-rgb": hexToRgb(accentColor),
-      fontFamily: `"${fontFamily}", sans-serif`
-    }}>
-      
-      {/* Hero Section */}
+    <div style={{ background: eventConfig?.theme === 'light' ? '#e9ecef' : '#000', minHeight: '100vh' }}>
+      <div className={`invitation-screen ${themeClass}`} style={{ 
+        "--accent": accentColor, 
+        "--accent-rgb": hexToRgb(accentColor),
+        fontFamily: `"${fontFamily}", sans-serif`,
+        maxWidth: '500px',
+        margin: '0 auto',
+        minHeight: '100vh',
+        position: 'relative',
+        boxShadow: '0 0 50px rgba(0,0,0,0.2)'
+      }}>
+        
+        {/* Hero Section */}
       <section className="invitation-hero">
         <div 
           className="invitation-hero-bg" 
@@ -344,10 +351,11 @@ export default function Invitation() {
           </div>
         )}
 
-        <div style={{ textAlign: 'center', opacity: 0.4, fontSize: '0.8rem', padding: '1rem' }}>
-          Realizado por Estudio Precinto
+        <div style={{ textAlign: 'center', opacity: 0.4, fontSize: '0.8rem', padding: '1rem', paddingBottom: '3rem' }}>
+          Realizado por <a href="https://estudioprecinto.com" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', fontWeight: 'bold' }}>Estudio Precinto</a>
         </div>
       </main>
+      </div>
     </div>
   );
 }

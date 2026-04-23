@@ -3,11 +3,10 @@ import { useParams, useNavigate } from "react-router-dom";
 import { db, ref, onValue, get, push, set, storage, storageRef, uploadBytes, getDownloadURL } from "../firebase";
 import CameraCapture from "../components/CameraCapture";
 
-const GUEST_NAME_KEY = "livefeed_guest_name";
-
 export default function PhotoUpload() {
   const { eventId } = useParams();
   const navigate = useNavigate();
+  const GUEST_NAME_KEY = `livefeed_guest_name_${eventId}`;
   const [eventConfig, setEventConfig] = useState(null);
   const [loadingEvent, setLoadingEvent] = useState(true);
   const [eventError, setEventError] = useState(null);
