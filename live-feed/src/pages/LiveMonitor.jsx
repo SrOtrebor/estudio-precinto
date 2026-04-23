@@ -204,8 +204,16 @@ export default function LiveMonitor() {
                 <img src={currentPhoto.imageUrl} alt="Live Feed" className="photo-main" />
               </div>
               <div className="polaroid-info-area">
-                <div className="polaroid-label">ENVIADO POR</div>
-                <div className="polaroid-name">{currentPhoto.authorName}</div>
+                <div className="polaroid-info-left">
+                  <div className="polaroid-label">ENVIADO POR</div>
+                  <div className="polaroid-name">{currentPhoto.authorName}</div>
+                </div>
+                <div className="polaroid-info-right">
+                  <span className="polaroid-event-name-mini">{eventConfig?.eventName}</span>
+                  {eventConfig?.logoUrl && (
+                    <img src={eventConfig.logoUrl} alt="Logo" className="polaroid-mini-logo" />
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -267,10 +275,15 @@ export default function LiveMonitor() {
         .photo-main { max-width: 100%; max-height: 70vh; display: block; object-fit: contain; }
         .polaroid-info-area { 
           margin-top: 15px; text-align: left; padding: 0 10px;
-          display: flex; flex-direction: column; 
+          display: flex; justify-content: space-between; align-items: flex-end;
         }
+        .polaroid-info-left { display: flex; flex-direction: column; }
         .polaroid-label { font-size: 0.7rem; color: #999; letter-spacing: 2px; font-weight: 700; }
         .polaroid-name { font-size: 2rem; color: #222; font-weight: 900; line-height: 1.1; }
+        
+        .polaroid-info-right { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
+        .polaroid-event-name-mini { font-size: 0.8rem; font-weight: 700; color: var(--accent); text-transform: uppercase; }
+        .polaroid-mini-logo { height: 35px; width: auto; object-fit: contain; }
 
         /* Collage Styles */
         .collage-container {

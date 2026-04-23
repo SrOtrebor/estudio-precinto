@@ -72,8 +72,14 @@ export default function AlbumPrint() {
                 <img src={photo.imageUrl} alt={`Foto ${index + 1}`} />
               </div>
               <div className="photo-footer">
-                <p className="author">{photo.authorName}</p>
-                <p className="time">{new Date(photo.uploadedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} hs</p>
+                <div className="footer-left">
+                  <p className="author">{photo.authorName}</p>
+                  <p className="time">{new Date(photo.uploadedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} hs</p>
+                </div>
+                <div className="footer-right">
+                  <span className="event-label">{eventConfig?.eventName}</span>
+                  {eventConfig?.logoUrl && <img src={eventConfig.logoUrl} alt="Logo" className="mini-logo" />}
+                </div>
               </div>
             </div>
           ))}
@@ -136,9 +142,14 @@ export default function AlbumPrint() {
         .photo-inner { width: 100%; display: flex; justify-content: center; background: #000; }
         .photo-inner img { max-width: 100%; height: auto; max-height: 180mm; object-fit: contain; }
         
-        .photo-footer { margin-top: 5mm; text-align: left; }
-        .photo-footer .author { font-weight: 900; font-size: 1.2rem; margin: 0; color: #111; font-family: 'Playfair Display', serif; }
-        .photo-footer .time { font-size: 0.7rem; margin: 0; color: #999; text-transform: uppercase; letter-spacing: 1px; }
+        .photo-footer { margin-top: 5mm; display: flex; justify-content: space-between; align-items: flex-end; }
+        .footer-left { display: flex; flex-direction: column; }
+        .photo-footer .author { font-weight: 900; font-size: 1.1rem; margin: 0; color: #111; font-family: 'Playfair Display', serif; line-height: 1.2; }
+        .photo-footer .time { font-size: 0.6rem; margin: 0; color: #999; text-transform: uppercase; letter-spacing: 1px; }
+        
+        .footer-right { display: flex; flex-direction: column; align-items: flex-end; gap: 2mm; }
+        .event-label { font-size: 0.6rem; font-weight: 700; color: #666; text-transform: uppercase; letter-spacing: 1px; }
+        .mini-logo { height: 25px; width: auto; object-fit: contain; opacity: 0.8; }
 
         .album-footer-all { text-align: center; padding: 2rem; color: #999; font-size: 0.7rem; }
 
