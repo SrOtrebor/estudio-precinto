@@ -41,6 +41,12 @@ jobs:
           npm ci
           npm run build
 
+      - name: Build Subasta App
+        working-directory: ./subasta-silenciosa
+        run: |
+          npm ci
+          npm run build
+
       - name: Create Final Build Structure
         run: |
           mkdir dist_final
@@ -61,6 +67,10 @@ jobs:
           # Copiamos el build de Live Feed a la subcarpeta /live-feed
           mkdir -p dist_final/live-feed
           cp -r live-feed/dist/* dist_final/live-feed/
+
+          # Copiamos el build de Subasta a la subcarpeta /subasta-silenciosa
+          mkdir -p dist_final/subasta-silenciosa
+          cp -r subasta-silenciosa/dist/* dist_final/subasta-silenciosa/
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
