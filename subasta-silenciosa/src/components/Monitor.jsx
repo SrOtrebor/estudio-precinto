@@ -32,30 +32,28 @@ export default function Monitor() {
       if (data) setSponsors(Object.values(data).sort((a,b) => a.orden - b.orden));
     });
 
-    // 1. Carga inicial para saber dónde estamos
-    let initialSyncDone = false;
+    // Escuchar pujas de forma directa y simple
+    const monitorStartTime = Date.now() - 1000; // Un segundo de margen
     
-    // Escuchar pujas de forma ultra-sensible
     onValue(bidsRef, (snapshot) => {
       const data = snapshot.val();
-      const bidId = data ? Object.keys(data)[0] : null;
-      const bidData = data ? Object.values(data)[0] : null;
+      if (!data) return;
 
-      // DISPARADOR: Si ya sincronizamos y el ID es nuevo, saltar animación
-      if (initialSyncDone && bidId && bidId !== lastBidIdRef.current) {
+      const bidId = Object.keys(data)[0];
+      const bidData = Object.values(data)[0];
+
+      // Si la puja es posterior a que abrimos el monitor, saltar animación
+      if (bidData.timestamp > monitorStartTime && bidId !== lastBidIdRef.current) {
         setMode('PUJA');
         if (pujaTimeoutRef.current) clearTimeout(pujaTimeoutRef.current);
         pujaTimeoutRef.current = setTimeout(() => setMode('BANNER'), 15000);
       }
 
-      // Guardar estado actual
-      if (bidId) lastBidIdRef.current = bidId;
-      if (bidData) setLastBid(bidData);
-      
-      // Marcar como sincronizado después del primer golpe de datos (o si está vacío)
-      initialSyncDone = true;
+      // Actualizar estado siempre
+      lastBidIdRef.current = bidId;
+      setLastBid(bidData);
     });
-  }, []);
+  }, []); 
 
   useEffect(() => {
     if (mode === 'BANNER') {
