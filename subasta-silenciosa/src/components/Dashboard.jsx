@@ -142,7 +142,7 @@ export default function Dashboard() {
     <div className="container" style={{ maxWidth: '1000px', paddingTop: '4rem' }}>
       <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <img src="https://fundacionnordelta.org/wp-content/uploads/2024/09/Logo-Fundacion-Nordelta-25-Anos.png" alt="Logo" style={{ height: '60px' }} />
+          <img src="https://fundacionnordelta.org/wp-content/uploads/2026/03/Fundacion-Nordelta-logo-25-anos-horizontal.png" alt="Logo" style={{ height: '60px' }} />
           <h1 style={{ margin: 0, fontSize: '1.8rem' }}>Admin Subasta</h1>
         </div>
         <button className="btn-secondary" onClick={exportCSV}>

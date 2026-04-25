@@ -26,7 +26,7 @@ export default function Register({ onRegister }) {
   return (
     <div className="container" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="glass" style={{ padding: '3.5rem', width: '100%', maxWidth: '500px', textAlign: 'center' }}>
-        <img src="https://fundacionnordelta.org/wp-content/uploads/2024/09/Logo-Fundacion-Nordelta-25-Anos.png" alt="Logo" style={{ height: '100px', marginBottom: '2.5rem' }} />
+        <img src="https://fundacionnordelta.org/wp-content/uploads/2026/03/Fundacion-Nordelta-logo-25-anos-horizontal.png" alt="Logo" style={{ height: '100px', marginBottom: '2.5rem' }} />
         <h1 style={{ fontSize: '2.5rem', marginBottom: '1rem', letterSpacing: '2px' }}>REGISTRO</h1>
         <p style={{ color: 'rgba(255,255,255,0.5)', marginBottom: '3rem' }}>Ingresá tus datos para participar de la subasta solidaria.</p>
 

@@ -57,7 +57,7 @@ export default function BidClient({ user }) {
   return (
     <div className="container" style={{ paddingBottom: '5rem', paddingTop: '2rem' }}>
       <header style={{ marginBottom: '3rem', textAlign: 'center' }}>
-        <img src="https://fundacionnordelta.org/wp-content/uploads/2024/09/Logo-Fundacion-Nordelta-25-Anos.png" alt="Logo" style={{ height: '70px', marginBottom: '1.5rem' }} />
+        <img src="https://fundacionnordelta.org/wp-content/uploads/2026/03/Fundacion-Nordelta-logo-25-anos-horizontal.png" alt="Logo" style={{ height: '70px', marginBottom: '1.5rem' }} />
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', color: 'var(--primary)', marginBottom: '0.5rem' }}>
           <UserIcon size={16} />
           <span style={{ fontWeight: 600, letterSpacing: '1px' }}>{user.name.toUpperCase()}</span>

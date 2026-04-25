@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { db, ref, onValue, query, limitToLast } from '../firebase';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TrendingUp, Award, Sparkles } from 'lucide-react';
+import logoPrecinto from '../assets/logo-precinto.svg';
 
 export default function Monitor() {
   const [articulos, setArticulos] = useState([]);
@@ -108,7 +109,7 @@ export default function Monitor() {
       {/* Header */}
       <header className="monitor-header" style={{ position: 'relative', zIndex: 2 }}>
         <img 
-          src="https://fundacionnordelta.org/wp-content/uploads/2024/09/Logo-Fundacion-Nordelta-25-Anos.png" 
+          src="https://fundacionnordelta.org/wp-content/uploads/2026/03/Fundacion-Nordelta-logo-25-anos-horizontal.png" 
           alt="Logo" 
           style={{ height: '90px', filter: 'drop-shadow(0 0 15px rgba(224,159,62,0.6))' }} 
         />
@@ -201,8 +202,13 @@ export default function Monitor() {
       </main>
 
       {/* Footer */}
-      <footer className="monitor-footer" style={{ borderTop: '1px solid rgba(255,255,255,0.1)', position: 'relative', zIndex: 2 }}>
-        Fundación Nordelta  •  Noche Solidaria 2026  •  <span style={{ color: 'rgba(255,255,255,0.3)', margin: '0 10px' }}> Desarrollado por </span> <strong style={{ color: 'white' }}> ESTUDIO PRECINTO </strong>
+      <footer className="monitor-footer" style={{ borderTop: '1px solid rgba(255,255,255,0.1)', position: 'relative', zIndex: 2, display: 'flex', alignItems: 'center', gap: '15px' }}>
+        <span>Fundación Nordelta  •  Noche Solidaria 2026</span>
+        <span style={{ color: 'rgba(255,255,255,0.3)' }}>|</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span style={{ fontSize: '0.7rem', opacity: 0.6 }}>DESARROLLADO POR</span>
+          <img src={logoPrecinto} alt="Estudio Precinto" style={{ height: '20px', opacity: 0.8 }} />
+        </div>
       </footer>
     </div>
   );
