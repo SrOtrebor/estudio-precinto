@@ -9,8 +9,8 @@ const firebaseConfig = {
   storageBucket: "subasta-silenciosa-1b5ac.firebasestorage.app",
   messagingSenderId: "60216359524",
   appId: "1:60216359524:web:bc45ae340a39dbe0e23d71",
-  // Probamos con el formato simplificado si el otro falla
-  databaseURL: "https://subasta-silenciosa-1b5ac.firebaseio.com"
+  // Usamos el formato con barra final que funciona en tus otros proyectos
+  databaseURL: "https://subasta-silenciosa-1b5ac-default-rtdb.firebaseio.com/"
 };
 
 const app = initializeApp(firebaseConfig);
