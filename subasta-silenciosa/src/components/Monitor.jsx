@@ -24,7 +24,41 @@ export default function Monitor() {
 
     const unsubscribeArt = onValue(artRef, (snapshot) => {
       const data = snapshot.val();
-      if (data) setArticulos(Object.values(data).sort((a,b) => b.prioridad - a.prioridad));
+      if (!data) return;
+      
+      const newArticulos = Object.values(data);
+
+      // Si no es la carga inicial, buscamos qué artículo subió de precio
+      if (!isFirstLoadRef.current) {
+        let changedArt = null;
+        
+        // Comparamos el nuevo estado con el estado anterior guardado en "articulos"
+        setArticulos(prevArticulos => {
+          newArticulos.forEach(newArt => {
+            const oldArt = prevArticulos.find(a => a.id === newArt.id);
+            if (oldArt && newArt.monto_actual > oldArt.monto_actual) {
+              changedArt = newArt;
+            }
+          });
+          return newArticulos.sort((a,b) => b.prioridad - a.prioridad);
+        });
+
+        // Si encontramos un artículo que subió de precio, disparamos la alerta gigante
+        if (changedArt) {
+          setLastBid({
+            articulo_id: changedArt.id,
+            articulo_nombre: changedArt.nombre,
+            monto: changedArt.monto_actual,
+            user_name: changedArt.highestBidderName
+          });
+          setMode('PUJA');
+          if (pujaTimeoutRef.current) clearTimeout(pujaTimeoutRef.current);
+          pujaTimeoutRef.current = setTimeout(() => setMode('BANNER'), 12000);
+        }
+      } else {
+        setArticulos(newArticulos.sort((a,b) => b.prioridad - a.prioridad));
+        isFirstLoadRef.current = false;
+      }
     });
 
     const unsubscribeSpon = onValue(sponRef, (snapshot) => {
@@ -32,32 +66,9 @@ export default function Monitor() {
       if (data) setSponsors(Object.values(data).sort((a,b) => a.orden - b.orden));
     });
 
-    const unsubscribeBids = onValue(bidsRef, (snapshot) => {
-      const data = snapshot.val();
-      if (!data) {
-        isFirstLoadRef.current = false;
-        return;
-      }
-
-      const bidId = Object.keys(data)[0];
-      const bidData = Object.values(data)[0];
-
-      // DISPARAR ANIMACIÓN: Lógica a prueba de balas
-      if (!isFirstLoadRef.current && bidId !== lastBidIdRef.current) {
-        setMode('PUJA');
-        if (pujaTimeoutRef.current) clearTimeout(pujaTimeoutRef.current);
-        pujaTimeoutRef.current = setTimeout(() => setMode('BANNER'), 12000); // 12 segundos visibles
-      }
-
-      lastBidIdRef.current = bidId;
-      setLastBid(bidData);
-      isFirstLoadRef.current = false;
-    });
-
     return () => {
       unsubscribeArt();
       unsubscribeSpon();
-      unsubscribeBids();
       if (pujaTimeoutRef.current) clearTimeout(pujaTimeoutRef.current);
     };
   }, []);
