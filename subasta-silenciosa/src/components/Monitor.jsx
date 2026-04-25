@@ -30,21 +30,27 @@ export default function Monitor() {
       if (data) setSponsors(Object.values(data).sort((a,b) => a.orden - b.orden));
     });
 
-    const startTime = Date.now();
+    // Reliable bid detection
+    let isInitialLoad = true;
+    let lastSeenBidId = null;
+
     onValue(bidsRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
+        const bidId = Object.keys(data)[0];
         const bid = Object.values(data)[0];
-        if (bid.timestamp > startTime) {
-          setTimeout(() => {
-            setMode('PUJA');
-            if (pujaTimeoutRef.current) clearTimeout(pujaTimeoutRef.current);
-            // El usuario pidió 15 segundos de duración
-            pujaTimeoutRef.current = setTimeout(() => setMode('BANNER'), 15000);
-          }, 200);
+        
+        // Trigger if it's NOT the first time we load AND the bid ID has changed
+        if (!isInitialLoad && bidId !== lastSeenBidId) {
+          setTimeout(() => setMode('PUJA'), 100);
+          if (pujaTimeoutRef.current) clearTimeout(pujaTimeoutRef.current);
+          pujaTimeoutRef.current = setTimeout(() => setMode('BANNER'), 15000);
         }
+        
+        lastSeenBidId = bidId;
         setLastBid(bid);
       }
+      isInitialLoad = false;
     });
   }, []);
 
