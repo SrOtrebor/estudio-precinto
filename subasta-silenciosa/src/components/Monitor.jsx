@@ -31,17 +31,21 @@ export default function Monitor() {
       if (data) setSponsors(Object.values(data).sort((a,b) => a.orden - b.orden));
     });
 
+    // Listen for NEW bids
+    const startTime = Date.now();
     onValue(bidsRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
         const bid = Object.values(data)[0];
-        if (lastBid && bid.timestamp > lastBid.timestamp) {
-          triggerPujaMode(bid);
+        // Only trigger if it's a new bid after opening the monitor
+        if (bid.timestamp > startTime) {
+          // Small delay to ensure the 'articulos' state has updated with the new bid data
+          setTimeout(() => triggerPujaMode(bid), 300);
         }
         setLastBid(bid);
       }
     });
-  }, [lastBid]);
+  }, []); // Remove lastBid dependency
 
   const triggerPujaMode = (bid) => {
     setMode('PUJA');
@@ -191,7 +195,7 @@ export default function Monitor() {
                     <p style={{ fontSize: '6rem', fontWeight: 800, marginBottom: '3.5rem', color: 'white' }}>{bidArt?.highestBidderName}</p>
                     <div style={{ height: '2px', background: 'rgba(224,159,62,0.3)', marginBottom: '3.5rem' }} />
                     <p className="price-tag" style={{ fontSize: '10rem', fontWeight: 900 }}>
-                      ${Number(bidArt?.monto_actual).toLocaleString('es-AR')}
+                      ${Number(bidArt?.monto_actual || 0).toLocaleString('es-AR')}
                     </p>
                   </div>
                 </motion.div>
