@@ -32,24 +32,28 @@ export default function Monitor() {
       if (data) setSponsors(Object.values(data).sort((a,b) => a.orden - b.orden));
     });
 
-    // Detectar pujas NUEVAS comparando IDs
+    // 1. Carga inicial para saber dónde estamos
+    let initialSyncDone = false;
+    
+    // Escuchar pujas de forma ultra-sensible
     onValue(bidsRef, (snapshot) => {
       const data = snapshot.val();
-      if (data) {
-        const bidId = Object.keys(data)[0];
-        const bidData = Object.values(data)[0];
+      const bidId = data ? Object.keys(data)[0] : null;
+      const bidData = data ? Object.values(data)[0] : null;
 
-        // Si no es la carga inicial y el ID cambió, disparamos la animación
-        if (!isFirstLoadRef.current && bidId !== lastBidIdRef.current) {
-          setMode('PUJA');
-          if (pujaTimeoutRef.current) clearTimeout(pujaTimeoutRef.current);
-          pujaTimeoutRef.current = setTimeout(() => setMode('BANNER'), 15000);
-        }
-
-        lastBidIdRef.current = bidId;
-        setLastBid(bidData);
-        isFirstLoadRef.current = false;
+      // DISPARADOR: Si ya sincronizamos y el ID es nuevo, saltar animación
+      if (initialSyncDone && bidId && bidId !== lastBidIdRef.current) {
+        setMode('PUJA');
+        if (pujaTimeoutRef.current) clearTimeout(pujaTimeoutRef.current);
+        pujaTimeoutRef.current = setTimeout(() => setMode('BANNER'), 15000);
       }
+
+      // Guardar estado actual
+      if (bidId) lastBidIdRef.current = bidId;
+      if (bidData) setLastBid(bidData);
+      
+      // Marcar como sincronizado después del primer golpe de datos (o si está vacío)
+      initialSyncDone = true;
     });
   }, []);
 
