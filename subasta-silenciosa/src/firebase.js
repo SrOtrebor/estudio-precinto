@@ -9,11 +9,12 @@ const firebaseConfig = {
   storageBucket: "subasta-silenciosa-1b5ac.firebasestorage.app",
   messagingSenderId: "60216359524",
   appId: "1:60216359524:web:bc45ae340a39dbe0e23d71",
-  databaseURL: "https://subasta-silenciosa-1b5ac-default-rtdb.firebaseio.com"
+  // Probamos con el formato simplificado si el otro falla
+  databaseURL: "https://subasta-silenciosa-1b5ac.firebaseio.com"
 };
 
 const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+const db = getDatabase(app, firebaseConfig.databaseURL);
 const storage = getStorage(app);
 
 export { db, storage, ref, sRef, onValue, set, update, get, runTransaction, query, limitToLast, orderByKey, uploadBytes, getDownloadURL };

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { db, ref, onValue, query, limitToLast } from '../firebase';
 import { motion, AnimatePresence } from 'framer-motion';
-import { TrendingUp, Award, Clock } from 'lucide-react';
+import { TrendingUp, Award, Sparkles } from 'lucide-react';
 
 export default function Monitor() {
   const [articulos, setArticulos] = useState([]);
@@ -70,19 +70,51 @@ export default function Monitor() {
 
   return (
     <div className={`monitor-root ${flash ? 'flash-trigger' : ''}`} style={{ 
-      height: '100vh', width: '100vw', overflow: 'hidden', background: '#0c162d',
-      display: 'flex', flexDirection: 'column'
+      height: '100vh', width: '100vw', overflow: 'hidden', 
+      background: 'linear-gradient(135deg, #0c162d 0%, #000000 100%)',
+      display: 'flex', flexDirection: 'column', position: 'relative'
     }}>
-      {/* Header Premium Fundación Nordelta */}
-      <header className="monitor-header">
+      {/* Background Sparkles Effect */}
+      <div className="sparkles-container">
+        {[...Array(30)].map((_, i) => (
+          <div key={i} className="sparkle" style={{
+            left: `${Math.random() * 100}%`,
+            top: `${Math.random() * 100}%`,
+            animationDelay: `${Math.random() * 5}s`,
+            transform: `scale(${Math.random()})`
+          }} />
+        ))}
+      </div>
+
+      <style>{`
+        .sparkles-container { position: absolute; inset: 0; pointer-events: none; }
+        .sparkle {
+          position: absolute; width: 4px; height: 4px; background: white;
+          border-radius: 50%; opacity: 0;
+          animation: twinkle 4s infinite;
+          box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.3);
+        }
+        @keyframes twinkle {
+          0%, 100% { opacity: 0; transform: scale(0.5); }
+          50% { opacity: 0.8; transform: scale(1.2); }
+        }
+        .flash-trigger { animation: flashEffect 1s ease-out; }
+        @keyframes flashEffect {
+          0% { background: white; }
+          100% { background: inherit; }
+        }
+      `}</style>
+
+      {/* Header */}
+      <header className="monitor-header" style={{ position: 'relative', zIndex: 2 }}>
         <img 
           src="https://fundacionnordelta.org/wp-content/uploads/2024/09/Logo-Fundacion-Nordelta-25-Anos.png" 
           alt="Logo" 
-          style={{ height: '80px', filter: 'drop-shadow(0 0 10px rgba(224,159,62,0.4))' }} 
+          style={{ height: '90px', filter: 'drop-shadow(0 0 15px rgba(224,159,62,0.6))' }} 
         />
       </header>
 
-      <main style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
+      <main style={{ flex: 1, position: 'relative', overflow: 'hidden', zIndex: 1 }}>
         <AnimatePresence mode="wait">
           {mode === 'BANNER' ? (
             <motion.div 
@@ -94,35 +126,40 @@ export default function Monitor() {
                 {currentSponsor ? (
                   <motion.div 
                     key={currentSponsor.id}
-                    initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 1.1, opacity: 0 }}
-                    transition={{ duration: 0.8 }}
+                    initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 1.1, opacity: 0 }}
+                    transition={{ duration: 0.8, ease: "easeOut" }}
+                    style={{ textAlign: 'center' }}
                   >
                     {currentSponsor.video_url ? (
-                      <video src={currentSponsor.video_url} autoPlay muted loop style={{ maxHeight: '60vh', borderRadius: '2rem', boxShadow: '0 0 50px rgba(0,0,0,0.5)' }} />
+                      <video src={currentSponsor.video_url} autoPlay muted loop style={{ maxHeight: '65vh', borderRadius: '2rem', border: '2px solid var(--primary)', boxShadow: '0 0 60px rgba(224,159,62,0.2)' }} />
                     ) : (
-                      <img src={currentSponsor.logo_url} style={{ maxHeight: '50vh', maxWidth: '80vw', objectFit: 'contain' }} alt="" />
+                      <img src={currentSponsor.logo_url} style={{ maxHeight: '55vh', maxWidth: '85vw', objectFit: 'contain' }} alt="" />
                     )}
+                    <h2 style={{ marginTop: '2rem', fontSize: '2rem', color: 'var(--primary)', opacity: 0.8, textTransform: 'uppercase', letterSpacing: '4px' }}>{currentSponsor.nombre}</h2>
                   </motion.div>
                 ) : (
                   <div style={{ textAlign: 'center' }}>
-                    <h1 style={{ fontSize: '6rem', color: 'var(--primary)', letterSpacing: '10px' }}>SUBASTA</h1>
-                    <h2 style={{ fontSize: '3rem', opacity: 0.5 }}>Fundación Nordelta</h2>
+                    <h1 style={{ fontSize: '7rem', fontWeight: 900, background: 'linear-gradient(to bottom, #fff, var(--primary))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>SUBASTA 2026</h1>
+                    <h2 style={{ fontSize: '2.5rem', fontWeight: 300, opacity: 0.6, letterSpacing: '15px' }}>NOCHE SOLIDARIA</h2>
                   </div>
                 )}
               </div>
 
-              {/* Ticker de artículos */}
-              <div style={{ height: '180px', background: 'rgba(20, 40, 80, 0.5)', borderTop: '2px solid var(--primary)', display: 'flex', alignItems: 'center', padding: '0 5rem', justifyContent: 'space-between' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '3rem' }}>
-                  <img src={currentArt?.imagen_url} style={{ width: '200px', height: '120px', objectFit: 'cover', borderRadius: '1rem', border: '1px solid var(--primary)' }} />
+              {/* Ticker Artículos Destacados */}
+              <div style={{ height: '200px', background: 'rgba(20, 40, 80, 0.4)', backdropFilter: 'blur(10px)', borderTop: '3px solid var(--primary)', display: 'flex', alignItems: 'center', padding: '0 6rem', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4rem' }}>
+                  <img src={currentArt?.imagen_url} style={{ width: '220px', height: '130px', objectFit: 'cover', borderRadius: '1.5rem', border: '2px solid var(--primary)', boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }} />
                   <div>
-                    <h2 style={{ fontSize: '2.5rem', margin: 0 }}>{currentArt?.nombre}</h2>
-                    <p style={{ color: 'var(--primary)', fontSize: '1.2rem', fontWeight: 600 }}>ARTÍCULO EN SUBASTA</p>
+                    <h2 style={{ fontSize: '3rem', margin: 0, fontWeight: 800 }}>{currentArt?.nombre}</h2>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--primary)', marginTop: '5px' }}>
+                      <Sparkles size={20} />
+                      <p style={{ fontSize: '1.4rem', fontWeight: 600, letterSpacing: '2px' }}>SUBASTA EN VIVO</p>
+                    </div>
                   </div>
                 </div>
                 <div style={{ textAlign: 'right' }}>
-                  <p style={{ fontSize: '1.2rem', opacity: 0.7 }}>OFERTA ACTUAL</p>
-                  <p className="price-tag" style={{ fontSize: '4.5rem', fontWeight: 900 }}>
+                  <p style={{ fontSize: '1.4rem', color: 'rgba(255,255,255,0.5)', letterSpacing: '2px' }}>OFERTA ACTUAL</p>
+                  <p className="price-tag" style={{ fontSize: '5.5rem', fontWeight: 900, lineHeight: 1 }}>
                     ${Number(currentArt?.monto_actual || 0).toLocaleString('es-AR')}
                   </p>
                 </div>
@@ -131,30 +168,28 @@ export default function Monitor() {
           ) : (
             <motion.div 
               key="puja"
-              initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 1.2 }}
+              initial={{ opacity: 0, scale: 0.7 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 1.3 }}
               style={{ 
                 height: '100%', width: '100%', position: 'absolute', zIndex: 100,
-                background: 'rgba(12, 22, 45, 0.95)', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                backdropFilter: 'blur(10px)'
+                background: 'rgba(12, 22, 45, 0.98)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                backdropFilter: 'blur(20px)'
               }}
             >
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6rem', maxWidth: '1400px', alignItems: 'center' }}>
-                <motion.img 
-                  initial={{ x: -200 }} animate={{ x: 0 }}
-                  src={bidArt?.imagen_url} 
-                  style={{ width: '100%', height: '700px', objectFit: 'cover', borderRadius: '4rem', border: '5px solid var(--primary)', boxShadow: '0 0 100px rgba(224,159,62,0.3)' }} 
-                />
-                <motion.div initial={{ x: 200 }} animate={{ x: 0 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', color: 'var(--primary)', marginBottom: '2rem' }}>
-                    <TrendingUp size={64} />
-                    <span style={{ fontSize: '4rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '5px' }}>¡Nueva Puja!</span>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: '8rem', maxWidth: '1500px', width: '90%', alignItems: 'center' }}>
+                <motion.div initial={{ x: -100 }} animate={{ x: 0 }} transition={{ type: "spring" }}>
+                  <img src={bidArt?.imagen_url} style={{ width: '100%', height: '750px', objectFit: 'cover', borderRadius: '4rem', border: '6px solid var(--primary)', boxShadow: '0 0 120px rgba(224,159,62,0.4)' }} />
+                </motion.div>
+                <motion.div initial={{ x: 100 }} animate={{ x: 0 }} transition={{ type: "spring" }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', color: 'var(--primary)', marginBottom: '3rem' }}>
+                    <TrendingUp size={80} />
+                    <span style={{ fontSize: '5rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '10px' }}>¡NUEVA PUJA!</span>
                   </div>
-                  <h1 style={{ fontSize: '5.5rem', marginBottom: '2rem' }}>{bidArt?.nombre}</h1>
-                  <div className="glass" style={{ padding: '4rem', borderLeft: '15px solid var(--primary)' }}>
-                    <p style={{ fontSize: '2.5rem', color: 'rgba(255,255,255,0.6)', marginBottom: '1rem' }}>Líder de la subasta:</p>
-                    <p style={{ fontSize: '5rem', fontWeight: 800, marginBottom: '3rem' }}>{bidArt?.highestBidderName}</p>
-                    <div style={{ height: '4px', background: 'rgba(224,159,62,0.2)', marginBottom: '3rem' }} />
-                    <p className="price-tag" style={{ fontSize: '9rem', fontWeight: 900 }}>
+                  <h1 style={{ fontSize: '6rem', lineHeight: 1, marginBottom: '3rem', fontWeight: 800 }}>{bidArt?.nombre}</h1>
+                  <div className="glass" style={{ padding: '4.5rem', borderLeft: '20px solid var(--primary)', background: 'rgba(255,255,255,0.03)' }}>
+                    <p style={{ fontSize: '2.5rem', color: 'rgba(255,255,255,0.4)', marginBottom: '1.5rem', letterSpacing: '3px' }}>VA GANANDO:</p>
+                    <p style={{ fontSize: '6rem', fontWeight: 800, marginBottom: '3.5rem', color: 'white' }}>{bidArt?.highestBidderName}</p>
+                    <div style={{ height: '2px', background: 'rgba(224,159,62,0.3)', marginBottom: '3.5rem' }} />
+                    <p className="price-tag" style={{ fontSize: '10rem', fontWeight: 900 }}>
                       ${Number(bidArt?.monto_actual).toLocaleString('es-AR')}
                     </p>
                   </div>
@@ -165,9 +200,9 @@ export default function Monitor() {
         </AnimatePresence>
       </main>
 
-      {/* Footer Estudio Precinto */}
-      <footer className="monitor-footer">
-        Desarrollado por <strong style={{ color: 'white', marginLeft: '5px' }}>ESTUDIO PRECINTO</strong>
+      {/* Footer */}
+      <footer className="monitor-footer" style={{ borderTop: '1px solid rgba(255,255,255,0.1)', position: 'relative', zIndex: 2 }}>
+        Fundación Nordelta  •  Noche Solidaria 2026  •  <span style={{ color: 'rgba(255,255,255,0.3)', margin: '0 10px' }}> Desarrollado por </span> <strong style={{ color: 'white' }}> ESTUDIO PRECINTO </strong>
       </footer>
     </div>
   );
