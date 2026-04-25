@@ -32,26 +32,28 @@ export default function Monitor() {
       if (data) setSponsors(Object.values(data).sort((a,b) => a.orden - b.orden));
     });
 
-    // Escuchar pujas de forma directa y simple
-    const monitorStartTime = Date.now() - 1000; // Un segundo de margen
-    
+    // Escuchar pujas de forma directa por cambio de ID
     onValue(bidsRef, (snapshot) => {
       const data = snapshot.val();
-      if (!data) return;
+      if (!data) {
+        isFirstLoadRef.current = false;
+        return;
+      }
 
       const bidId = Object.keys(data)[0];
       const bidData = Object.values(data)[0];
 
-      // Si la puja es posterior a que abrimos el monitor, saltar animación
-      if (bidData.timestamp > monitorStartTime && bidId !== lastBidIdRef.current) {
+      // DISPARAR: Si no es el arranque y el ID cambió, saltar animación
+      if (!isFirstLoadRef.current && bidId !== lastBidIdRef.current) {
         setMode('PUJA');
         if (pujaTimeoutRef.current) clearTimeout(pujaTimeoutRef.current);
         pujaTimeoutRef.current = setTimeout(() => setMode('BANNER'), 15000);
       }
 
-      // Actualizar estado siempre
+      // Guardar estado y marcar que ya pasamos la carga inicial
       lastBidIdRef.current = bidId;
       setLastBid(bidData);
+      isFirstLoadRef.current = false;
     });
   }, []); 
 
