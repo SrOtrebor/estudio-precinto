@@ -22,17 +22,17 @@ export default function Monitor() {
     const sponRef = ref(db, 'sponsors');
     const bidsRef = query(ref(db, 'pujas'), limitToLast(1));
 
-    onValue(artRef, (snapshot) => {
+    const unsubscribeArt = onValue(artRef, (snapshot) => {
       const data = snapshot.val();
       if (data) setArticulos(Object.values(data).sort((a,b) => b.prioridad - a.prioridad));
     });
 
-    onValue(sponRef, (snapshot) => {
+    const unsubscribeSpon = onValue(sponRef, (snapshot) => {
       const data = snapshot.val();
       if (data) setSponsors(Object.values(data).sort((a,b) => a.orden - b.orden));
     });
 
-    onValue(bidsRef, (snapshot) => {
+    const unsubscribeBids = onValue(bidsRef, (snapshot) => {
       const data = snapshot.val();
       if (!data) {
         isFirstLoadRef.current = false;
@@ -42,17 +42,24 @@ export default function Monitor() {
       const bidId = Object.keys(data)[0];
       const bidData = Object.values(data)[0];
 
-      // DISPARAR ANIMACIÓN
-      if (!isFirstLoadRef.current && bidId !== lastBidIdRef.current) {
+      // DISPARAR ANIMACIÓN: Lógica a prueba de balas
+      if (!isFirstLoadRef.current && lastBidIdRef.current && bidId !== lastBidIdRef.current) {
         setMode('PUJA');
         if (pujaTimeoutRef.current) clearTimeout(pujaTimeoutRef.current);
-        pujaTimeoutRef.current = setTimeout(() => setMode('BANNER'), 15000);
+        pujaTimeoutRef.current = setTimeout(() => setMode('BANNER'), 12000); // 12 segundos visibles
       }
 
       lastBidIdRef.current = bidId;
       setLastBid(bidData);
       isFirstLoadRef.current = false;
     });
+
+    return () => {
+      unsubscribeArt();
+      unsubscribeSpon();
+      unsubscribeBids();
+      if (pujaTimeoutRef.current) clearTimeout(pujaTimeoutRef.current);
+    };
   }, []);
 
   useEffect(() => {
@@ -100,37 +107,55 @@ export default function Monitor() {
         <img src="https://fundacionnordelta.org/wp-content/uploads/2026/03/Fundacion-Nordelta-logo-25-anos-horizontal.png" alt="Logo" style={{ height: '140px', filter: 'drop-shadow(0 0 20px rgba(224,159,62,0.5))' }} />
       </header>
 
-      {/* Central Content Area */}
+      {/* Central Content Area (Siempre muestra el banner ahora) */}
       <main style={{ position: 'relative', overflow: 'hidden', zIndex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
         <AnimatePresence mode="wait">
-          {mode === 'BANNER' ? (
-            <motion.div key="banner-mode" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-               {currentSponsor?.video_url ? (
-                 <video src={currentSponsor.video_url} autoPlay muted loop style={{ maxWidth: '100%', maxHeight: '100%', borderRadius: '2rem', boxShadow: '0 20px 60px rgba(0,0,0,0.5)' }} />
-               ) : (
-                 <img src={currentSponsor?.logo_url} style={{ maxWidth: '85%', maxHeight: '85%', objectFit: 'contain' }} alt="" />
-               )}
-            </motion.div>
-          ) : (
-            <motion.div key="puja-mode" initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 1.1 }} style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-               <div style={{ background: 'rgba(12, 22, 45, 0.95)', border: '6px solid var(--primary)', borderRadius: '4rem', padding: '5rem', textAlign: 'center', boxShadow: '0 0 120px rgba(224,159,62,0.6)', minWidth: '850px', backdropFilter: 'blur(15px)' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2rem', color: 'var(--primary)', marginBottom: '2rem' }}>
-                     <TrendingUp size={80} />
-                     <h1 style={{ fontSize: '5rem', fontWeight: 900, letterSpacing: '8px', margin: 0 }}>¡NUEVA PUJA!</h1>
-                  </div>
-                  <h2 style={{ fontSize: '3.5rem', marginBottom: '3rem' }}>{lastBid?.articulo_nombre}</h2>
-                  <div style={{ background: 'rgba(224,159,62,0.15)', padding: '3.5rem', borderRadius: '3rem', border: '1px solid var(--primary)' }}>
-                    <p className="price-label" style={{ fontSize: '1.8rem' }}>OFERTA ACTUAL</p>
-                    <p className="price-tag" style={{ fontSize: '12rem', margin: 0, lineHeight: 1 }}>
-                      ${Number(lastBid?.monto || 0).toLocaleString('es-AR')}
-                    </p>
-                  </div>
-                  <p style={{ fontSize: '3.5rem', marginTop: '3.5rem', fontWeight: 800 }}>{lastBid?.user_name || articulos.find(a => a.id === lastBid?.articulo_id)?.highestBidderName}</p>
-               </div>
-            </motion.div>
-          )}
+          <motion.div key={currentSponsorIndex} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+             {currentSponsor?.video_url ? (
+               <video src={currentSponsor.video_url} autoPlay muted loop style={{ maxWidth: '100%', maxHeight: '100%', borderRadius: '2rem', boxShadow: '0 20px 60px rgba(0,0,0,0.5)' }} />
+             ) : (
+               <img src={currentSponsor?.logo_url} style={{ maxWidth: '85%', maxHeight: '85%', objectFit: 'contain' }} alt="" />
+             )}
+          </motion.div>
         </AnimatePresence>
       </main>
+
+      {/* OVERLAY DE PUJA GIGANTE - Se monta encima de todo de forma garantizada */}
+      <AnimatePresence>
+        {mode === 'PUJA' && (
+          <motion.div 
+            initial={{ opacity: 0, backdropFilter: 'blur(0px)' }} 
+            animate={{ opacity: 1, backdropFilter: 'blur(25px)' }} 
+            exit={{ opacity: 0, backdropFilter: 'blur(0px)' }} 
+            style={{ 
+              position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, 
+              zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center',
+              background: 'rgba(12, 22, 45, 0.85)'
+            }}
+          >
+             <motion.div 
+                initial={{ scale: 0.5, y: 100 }} 
+                animate={{ scale: 1, y: 0 }} 
+                exit={{ scale: 1.2, opacity: 0 }}
+                transition={{ type: 'spring', bounce: 0.4, duration: 0.8 }}
+                style={{ background: 'rgba(12, 22, 45, 0.95)', border: '6px solid var(--primary)', borderRadius: '4rem', padding: '5rem', textAlign: 'center', boxShadow: '0 0 150px rgba(224,159,62,0.6)', minWidth: '850px' }}
+             >
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2rem', color: 'var(--primary)', marginBottom: '2rem' }}>
+                   <TrendingUp size={90} />
+                   <h1 style={{ fontSize: '6rem', fontWeight: 900, letterSpacing: '8px', margin: 0 }}>¡NUEVA PUJA!</h1>
+                </div>
+                <h2 style={{ fontSize: '4rem', marginBottom: '3rem' }}>{lastBid?.articulo_nombre}</h2>
+                <div style={{ background: 'rgba(224,159,62,0.15)', padding: '3.5rem', borderRadius: '3rem', border: '1px solid var(--primary)' }}>
+                  <p className="price-label" style={{ fontSize: '1.8rem' }}>OFERTA ACTUAL</p>
+                  <p className="price-tag" style={{ fontSize: '14rem', margin: 0, lineHeight: 1 }}>
+                    ${Number(lastBid?.monto || 0).toLocaleString('es-AR')}
+                  </p>
+                </div>
+                <p style={{ fontSize: '4rem', marginTop: '3.5rem', fontWeight: 800 }}>{lastBid?.user_name || articulos.find(a => a.id === lastBid?.articulo_id)?.highestBidderName}</p>
+             </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Sidebar */}
       <aside className="monitor-sidebar">
@@ -150,25 +175,16 @@ export default function Monitor() {
 
       {/* Footer */}
       <footer style={{ gridColumn: '1 / span 2', background: 'rgba(0,0,0,0.6)', borderTop: '2px solid var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 4rem', zIndex: 1 }}>
-        <AnimatePresence mode="wait">
-          {mode === 'BANNER' ? (
-            <motion.div key="footer-banner" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} style={{ display: 'flex', alignItems: 'center', gap: '3rem' }}>
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <span className="price-label">PRODUCTO ACTUAL</span>
-                <span style={{ fontSize: '1.8rem', fontWeight: 800 }}>{currentArt?.nombre}</span>
-              </div>
-              <div style={{ background: 'var(--primary)', color: '#0c162d', padding: '0.5rem 2rem', borderRadius: '1rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                 <span style={{ fontWeight: 800, fontSize: '1.2rem' }}>OFERTA ACTUAL:</span>
-                 <span className="price-tag" style={{ color: '#0c162d', fontSize: '2.5rem' }}>${Number(currentArt?.monto_actual || 0).toLocaleString('es-AR')}</span>
-              </div>
-            </motion.div>
-          ) : (
-            <motion.div key="footer-puja" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} style={{ display: 'flex', alignItems: 'center', gap: '2rem', height: '80%' }}>
-               <span className="price-label">EN EXHIBICIÓN:</span>
-               {currentSponsor?.logo_url && <img src={currentSponsor.logo_url} style={{ height: '100%', objectFit: 'contain' }} />}
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '3rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <span className="price-label">PRODUCTO EN PANTALLA</span>
+            <span style={{ fontSize: '1.8rem', fontWeight: 800 }}>{currentArt?.nombre}</span>
+          </div>
+          <div style={{ background: 'var(--primary)', color: '#0c162d', padding: '0.5rem 2rem', borderRadius: '1rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+             <span style={{ fontWeight: 800, fontSize: '1.2rem' }}>OFERTA:</span>
+             <span className="price-tag" style={{ color: '#0c162d', fontSize: '2.5rem' }}>${Number(currentArt?.monto_actual || 0).toLocaleString('es-AR')}</span>
+          </div>
+        </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
           <span style={{ fontSize: '0.7rem', opacity: 0.4 }}>DESARROLLADO POR</span>
