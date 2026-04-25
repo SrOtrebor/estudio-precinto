@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { db, ref, onValue, query, limitToLast } from '../firebase';
 import { motion, AnimatePresence } from 'framer-motion';
-import { TrendingUp, Award, Sparkles } from 'lucide-react';
+import { TrendingUp, Sparkles, Gavel } from 'lucide-react';
 import logoPrecinto from '../assets/logo-precinto.svg';
 
 export default function Monitor() {
@@ -31,31 +31,24 @@ export default function Monitor() {
       if (data) setSponsors(Object.values(data).sort((a,b) => a.orden - b.orden));
     });
 
-    // Listen for NEW bids
     const startTime = Date.now();
     onValue(bidsRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
         const bid = Object.values(data)[0];
-        // Only trigger if it's a new bid after opening the monitor
         if (bid.timestamp > startTime) {
-          // Small delay to ensure the 'articulos' state has updated with the new bid data
-          setTimeout(() => triggerPujaMode(bid), 300);
+          setTimeout(() => {
+            setMode('PUJA');
+            setFlash(true);
+            setTimeout(() => setFlash(false), 1000);
+            if (pujaTimeoutRef.current) clearTimeout(pujaTimeoutRef.current);
+            pujaTimeoutRef.current = setTimeout(() => setMode('BANNER'), 8000);
+          }, 300);
         }
         setLastBid(bid);
       }
     });
-  }, []); // Remove lastBid dependency
-
-  const triggerPujaMode = (bid) => {
-    setMode('PUJA');
-    setFlash(true);
-    setTimeout(() => setFlash(false), 1000);
-    if (pujaTimeoutRef.current) clearTimeout(pujaTimeoutRef.current);
-    pujaTimeoutRef.current = setTimeout(() => {
-      setMode('BANNER');
-    }, 8000);
-  };
+  }, []);
 
   useEffect(() => {
     if (mode === 'BANNER') {
@@ -76,142 +69,107 @@ export default function Monitor() {
   return (
     <div className={`monitor-root ${flash ? 'flash-trigger' : ''}`} style={{ 
       height: '100vh', width: '100vw', overflow: 'hidden', 
-      background: 'linear-gradient(135deg, #0c162d 0%, #000000 100%)',
-      display: 'flex', flexDirection: 'column', position: 'relative'
+      background: '#0c162d', color: 'white',
+      display: 'grid', gridTemplateRows: '200px 1fr 100px', gridTemplateColumns: '1fr 400px',
+      position: 'relative'
     }}>
-      {/* Background Sparkles Effect */}
-      <div className="sparkles-container">
-        {[...Array(30)].map((_, i) => (
-          <div key={i} className="sparkle" style={{
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 100}%`,
-            animationDelay: `${Math.random() * 5}s`,
-            transform: `scale(${Math.random()})`
-          }} />
-        ))}
-      </div>
-
       <style>{`
-        .sparkles-container { position: absolute; inset: 0; pointer-events: none; }
-        .sparkle {
-          position: absolute; width: 4px; height: 4px; background: white;
-          border-radius: 50%; opacity: 0;
-          animation: twinkle 4s infinite;
-          box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.3);
-        }
-        @keyframes twinkle {
-          0%, 100% { opacity: 0; transform: scale(0.5); }
-          50% { opacity: 0.8; transform: scale(1.2); }
-        }
-        .flash-trigger { animation: flashEffect 1s ease-out; }
-        @keyframes flashEffect {
-          0% { background: white; }
-          100% { background: inherit; }
-        }
+        .monitor-sidebar { background: rgba(0,0,0,0.3); border-left: 2px solid var(--primary); padding: 1.5rem; overflow-y: auto; }
+        .sidebar-item { display: flex; gap: 1rem; align-items: center; padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 1rem; margin-bottom: 1rem; border: 1px solid rgba(224,159,62,0.1); }
+        .sidebar-item.active { border-color: var(--primary); background: rgba(224,159,62,0.1); box-shadow: 0 0 15px rgba(224,159,62,0.2); }
+        .price-glow { color: var(--primary); font-family: 'Space Mono', monospace; font-weight: 800; }
+        .puja-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.85); display: flex; align-items: center; justifyContent: center; z-index: 100; backdrop-filter: blur(10px); }
+        .puja-card { background: #0c162d; border: 4px solid var(--primary); padding: 4rem; border-radius: 3rem; text-align: center; box-shadow: 0 0 100px rgba(224,159,62,0.4); width: 800px; }
       `}</style>
 
-      {/* Header */}
-      <header className="monitor-header" style={{ height: '200px', position: 'relative', zIndex: 2, background: 'rgba(12, 22, 45, 0.4)', borderBottom: '2px solid var(--primary)' }}>
+      {/* Header - Span across all columns */}
+      <header style={{ gridColumn: '1 / span 2', display: 'flex', alignItems: 'center', justifyContent: 'center', borderBottom: '2px solid var(--primary)', background: 'rgba(0,0,0,0.2)' }}>
         <img 
           src="https://fundacionnordelta.org/wp-content/uploads/2026/03/Fundacion-Nordelta-logo-25-anos-horizontal.png" 
           alt="Logo" 
-          style={{ height: '160px', filter: 'drop-shadow(0 0 25px rgba(224,159,62,0.7))', padding: '1rem 0' }} 
+          style={{ height: '150px', filter: 'drop-shadow(0 0 20px rgba(224,159,62,0.5))' }} 
         />
       </header>
 
-      <main style={{ flex: 1, position: 'relative', overflow: 'hidden', zIndex: 1 }}>
+      {/* Main Content Area */}
+      <main style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
         <AnimatePresence mode="wait">
-          {mode === 'BANNER' ? (
-            <motion.div 
-              key="banner"
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              style={{ height: '100%', display: 'flex', flexDirection: 'column' }}
-            >
-              <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
-                {currentSponsor ? (
-                  <motion.div 
-                    key={currentSponsor.id}
-                    initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 1.1, opacity: 0 }}
-                    transition={{ duration: 0.8, ease: "easeOut" }}
-                    style={{ textAlign: 'center' }}
-                  >
-                    {currentSponsor.video_url ? (
-                      <video src={currentSponsor.video_url} autoPlay muted loop style={{ maxHeight: '65vh', borderRadius: '2rem', border: '2px solid var(--primary)', boxShadow: '0 0 60px rgba(224,159,62,0.2)' }} />
-                    ) : (
-                      <img src={currentSponsor.logo_url} style={{ maxHeight: '55vh', maxWidth: '85vw', objectFit: 'contain' }} alt="" />
-                    )}
-                    <h2 style={{ marginTop: '2rem', fontSize: '2rem', color: 'var(--primary)', opacity: 0.8, textTransform: 'uppercase', letterSpacing: '4px' }}>{currentSponsor.nombre}</h2>
-                  </motion.div>
-                ) : (
-                  <div style={{ textAlign: 'center' }}>
-                    <h1 style={{ fontSize: '7rem', fontWeight: 900, background: 'linear-gradient(to bottom, #fff, var(--primary))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>SUBASTA 2026</h1>
-                    <h2 style={{ fontSize: '2.5rem', fontWeight: 300, opacity: 0.6, letterSpacing: '15px' }}>NOCHE SOLIDARIA</h2>
-                  </div>
-                )}
-              </div>
+          <motion.div 
+            key={currentSponsorIndex}
+            initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 1.05 }}
+            style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          >
+            {currentSponsor?.video_url ? (
+              <video src={currentSponsor.video_url} autoPlay muted loop style={{ maxWidth: '100%', maxHeight: '100%', borderRadius: '2rem', boxShadow: '0 20px 50px rgba(0,0,0,0.5)' }} />
+            ) : currentSponsor?.logo_url ? (
+              <img src={currentSponsor.logo_url} style={{ maxWidth: '90%', maxHeight: '90%', objectFit: 'contain' }} alt="" />
+            ) : (
+              <h1 style={{ fontSize: '8rem', fontWeight: 900, opacity: 0.2 }}>BANNERS</h1>
+            )}
+          </motion.div>
+        </AnimatePresence>
 
-              {/* Ticker Artículos Destacados */}
-              <div style={{ height: '200px', background: 'rgba(20, 40, 80, 0.4)', backdropFilter: 'blur(10px)', borderTop: '3px solid var(--primary)', display: 'flex', alignItems: 'center', padding: '0 6rem', justifyContent: 'space-between' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4rem' }}>
-                  <img src={currentArt?.imagen_url} style={{ width: '220px', height: '130px', objectFit: 'cover', borderRadius: '1.5rem', border: '2px solid var(--primary)', boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }} />
-                  <div>
-                    <h2 style={{ fontSize: '3rem', margin: 0, fontWeight: 800 }}>{currentArt?.nombre}</h2>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--primary)', marginTop: '5px' }}>
-                      <Sparkles size={20} />
-                      <p style={{ fontSize: '1.4rem', fontWeight: 600, letterSpacing: '2px' }}>SUBASTA EN VIVO</p>
-                    </div>
-                  </div>
+        {/* Puja Overlay (Interrupts main area only if you want, or whole screen) */}
+        <AnimatePresence>
+          {mode === 'PUJA' && (
+            <motion.div 
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              className="puja-overlay"
+              style={{ gridColumn: '1 / span 1' }} // Only covers main area
+            >
+              <motion.div 
+                initial={{ y: 50, scale: 0.9 }} animate={{ y: 0, scale: 1 }}
+                className="puja-card"
+              >
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', color: 'var(--primary)', marginBottom: '1rem' }}>
+                  <TrendingUp size={60} />
+                  <h2 style={{ fontSize: '4rem', fontWeight: 900, letterSpacing: '5px' }}>¡NUEVA PUJA!</h2>
                 </div>
-                <div style={{ textAlign: 'right' }}>
-                  <p style={{ fontSize: '1.4rem', color: 'rgba(255,255,255,0.5)', letterSpacing: '2px' }}>OFERTA ACTUAL</p>
-                  <p className="price-tag" style={{ fontSize: '5.5rem', fontWeight: 900, lineHeight: 1 }}>
-                    ${Number(currentArt?.monto_actual || 0).toLocaleString('es-AR')}
+                <h3 style={{ fontSize: '3rem', marginBottom: '2rem', opacity: 0.8 }}>{bidArt?.nombre}</h3>
+                <div style={{ background: 'rgba(255,255,255,0.05)', padding: '2rem', borderRadius: '2rem', border: '1px solid var(--primary)' }}>
+                  <p style={{ fontSize: '2rem', color: 'rgba(255,255,255,0.5)', marginBottom: '1rem' }}>OFERTA ACTUAL</p>
+                  <p style={{ fontSize: '10rem', fontWeight: 900, color: 'var(--primary)', lineHeight: 1, margin: 0 }}>
+                    ${Number(bidArt?.monto_actual || 0).toLocaleString('es-AR')}
                   </p>
                 </div>
-              </div>
-            </motion.div>
-          ) : (
-            <motion.div 
-              key="puja"
-              initial={{ opacity: 0, scale: 0.7 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 1.3 }}
-              style={{ 
-                height: '100%', width: '100%', position: 'absolute', zIndex: 100,
-                background: 'rgba(12, 22, 45, 0.98)', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                backdropFilter: 'blur(20px)'
-              }}
-            >
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: '8rem', maxWidth: '1500px', width: '90%', alignItems: 'center' }}>
-                <motion.div initial={{ x: -100 }} animate={{ x: 0 }} transition={{ type: "spring" }}>
-                  <img src={bidArt?.imagen_url} style={{ width: '100%', height: '750px', objectFit: 'cover', borderRadius: '4rem', border: '6px solid var(--primary)', boxShadow: '0 0 120px rgba(224,159,62,0.4)' }} />
-                </motion.div>
-                <motion.div initial={{ x: 100 }} animate={{ x: 0 }} transition={{ type: "spring" }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', color: 'var(--primary)', marginBottom: '3rem' }}>
-                    <TrendingUp size={80} />
-                    <span style={{ fontSize: '5rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '10px' }}>¡NUEVA PUJA!</span>
-                  </div>
-                  <h1 style={{ fontSize: '6rem', lineHeight: 1, marginBottom: '3rem', fontWeight: 800 }}>{bidArt?.nombre}</h1>
-                  <div className="glass" style={{ padding: '4.5rem', borderLeft: '20px solid var(--primary)', background: 'rgba(255,255,255,0.03)' }}>
-                    <p style={{ fontSize: '2.5rem', color: 'rgba(255,255,255,0.4)', marginBottom: '1.5rem', letterSpacing: '3px' }}>VA GANANDO:</p>
-                    <p style={{ fontSize: '6rem', fontWeight: 800, marginBottom: '3.5rem', color: 'white' }}>{bidArt?.highestBidderName}</p>
-                    <div style={{ height: '2px', background: 'rgba(224,159,62,0.3)', marginBottom: '3.5rem' }} />
-                    <p className="price-tag" style={{ fontSize: '10rem', fontWeight: 900 }}>
-                      ${Number(bidArt?.monto_actual || 0).toLocaleString('es-AR')}
-                    </p>
-                  </div>
-                </motion.div>
-              </div>
+                <p style={{ fontSize: '2.5rem', marginTop: '2rem', fontWeight: 700 }}>{bidArt?.highestBidderName}</p>
+              </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
       </main>
 
-      {/* Footer */}
-      <footer className="monitor-footer" style={{ borderTop: '1px solid rgba(255,255,255,0.1)', position: 'relative', zIndex: 2, display: 'flex', alignItems: 'center', gap: '15px' }}>
-        <span>Fundación Nordelta  •  Noche Solidaria 2026</span>
-        <span style={{ color: 'rgba(255,255,255,0.3)' }}>|</span>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ fontSize: '0.7rem', opacity: 0.6 }}>DESARROLLADO POR</span>
-          <img src={logoPrecinto} alt="Estudio Precinto" style={{ height: '20px', opacity: 0.8 }} />
+      {/* Right Sidebar - Product List */}
+      <aside className="monitor-sidebar">
+        <h2 style={{ fontSize: '1.5rem', color: 'var(--primary)', marginBottom: '2rem', textAlign: 'center', letterSpacing: '2px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
+          <Gavel size={24} /> LOTES EN SUBASTA
+        </h2>
+        {articulos.map((art, idx) => (
+          <div key={art.id} className={`sidebar-item ${idx === currentIndex ? 'active' : ''}`}>
+            <img src={art.imagen_url} style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '0.8rem' }} />
+            <div style={{ flex: 1, overflow: 'hidden' }}>
+              <p style={{ fontSize: '1rem', fontWeight: 700, margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{art.nombre}</p>
+              <p className="price-glow" style={{ fontSize: '1.4rem', margin: 0 }}>${Number(art.monto_actual || 0).toLocaleString('es-AR')}</p>
+            </div>
+          </div>
+        ))}
+      </aside>
+
+      {/* Footer - Span across all columns */}
+      <footer style={{ gridColumn: '1 / span 2', background: 'rgba(0,0,0,0.4)', borderTop: '2px solid var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 4rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
+          <div style={{ background: 'rgba(255,255,255,0.05)', padding: '0.5rem 2rem', borderRadius: '1rem', border: '1px solid var(--primary)' }}>
+             <span style={{ fontSize: '1rem', color: 'rgba(255,255,255,0.5)', marginRight: '1rem' }}>PRODUCTO ACTUAL:</span>
+             <span style={{ fontSize: '1.5rem', fontWeight: 800 }}>{currentArt?.nombre || "Cargando..."}</span>
+          </div>
+          <div style={{ fontSize: '1.5rem', color: 'var(--primary)', fontWeight: 800 }}>
+             OFERTA: ${Number(currentArt?.monto_actual || 0).toLocaleString('es-AR')}
+          </div>
+        </div>
+        
+        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+          <span style={{ fontSize: '0.8rem', opacity: 0.5 }}>DESARROLLADO POR</span>
+          <img src={logoPrecinto} style={{ height: '30px' }} />
         </div>
       </footer>
     </div>
