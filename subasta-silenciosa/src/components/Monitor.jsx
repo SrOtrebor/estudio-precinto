@@ -43,7 +43,7 @@ export default function Monitor() {
       const bidData = Object.values(data)[0];
 
       // DISPARAR ANIMACIÓN: Lógica a prueba de balas
-      if (!isFirstLoadRef.current && lastBidIdRef.current && bidId !== lastBidIdRef.current) {
+      if (!isFirstLoadRef.current && bidId !== lastBidIdRef.current) {
         setMode('PUJA');
         if (pujaTimeoutRef.current) clearTimeout(pujaTimeoutRef.current);
         pujaTimeoutRef.current = setTimeout(() => setMode('BANNER'), 12000); // 12 segundos visibles
@@ -120,42 +120,39 @@ export default function Monitor() {
         </AnimatePresence>
       </main>
 
-      {/* OVERLAY DE PUJA GIGANTE - Se monta encima de todo de forma garantizada */}
-      <AnimatePresence>
-        {mode === 'PUJA' && (
-          <motion.div 
-            initial={{ opacity: 0, backdropFilter: 'blur(0px)' }} 
-            animate={{ opacity: 1, backdropFilter: 'blur(25px)' }} 
-            exit={{ opacity: 0, backdropFilter: 'blur(0px)' }} 
+      {/* OVERLAY DE PUJA GIGANTE - CSS PURO PARA EVITAR BLOQUEOS */}
+      <div 
+        style={{ 
+          position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, 
+          zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center',
+          background: 'rgba(12, 22, 45, 0.90)',
+          opacity: mode === 'PUJA' ? 1 : 0,
+          pointerEvents: mode === 'PUJA' ? 'auto' : 'none',
+          transition: 'opacity 0.4s ease-in-out',
+          backdropFilter: mode === 'PUJA' ? 'blur(15px)' : 'blur(0px)'
+        }}
+      >
+         <div 
             style={{ 
-              position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, 
-              zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center',
-              background: 'rgba(12, 22, 45, 0.85)'
+              background: 'rgba(12, 22, 45, 0.95)', border: '6px solid var(--primary)', borderRadius: '4rem', padding: '5rem', textAlign: 'center', boxShadow: '0 0 150px rgba(224,159,62,0.6)', minWidth: '850px',
+              transform: mode === 'PUJA' ? 'scale(1) translateY(0)' : 'scale(0.8) translateY(50px)',
+              transition: 'all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
             }}
-          >
-             <motion.div 
-                initial={{ scale: 0.5, y: 100 }} 
-                animate={{ scale: 1, y: 0 }} 
-                exit={{ scale: 1.2, opacity: 0 }}
-                transition={{ type: 'spring', bounce: 0.4, duration: 0.8 }}
-                style={{ background: 'rgba(12, 22, 45, 0.95)', border: '6px solid var(--primary)', borderRadius: '4rem', padding: '5rem', textAlign: 'center', boxShadow: '0 0 150px rgba(224,159,62,0.6)', minWidth: '850px' }}
-             >
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2rem', color: 'var(--primary)', marginBottom: '2rem' }}>
-                   <TrendingUp size={90} />
-                   <h1 style={{ fontSize: '6rem', fontWeight: 900, letterSpacing: '8px', margin: 0 }}>¡NUEVA PUJA!</h1>
-                </div>
-                <h2 style={{ fontSize: '4rem', marginBottom: '3rem' }}>{lastBid?.articulo_nombre}</h2>
-                <div style={{ background: 'rgba(224,159,62,0.15)', padding: '3.5rem', borderRadius: '3rem', border: '1px solid var(--primary)' }}>
-                  <p className="price-label" style={{ fontSize: '1.8rem' }}>OFERTA ACTUAL</p>
-                  <p className="price-tag" style={{ fontSize: '14rem', margin: 0, lineHeight: 1 }}>
-                    ${Number(lastBid?.monto || 0).toLocaleString('es-AR')}
-                  </p>
-                </div>
-                <p style={{ fontSize: '4rem', marginTop: '3.5rem', fontWeight: 800 }}>{lastBid?.user_name || articulos.find(a => a.id === lastBid?.articulo_id)?.highestBidderName}</p>
-             </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+         >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2rem', color: 'var(--primary)', marginBottom: '2rem' }}>
+               <TrendingUp size={90} />
+               <h1 style={{ fontSize: '6rem', fontWeight: 900, letterSpacing: '8px', margin: 0 }}>¡NUEVA PUJA!</h1>
+            </div>
+            <h2 style={{ fontSize: '4rem', marginBottom: '3rem' }}>{lastBid?.articulo_nombre}</h2>
+            <div style={{ background: 'rgba(224,159,62,0.15)', padding: '3.5rem', borderRadius: '3rem', border: '1px solid var(--primary)' }}>
+              <p className="price-label" style={{ fontSize: '1.8rem' }}>OFERTA ACTUAL</p>
+              <p className="price-tag" style={{ fontSize: '14rem', margin: 0, lineHeight: 1 }}>
+                ${Number(lastBid?.monto || 0).toLocaleString('es-AR')}
+              </p>
+            </div>
+            <p style={{ fontSize: '4rem', marginTop: '3.5rem', fontWeight: 800 }}>{lastBid?.user_name || articulos.find(a => a.id === lastBid?.articulo_id)?.highestBidderName}</p>
+         </div>
+      </div>
 
       {/* Sidebar */}
       <aside className="monitor-sidebar">
