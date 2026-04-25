@@ -9,6 +9,7 @@ export default function Dashboard() {
   const [activeTab, setActiveTab] = useState('articulos');
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
+  const [revelarGanadores, setRevelarGanadores] = useState(false);
 
   // Form states
   const [newArt, setNewArt] = useState({ nombre: '', descripcion: '', precio_base: '', prioridad: 5 });
@@ -18,6 +19,12 @@ export default function Dashboard() {
   useEffect(() => {
     const artRef = ref(db, 'articulos');
     const sponRef = ref(db, 'sponsors');
+    const settingsRef = ref(db, 'settings');
+
+    const unsubSettings = onValue(settingsRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) setRevelarGanadores(!!data.revelar_ganadores);
+    });
 
     const unsubArt = onValue(artRef, (snapshot) => {
       const data = snapshot.val();
@@ -38,7 +45,7 @@ export default function Dashboard() {
       }
     });
 
-    return () => { unsubArt(); unsubSpon(); };
+    return () => { unsubArt(); unsubSpon(); unsubSettings(); };
   }, []);
 
   const uploadFile = async (file, path) => {
@@ -145,9 +152,18 @@ export default function Dashboard() {
           <img src="https://fundacionnordelta.org/wp-content/uploads/2026/03/Fundacion-Nordelta-logo-25-anos-horizontal.png" alt="Logo" style={{ height: '60px' }} />
           <h1 style={{ margin: 0, fontSize: '1.8rem' }}>Admin Subasta</h1>
         </div>
-        <button className="btn-secondary" onClick={exportCSV}>
-          <Download size={18} style={{ marginRight: '8px' }} /> Exportar CSV
-        </button>
+        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          <button 
+            className="btn-secondary" 
+            style={{ borderColor: revelarGanadores ? 'var(--success)' : 'rgba(255,255,255,0.2)', color: revelarGanadores ? 'var(--success)' : 'white' }}
+            onClick={() => set(ref(db, 'settings/revelar_ganadores'), !revelarGanadores)}
+          >
+            {revelarGanadores ? "Ocultar Ganadores" : "Revelar Ganadores"}
+          </button>
+          <button className="btn-secondary" onClick={exportCSV}>
+            <Download size={18} style={{ marginRight: '8px' }} /> Exportar CSV
+          </button>
+        </div>
       </header>
 
       <nav className="glass" style={{ display: 'flex', padding: '0.5rem', marginBottom: '2rem', gap: '0.5rem' }}>

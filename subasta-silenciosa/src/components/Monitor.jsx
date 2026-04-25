@@ -11,6 +11,7 @@ export default function Monitor() {
   const [mode, setMode] = useState('BANNER'); 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [currentSponsorIndex, setCurrentSponsorIndex] = useState(0);
+  const [revelarGanadores, setRevelarGanadores] = useState(false);
   
   const timerRef = useRef(null);
   const pujaTimeoutRef = useRef(null);
@@ -21,6 +22,12 @@ export default function Monitor() {
   useEffect(() => {
     const artRef = ref(db, 'articulos');
     const sponRef = ref(db, 'sponsors');
+    const settingsRef = ref(db, 'settings');
+
+    const unsubSettings = onValue(settingsRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) setRevelarGanadores(!!data.revelar_ganadores);
+    });
     const bidsRef = query(ref(db, 'pujas'), limitToLast(1));
 
     const unsubscribeArt = onValue(artRef, (snapshot) => {
@@ -70,6 +77,7 @@ export default function Monitor() {
     return () => {
       unsubscribeArt();
       unsubscribeSpon();
+      unsubSettings();
       if (pujaTimeoutRef.current) clearTimeout(pujaTimeoutRef.current);
     };
   }, []);
@@ -157,12 +165,11 @@ export default function Monitor() {
             </div>
             <h2 style={{ fontSize: '4rem', marginBottom: '3rem' }}>{lastBid?.articulo_nombre}</h2>
             <div style={{ background: 'rgba(224,159,62,0.15)', padding: '3.5rem', borderRadius: '3rem', border: '1px solid var(--primary)' }}>
-              <p className="price-label" style={{ fontSize: '1.8rem' }}>OFERTA ACTUAL</p>
+              <p className="price-label" style={{ fontSize: '1.8rem' }}>NUEVO VALOR</p>
               <p className="price-tag" style={{ fontSize: '14rem', margin: 0, lineHeight: 1 }}>
                 ${Number(lastBid?.monto || 0).toLocaleString('es-AR')}
               </p>
             </div>
-            <p style={{ fontSize: '4rem', marginTop: '3.5rem', fontWeight: 800 }}>{lastBid?.user_name || articulos.find(a => a.id === lastBid?.articulo_id)?.highestBidderName}</p>
          </div>
       </div>
 
@@ -175,8 +182,15 @@ export default function Monitor() {
           <div key={art.id} className={`sidebar-item ${idx === currentIndex ? 'active' : ''}`}>
             <img src={art.imagen_url} style={{ width: '70px', height: '70px', objectFit: 'cover', borderRadius: '0.6rem' }} />
             <div style={{ flex: 1, overflow: 'hidden' }}>
-              <p style={{ fontSize: '0.9rem', fontWeight: 700, margin: 0 }}>{art.nombre}</p>
-              <p className="price-tag" style={{ fontSize: '1.2rem', margin: 0 }}>${Number(art.monto_actual || 0).toLocaleString('es-AR')}</p>
+              <p style={{ fontSize: '0.9rem', fontWeight: 700, margin: 0, opacity: art.status === 'closed' ? 0.5 : 1 }}>{art.nombre}</p>
+              <p className="price-tag" style={{ fontSize: '1.2rem', margin: 0, color: art.status === 'closed' ? 'gray' : 'var(--primary)' }}>
+                ${Number(art.monto_actual || 0).toLocaleString('es-AR')}
+              </p>
+              {revelarGanadores && art.status === 'closed' && art.highestBidderName && (
+                <p style={{ fontSize: '0.85rem', color: '#E09F3E', fontWeight: 'bold', margin: '5px 0 0 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  🏆 Ganador: {art.highestBidderName}
+                </p>
+              )}
             </div>
           </div>
         ))}
