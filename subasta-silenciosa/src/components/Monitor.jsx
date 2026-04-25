@@ -107,11 +107,11 @@ export default function Monitor() {
       `}</style>
 
       {/* Header */}
-      <header className="monitor-header" style={{ position: 'relative', zIndex: 2 }}>
+      <header className="monitor-header" style={{ height: '200px', position: 'relative', zIndex: 2, background: 'rgba(12, 22, 45, 0.4)', borderBottom: '2px solid var(--primary)' }}>
         <img 
           src="https://fundacionnordelta.org/wp-content/uploads/2026/03/Fundacion-Nordelta-logo-25-anos-horizontal.png" 
           alt="Logo" 
-          style={{ height: '90px', filter: 'drop-shadow(0 0 15px rgba(224,159,62,0.6))' }} 
+          style={{ height: '160px', filter: 'drop-shadow(0 0 25px rgba(224,159,62,0.7))', padding: '1rem 0' }} 
         />
       </header>
 
