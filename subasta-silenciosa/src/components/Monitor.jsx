@@ -17,7 +17,7 @@ export default function Monitor() {
   const pujaTimeoutRef = useRef(null);
   const lastBidIdRef = useRef(null);
   const isFirstLoadRef = useRef(true);
-  const articulosRef = useRef([]);
+  const preciosRef = useRef({});
   const canShowAlertRef = useRef(true);
 
   useEffect(() => {
@@ -29,7 +29,6 @@ export default function Monitor() {
       const data = snapshot.val();
       if (data) setRevelarGanadores(!!data.revelar_ganadores);
     });
-    const bidsRef = query(ref(db, 'pujas'), limitToLast(1));
 
     const unsubscribeArt = onValue(artRef, (snapshot) => {
       const data = snapshot.val();
@@ -37,19 +36,18 @@ export default function Monitor() {
       
       const newArticulos = Object.values(data);
 
-      // Si no es la carga inicial, buscamos de forma síncrona qué artículo subió de precio
       if (!isFirstLoadRef.current) {
         let changedArt = null;
         
-        // Comparamos usando la referencia síncrona asegurando que sean números
+        // Comparamos usando el diccionario síncrono de precios
         newArticulos.forEach(newArt => {
-          const oldArt = articulosRef.current.find(a => a.id === newArt.id);
-          if (oldArt && Number(newArt.monto_actual) > Number(oldArt.monto_actual)) {
+          const oldPrecio = preciosRef.current[newArt.id];
+          const newPrecio = Number(newArt.monto_actual);
+          if (oldPrecio !== undefined && newPrecio > oldPrecio) {
             changedArt = newArt;
           }
         });
 
-        // Disparamos la alerta SOLO si el sistema no está en "cooldown" (enfriamiento)
         if (changedArt && canShowAlertRef.current) {
           setLastBid({
             articulo_id: changedArt.id,
@@ -59,14 +57,10 @@ export default function Monitor() {
           });
           setMode('PUJA');
           
-          // Bloqueamos nuevas alertas
           canShowAlertRef.current = false;
           
-          // El cartel gigante dura 8 segundos
           setTimeout(() => {
             setMode('BANNER');
-            
-            // Recién 15 segundos después de ocultarse, permitimos que otro cartel gigante vuelva a salir
             setTimeout(() => {
               canShowAlertRef.current = true;
             }, 15000);
@@ -76,8 +70,13 @@ export default function Monitor() {
         isFirstLoadRef.current = false;
       }
 
-      // Actualizamos estado y referencia
-      articulosRef.current = newArticulos;
+      // Actualizamos el diccionario de precios
+      const nuevosPrecios = {};
+      newArticulos.forEach(art => {
+        nuevosPrecios[art.id] = Number(art.monto_actual);
+      });
+      preciosRef.current = nuevosPrecios;
+
       setArticulos(newArticulos.sort((a,b) => b.prioridad - a.prioridad));
     });
 
