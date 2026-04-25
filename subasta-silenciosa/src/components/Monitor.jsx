@@ -16,6 +16,7 @@ export default function Monitor() {
   const pujaTimeoutRef = useRef(null);
   const lastBidIdRef = useRef(null);
   const isFirstLoadRef = useRef(true);
+  const articulosRef = useRef([]);
 
   useEffect(() => {
     const artRef = ref(db, 'articulos');
@@ -28,19 +29,16 @@ export default function Monitor() {
       
       const newArticulos = Object.values(data);
 
-      // Si no es la carga inicial, buscamos qué artículo subió de precio
+      // Si no es la carga inicial, buscamos de forma síncrona qué artículo subió de precio
       if (!isFirstLoadRef.current) {
         let changedArt = null;
         
-        // Comparamos el nuevo estado con el estado anterior guardado en "articulos"
-        setArticulos(prevArticulos => {
-          newArticulos.forEach(newArt => {
-            const oldArt = prevArticulos.find(a => a.id === newArt.id);
-            if (oldArt && newArt.monto_actual > oldArt.monto_actual) {
-              changedArt = newArt;
-            }
-          });
-          return newArticulos.sort((a,b) => b.prioridad - a.prioridad);
+        // Comparamos usando la referencia síncrona
+        newArticulos.forEach(newArt => {
+          const oldArt = articulosRef.current.find(a => a.id === newArt.id);
+          if (oldArt && newArt.monto_actual > oldArt.monto_actual) {
+            changedArt = newArt;
+          }
         });
 
         // Si encontramos un artículo que subió de precio, disparamos la alerta gigante
@@ -56,9 +54,12 @@ export default function Monitor() {
           pujaTimeoutRef.current = setTimeout(() => setMode('BANNER'), 12000);
         }
       } else {
-        setArticulos(newArticulos.sort((a,b) => b.prioridad - a.prioridad));
         isFirstLoadRef.current = false;
       }
+
+      // Actualizamos estado y referencia
+      articulosRef.current = newArticulos;
+      setArticulos(newArticulos.sort((a,b) => b.prioridad - a.prioridad));
     });
 
     const unsubscribeSpon = onValue(sponRef, (snapshot) => {
