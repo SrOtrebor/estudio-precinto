@@ -18,6 +18,7 @@ export default function Monitor() {
   const lastBidIdRef = useRef(null);
   const isFirstLoadRef = useRef(true);
   const articulosRef = useRef([]);
+  const canShowAlertRef = useRef(true);
 
   useEffect(() => {
     const artRef = ref(db, 'articulos');
@@ -40,16 +41,16 @@ export default function Monitor() {
       if (!isFirstLoadRef.current) {
         let changedArt = null;
         
-        // Comparamos usando la referencia síncrona
+        // Comparamos usando la referencia síncrona asegurando que sean números
         newArticulos.forEach(newArt => {
           const oldArt = articulosRef.current.find(a => a.id === newArt.id);
-          if (oldArt && newArt.monto_actual > oldArt.monto_actual) {
+          if (oldArt && Number(newArt.monto_actual) > Number(oldArt.monto_actual)) {
             changedArt = newArt;
           }
         });
 
-        // Si encontramos un artículo que subió de precio, disparamos la alerta gigante
-        if (changedArt) {
+        // Disparamos la alerta SOLO si el sistema no está en "cooldown" (enfriamiento)
+        if (changedArt && canShowAlertRef.current) {
           setLastBid({
             articulo_id: changedArt.id,
             articulo_nombre: changedArt.nombre,
@@ -57,8 +58,19 @@ export default function Monitor() {
             user_name: changedArt.highestBidderName
           });
           setMode('PUJA');
-          if (pujaTimeoutRef.current) clearTimeout(pujaTimeoutRef.current);
-          pujaTimeoutRef.current = setTimeout(() => setMode('BANNER'), 12000);
+          
+          // Bloqueamos nuevas alertas
+          canShowAlertRef.current = false;
+          
+          // El cartel gigante dura 8 segundos
+          setTimeout(() => {
+            setMode('BANNER');
+            
+            // Recién 15 segundos después de ocultarse, permitimos que otro cartel gigante vuelva a salir
+            setTimeout(() => {
+              canShowAlertRef.current = true;
+            }, 15000);
+          }, 8000);
         }
       } else {
         isFirstLoadRef.current = false;
