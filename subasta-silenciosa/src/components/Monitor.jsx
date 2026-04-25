@@ -146,14 +146,14 @@ export default function Monitor() {
                    <TrendingUp size={70} />
                    <h1 style={{ fontSize: '4.5rem', fontWeight: 900, letterSpacing: '8px', margin: 0 }}>¡NUEVA PUJA!</h1>
                 </div>
-                <h2 style={{ fontSize: '3rem', marginBottom: '2.5rem' }}>{bidArt?.nombre}</h2>
+                <h2 style={{ fontSize: '3.5rem', marginBottom: '2.5rem' }}>{lastBid?.articulo_nombre}</h2>
                 <div style={{ background: 'rgba(224,159,62,0.1)', padding: '2.5rem', borderRadius: '2rem', border: '1px solid var(--primary)' }}>
                   <p className="price-label" style={{ fontSize: '1.4rem' }}>OFERTA ACTUAL</p>
                   <p style={{ fontSize: '11rem', fontWeight: 900, color: 'var(--primary)', margin: 0, lineHeight: 1 }}>
-                    ${Number(bidArt?.monto_actual || 0).toLocaleString('es-AR')}
+                    ${Number(lastBid?.monto || 0).toLocaleString('es-AR')}
                   </p>
                 </div>
-                <p style={{ fontSize: '2.8rem', marginTop: '2.5rem', fontWeight: 800 }}>{bidArt?.highestBidderName}</p>
+                <p style={{ fontSize: '2.8rem', marginTop: '2.5rem', fontWeight: 800 }}>{articulos.find(a => a.id === lastBid?.articulo_id)?.highestBidderName}</p>
               </div>
             </motion.div>
           )}

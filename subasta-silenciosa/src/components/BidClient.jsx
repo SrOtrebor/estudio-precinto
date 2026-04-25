@@ -39,10 +39,12 @@ export default function BidClient({ user }) {
 
       if (result.committed) {
         const bidId = crypto.randomUUID();
+        const updatedArt = result.snapshot.val();
         await set(ref(db, `pujas/${bidId}`), {
           articulo_id: articuloId,
+          articulo_nombre: updatedArt.nombre,
           user_id: user.id,
-          monto: result.snapshot.val().monto_actual,
+          monto: updatedArt.monto_actual,
           timestamp: Date.now()
         });
         setFeedback({ type: 'success', message: '¡Puja exitosa! Vas ganando.' });
