@@ -72,6 +72,12 @@ jobs:
           mkdir -p dist_final/subasta-silenciosa
           cp -r subasta-silenciosa/dist/* dist_final/subasta-silenciosa/
 
+          # Copiamos curso-maleki
+          [ -d curso-maleki ] && cp -r curso-maleki dist_final/ || true
+
+          # Copiamos sitio-prueba
+          [ -d sitio-prueba ] && cp -r sitio-prueba dist_final/ || true
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
