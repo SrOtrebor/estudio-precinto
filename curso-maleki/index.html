@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Academia Maleki — Aprende el idioma de Edrenor</title>
+<meta name="description" content="Aprende el idioma Maleki, la lengua del pueblo Malekik del planeta Arrem. Desbloquea tu poder en el Reino de Edrenor.">
+<link rel="stylesheet" href="css/styles.css">
+<style>
+.auth-split{min-height:100vh;display:grid;grid-template-columns:1fr 1fr}
+.auth-lore{
+  background:linear-gradient(135deg,rgba(124,77,158,0.2),rgba(10,10,18,0.95)),
+             url('https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=900&auto=format&fit=crop') center/cover;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:3rem;text-align:center;position:relative;overflow:hidden;
+}
+.auth-lore::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at center,rgba(124,77,158,0.3) 0%,transparent 70%);
+}
+.auth-lore-content{position:relative;z-index:1;max-width:480px}
+.auth-rune{
+  font-family:'Cinzel Decorative',serif;font-size:4rem;
+  color:var(--gold);opacity:0.3;line-height:1;margin-bottom:1rem;
+  animation:float 6s ease-in-out infinite;
+}
+.auth-lore-title{font-size:2.2rem;margin-bottom:1rem;line-height:1.2}
+.auth-lore-text{color:var(--text-muted);line-height:1.8;font-size:0.95rem}
+.features-list{list-style:none;text-align:left;margin-top:2rem;display:flex;flex-direction:column;gap:0.75rem}
+.features-list li{display:flex;align-items:center;gap:0.75rem;font-size:0.9rem;color:var(--text-muted)}
+.features-list li span.icon{color:var(--gold);font-size:1rem;flex-shrink:0}
+.auth-panel{
+  background:var(--deep);
+  display:flex;align-items:center;justify-content:center;
+  padding:3rem 2rem;
+}
+.auth-box{width:100%;max-width:400px}
+.auth-logo{font-family:'Cinzel Decorative',serif;font-size:1.3rem;color:var(--gold);margin-bottom:0.25rem}
+.auth-logo span{color:var(--violet-bright)}
+.auth-tagline{font-size:0.8rem;color:var(--text-muted);margin-bottom:2.5rem;letter-spacing:0.08em}
+@media(max-width:768px){
+  .auth-split{grid-template-columns:1fr}
+  .auth-lore{display:none}
+  .auth-panel{padding:2rem 1.5rem;min-height:100vh}
+}
+</style>
+</head>
+<body>
+<div class="bg-stars"></div>
+
+<div class="auth-split page">
+  <!-- Lore Panel -->
+  <div class="auth-lore">
+    <div class="auth-lore-content">
+      <div class="auth-rune">✦</div>
+      <h1 class="auth-lore-title font-cinzel text-gold">
+        El idioma<br>del Kräm
+      </h1>
+      <p class="auth-lore-text">
+        El Maleki no nació para resolver lo urgente.<br>
+        Nació para <em>nombrar el mundo con exactitud</em>.<br><br>
+        Antes de ser palabra, todo fue pulso.
+      </p>
+      <ul class="features-list">
+        <li><span class="icon">⚔️</span> 3 niveles: Iniciado, Erudito, Maestro</li>
+        <li><span class="icon">🎯</span> Exámenes con corrección automática</li>
+        <li><span class="icon">🎮</span> Cada nivel desbloquea tu rol en Discord</li>
+        <li><span class="icon">🔮</span> Vinculado a tu Carta Krámica</li>
+        <li><span class="icon">📖</span> +1700 palabras del diccionario oficial</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Auth Panel -->
+  <div class="auth-panel">
+    <div class="auth-box">
+      <div class="auth-logo">Academia <span>Maleki</span></div>
+      <div class="auth-tagline">Saga Edrenor — Lengua del Pueblo Malekik</div>
+
+      <!-- TABS LOGIN / REGISTRO -->
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('login')" id="tab-login">Ingresar</button>
+        <button class="tab-btn" onclick="switchTab('register')" id="tab-register">Registrarse</button>
+      </div>
+
+      <!-- LOGIN -->
+      <div id="pane-login" class="tab-content active">
+        <form id="form-login" onsubmit="handleLogin(event)">
+          <div class="form-group">
+            <label class="form-label" for="login-email">Correo</label>
+            <input class="form-input" type="email" id="login-email" placeholder="tu@email.com" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="login-pass">Contraseña</label>
+            <input class="form-input" type="password" id="login-pass" placeholder="••••••••" required>
+          </div>
+          <div id="login-error" class="form-error" style="display:none"></div>
+          <button type="submit" class="btn btn-primary btn-full" id="btn-login">
+            <span>Entrar al Reino</span>
+          </button>
+        </form>
+        <div class="form-divider">o</div>
+        <a href="#" onclick="handleDiscordLogin()" class="btn btn-discord btn-full">
+          <svg width="18" height="18" viewBox="0 0 71 55" fill="currentColor" style="flex-shrink:0">
+            <path d="M60.1 4.9A58.6 58.6 0 0 0 45.7.5a40.8 40.8 0 0 0-1.8 3.7 54.1 54.1 0 0 0-16.3 0A40.4 40.4 0 0 0 25.8.5 58.6 58.6 0 0 0 11.4 5C1.6 19.4-1 33.5.3 47.4A59.1 59.1 0 0 0 18.1 55a44.5 44.5 0 0 0 3.8-6.2 38.5 38.5 0 0 1-6-2.9l1.4-1.1a42.2 42.2 0 0 0 36.2 0l1.5 1.1a38.4 38.4 0 0 1-6 2.9 44.7 44.7 0 0 0 3.8 6.2 58.9 58.9 0 0 0 17.8-7.6C72 33.4 68.6 19.3 60.1 4.9ZM23.7 38.8c-3.5 0-6.4-3.2-6.4-7.2s2.8-7.2 6.4-7.2 6.5 3.2 6.4 7.2c0 4-2.8 7.2-6.4 7.2Zm23.5 0c-3.5 0-6.4-3.2-6.4-7.2s2.8-7.2 6.4-7.2 6.5 3.2 6.4 7.2c0 4-2.8 7.2-6.4 7.2Z"/>
+          </svg>
+          Continuar con Discord
+        </a>
+      </div>
+
+      <!-- REGISTRO -->
+      <div id="pane-register" class="tab-content">
+        <form id="form-register" onsubmit="handleRegister(event)">
+          <div class="form-group">
+            <label class="form-label" for="reg-name">Nombre en el Reino</label>
+            <input class="form-input" type="text" id="reg-name" placeholder="Tu nombre Maleki" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="reg-email">Correo</label>
+            <input class="form-input" type="email" id="reg-email" placeholder="tu@email.com" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="reg-pass">Contraseña</label>
+            <input class="form-input" type="password" id="reg-pass" placeholder="Mínimo 6 caracteres" required minlength="6">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="reg-birth">Fecha de Nacimiento <span style="color:var(--violet-bright)">(Carta Krámica)</span></label>
+            <input class="form-input" type="date" id="reg-birth">
+            <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.4rem">Opcional — genera tu perfil krámica</div>
+          </div>
+          <div id="reg-error" class="form-error" style="display:none"></div>
+          <button type="submit" class="btn btn-primary btn-full" id="btn-register">
+            <span>Iniciar el Camino</span>
+          </button>
+        </form>
+        <div class="form-divider">o</div>
+        <a href="#" onclick="handleDiscordLogin()" class="btn btn-discord btn-full">
+          <svg width="18" height="18" viewBox="0 0 71 55" fill="currentColor" style="flex-shrink:0">
+            <path d="M60.1 4.9A58.6 58.6 0 0 0 45.7.5a40.8 40.8 0 0 0-1.8 3.7 54.1 54.1 0 0 0-16.3 0A40.4 40.4 0 0 0 25.8.5 58.6 58.6 0 0 0 11.4 5C1.6 19.4-1 33.5.3 47.4A59.1 59.1 0 0 0 18.1 55a44.5 44.5 0 0 0 3.8-6.2 38.5 38.5 0 0 1-6-2.9l1.4-1.1a42.2 42.2 0 0 0 36.2 0l1.5 1.1a38.4 38.4 0 0 1-6 2.9 44.7 44.7 0 0 0 3.8 6.2 58.9 58.9 0 0 0 17.8-7.6C72 33.4 68.6 19.3 60.1 4.9ZM23.7 38.8c-3.5 0-6.4-3.2-6.4-7.2s2.8-7.2 6.4-7.2 6.5 3.2 6.4 7.2c0 4-2.8 7.2-6.4 7.2Zm23.5 0c-3.5 0-6.4-3.2-6.4-7.2s2.8-7.2 6.4-7.2 6.5 3.2 6.4 7.2c0 4-2.8 7.2-6.4 7.2Z"/>
+          </svg>
+          Registrarse con Discord
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast">
+  <span class="toast-icon" id="toast-icon">✓</span>
+  <span id="toast-msg"></span>
+</div>
+
+<div style="position:fixed;bottom:1rem;left:1rem;opacity:0.1;z-index:10">
+  <a href="admin.html" style="color:var(--text);font-size:0.6rem;text-decoration:none">✧ Admin</a>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+<script src="js/app.js"></script>
+<script>
+function switchTab(tab){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  document.getElementById('pane-'+tab).classList.add('active');
+}
+async function handleLogin(e){
+  e.preventDefault();
+  const btn=document.getElementById('btn-login');
+  const err=document.getElementById('login-error');
+  btn.disabled=true; btn.innerHTML='<span>Entrando...</span>';
+  err.style.display='none';
+  const email=document.getElementById('login-email').value;
+  const pass=document.getElementById('login-pass').value;
+  const result=await window.MalekiAuth.login(email,pass);
+  if(result.ok){ window.location.href='dashboard.html'; }
+  else{ err.textContent=result.error; err.style.display='block'; btn.disabled=false; btn.innerHTML='<span>Entrar al Reino</span>'; }
+}
+async function handleRegister(e){
+  e.preventDefault();
+  const btn=document.getElementById('btn-register');
+  const err=document.getElementById('reg-error');
+  btn.disabled=true; btn.innerHTML='<span>Creando cuenta...</span>';
+  err.style.display='none';
+  const name=document.getElementById('reg-name').value;
+  const email=document.getElementById('reg-email').value;
+  const pass=document.getElementById('reg-pass').value;
+  const birth=document.getElementById('reg-birth').value;
+  const result=await window.MalekiAuth.register(email,pass,name,birth);
+  if(result.ok){ window.location.href='dashboard.html'; }
+  else{ err.textContent=result.error; err.style.display='block'; btn.disabled=false; btn.innerHTML='<span>Iniciar el Camino</span>'; }
+}
+function handleDiscordLogin(){
+  window.MalekiDiscord.startOAuth();
+}
+// Handle Discord OAuth callback
+if(window.location.hash.includes('discord_token=')){
+  const token=new URLSearchParams(window.location.hash.slice(1)).get('discord_token');
+  if(token){ window.MalekiDiscord.handleCallback(token).then(r=>{ if(r.ok) window.location.href='dashboard.html'; }); }
+}
+</script>
+</body>
+</html>
