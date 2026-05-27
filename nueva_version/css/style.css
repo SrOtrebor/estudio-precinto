@@ -86,11 +86,19 @@ body {
   top: 0;
   left: 0;
   width: 100%;
-  padding: 30px 5%;
+  padding: 25px 0;
   z-index: 100;
+  background: linear-gradient(to bottom, rgba(5,5,5,0.8) 0%, rgba(5,5,5,0) 100%);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.header .container {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 100%;
 }
 
 .header img {
@@ -111,6 +119,51 @@ body {
   letter-spacing: 1px;
   color: var(--color-text);
   text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.nav-btn:hover {
+  color: var(--color-accent);
+}
+
+/* === MENU TOGGLE HAMBURGUER === */
+.menu-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 28px;
+  height: 18px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 101;
+}
+
+.menu-toggle span {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background-color: var(--color-text);
+  border-radius: 2px;
+  transition: transform 0.3s cubic-bezier(0.77, 0.2, 0.05, 1.0),
+              background-color 0.3s ease,
+              opacity 0.3s ease;
+}
+
+.menu-toggle.active span {
+  background-color: var(--color-accent);
+}
+
+.menu-toggle.active span:nth-child(1) {
+  transform: translateY(8px) rotate(45deg);
+}
+
+.menu-toggle.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.menu-toggle.active span:nth-child(3) {
+  transform: translateY(-8px) rotate(-45deg);
 }
 
 .container {
@@ -232,7 +285,7 @@ body {
 }
 
 .pricing-card {
-  padding: 40px;
+  padding: 40px 30px;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -253,21 +306,24 @@ body {
 
 .pricing-card h3 {
   font-family: var(--font-display);
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   margin-bottom: 15px;
   color: var(--color-text-dim);
 }
 
 .price {
   font-family: var(--font-display);
-  font-size: 2.5rem;
+  font-size: clamp(1.6rem, 2.8vw, 2.4rem);
   font-weight: 700;
   margin-bottom: 20px;
   color: var(--color-text);
+  line-height: 1.2;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .currency {
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: normal;
   color: var(--color-text-dim);
 }
@@ -654,14 +710,49 @@ body {
     height: 250px;
     flex-basis: 250px;
   }
-  .header {
-    flex-direction: column;
-    gap: 20px;
+  .menu-toggle {
+    display: flex;
   }
   .nav-links {
-    gap: 15px;
-    flex-wrap: wrap;
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 100%;
+    height: 100vh;
+    background: rgba(5, 5, 5, 0.96);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    flex-direction: column;
+    align-items: center;
     justify-content: center;
+    gap: 40px;
+    padding: 100px 5%;
+    transition: right 0.5s cubic-bezier(0.77, 0, 0.175, 1);
+    z-index: 100;
+  }
+  .nav-links.active {
+    right: 0;
+  }
+  .nav-btn {
+    font-size: 1.8rem;
+    letter-spacing: 2px;
+  }
+  .nav-links a[style*="margin-left"] {
+    margin-left: 0 !important;
+    margin-top: 10px;
+    width: 80%;
+    text-align: center;
+    font-size: 1.4rem !important;
+    padding: 14px 28px !important;
+  }
+  body.menu-open {
+    overflow: hidden;
+  }
+  .cursor {
+    display: none !important;
+  }
+  * {
+    cursor: auto !important;
   }
 }
 

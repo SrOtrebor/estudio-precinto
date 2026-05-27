@@ -144,6 +144,28 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         );
     });
+
+    // 7. LÓGICA DE MENÚ HAMBURGUESA
+    const menuToggle = document.getElementById("menuToggle");
+    const navLinks = document.querySelector(".nav-links");
+    const navItems = document.querySelectorAll(".nav-links a");
+
+    if (menuToggle && navLinks) {
+        menuToggle.addEventListener("click", () => {
+            menuToggle.classList.toggle("active");
+            navLinks.classList.toggle("active");
+            document.body.classList.toggle("menu-open");
+        });
+
+        // Cerrar menú al hacer click en cualquier enlace
+        navItems.forEach(item => {
+            item.addEventListener("click", () => {
+                menuToggle.classList.remove("active");
+                navLinks.classList.remove("active");
+                document.body.classList.remove("menu-open");
+            });
+        });
+    }
 });
 
 // --- LÓGICA DE DETALLES DE HERRAMIENTAS (MODAL DINÁMICO) ---
