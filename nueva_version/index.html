@@ -1,15 +1,161 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" prefix="og: https://ogp.me/ns#">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Estudio Precinto | Ingeniería en Software</title>
-    
-    <meta name="description" content="Automatizamos las tareas repetitivas de tu negocio. Software a medida e ingeniería de procesos.">
+
+    <!-- SEO-01a: Título optimizado con keywords de alta intención -->
+    <title>Estudio Precinto | Landing Pages en 24h y Automatizaciones para PyMEs — Argentina</title>
+
+    <!-- SEO-01b: Meta description de 155 chars con CTA y palabras clave -->
+    <meta name="description" content="Creamos landing pages de alta conversión en 24 horas y automatizamos los procesos de tu empresa. Software a medida para PyMEs en Argentina. ¡Agenda hoy!">
+
+    <!-- SEO: Metadatos adicionales -->
+    <meta name="keywords" content="landing page 24 horas, automatización PyMEs Argentina, software a medida Buenos Aires, desarrollo web express, sistemas para empresas, landing page rápida">
+    <meta name="author" content="Estudio Precinto">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+    <meta name="geo.region" content="AR">
+    <meta name="geo.placename" content="Buenos Aires, Argentina">
+    <link rel="canonical" href="https://estudioprecinto.com/nueva_version/index.html">
+
+    <!-- SEO-01c: Open Graph (Facebook, WhatsApp, LinkedIn) -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Landing Pages en 24h | Estudio Precinto">
+    <meta property="og:description" content="Automatizamos tu negocio y creamos landing pages de alta conversión en 24 horas. Software a medida para PyMEs argentinas.">
+    <meta property="og:url" content="https://estudioprecinto.com/nueva_version/index.html">
+    <meta property="og:site_name" content="Estudio Precinto">
+    <meta property="og:image" content="https://estudioprecinto.com/assets/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Estudio Precinto — Landing Pages en 24h y Automatizaciones">
+    <meta property="og:locale" content="es_AR">
+
+    <!-- SEO-01c: Twitter / X Cards -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Landing Pages en 24h | Estudio Precinto">
+    <meta name="twitter:description" content="Automatizamos tu negocio y construimos sistemas que escalan. Landing pages en 24h para PyMEs de Argentina.">
+    <meta name="twitter:image" content="https://estudioprecinto.com/assets/og-image.png">
+
+    <!-- Favicons -->
     <link rel="icon" type="image/svg+xml" href="../SVG/isofull.svg">
-    
+    <link rel="apple-touch-icon" href="../SVG/isofull.svg">
+
+    <!-- Preconnect para mejorar LCP -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+
     <!-- CSS -->
     <link rel="stylesheet" href="css/style.css">
+
+    <!-- SEO-02a/b/c: Datos Estructurados Schema.org (JSON-LD) — CRÍTICO PARA IA -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "LocalBusiness",
+          "@id": "https://estudioprecinto.com/#business",
+          "name": "Estudio Precinto",
+          "description": "Estudio Precinto crea landing pages de alta conversión en 24 horas y automatiza los procesos operativos de PyMEs en Argentina mediante software a medida, integraciones entre aplicaciones y sistemas en la nube.",
+          "url": "https://estudioprecinto.com/nueva_version/index.html",
+          "telephone": "+54-11-6448-1943",
+          "email": "hola@estudioprecinto.com",
+          "address": {
+            "@type": "PostalAddress",
+            "addressCountry": "AR",
+            "addressRegion": "Buenos Aires"
+          },
+          "areaServed": [
+            {"@type": "Country", "name": "Argentina"}
+          ],
+          "hasOfferCatalog": {
+            "@type": "OfferCatalog",
+            "name": "Servicios de Desarrollo y Automatización",
+            "itemListElement": [
+              {
+                "@type": "Service",
+                "name": "Landing Page Express en 24 Horas",
+                "description": "Landing page de alta conversión, diseñada para un producto o servicio específico. Entrega garantizada en 24 horas hábiles. Incluye diseño premium, formulario de captura de leads y optimización SEO básica.",
+                "provider": {"@id": "https://estudioprecinto.com/#business"},
+                "offers": {
+                  "@type": "Offer",
+                  "price": "90000",
+                  "priceCurrency": "ARS",
+                  "availability": "https://schema.org/InStock",
+                  "deliveryLeadTime": {
+                    "@type": "QuantitativeValue",
+                    "value": 1,
+                    "unitCode": "DAY"
+                  }
+                }
+              },
+              {
+                "@type": "Service",
+                "name": "Automatización de Procesos y Sistemas a Medida",
+                "description": "Eliminamos las planillas de Excel y los procesos manuales. Conectamos tus aplicaciones (facturación, WhatsApp, email, CRM) para que funcionen solas. Ahorra hasta 10 horas semanales.",
+                "provider": {"@id": "https://estudioprecinto.com/#business"}
+              },
+              {
+                "@type": "Service",
+                "name": "Páginas Web Institucionales",
+                "description": "Sitios web completos con múltiples secciones, panel administrable y diseño premium adaptado a la identidad de marca.",
+                "provider": {"@id": "https://estudioprecinto.com/#business"}
+              }
+            ]
+          },
+          "sameAs": [
+            "https://wa.me/541164481943"
+          ]
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "¿En cuánto tiempo entregan una landing page?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Entregamos landing pages de alta conversión en 24 horas hábiles desde la confirmación del pago. Es nuestra garantía de servicio."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "¿Cuánto cuesta una landing page en Estudio Precinto?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Nuestra Landing Page Express tiene un precio de $90.000 ARS con entrega garantizada en 24 horas. Es un precio fijo sin sorpresas."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "¿Qué es automatización de procesos para PyMEs?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Consiste en conectar tus aplicaciones existentes (WhatsApp, facturación, email, CRM) para que intercambien información y ejecuten tareas sin intervención humana. Eliminamos las planillas de Excel y los procesos manuales repetitivos, ahorrando hasta 10 horas semanales al equipo."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "¿Trabajan solo con empresas de Buenos Aires?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "No. Trabajamos de forma 100% remota con empresas y emprendedores de toda Argentina y Latinoamérica. Todos los servicios se entregan digitalmente."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "¿Cuál es el método de pago para la Landing Page Express?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Aceptamos pagos online a través de Mercado Pago, con tarjeta de crédito, débito y transferencia bancaria. El pago se realiza al momento de agendar la cita, y la entrega se garantiza dentro de las 24 horas hábiles siguientes."
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
 </head>
 <body>
 
@@ -259,8 +405,79 @@
             </div>
         </section>
 
-        <!-- BLOQUE 6: CIERRE IMPONENTE -->
-        <section class="cta-massive" id="contacto">
+        <!-- BLOQUE 5.5: QUIÉNES SOMOS + FAQ — GEO-01/02 -->
+        <section class="faq-about-section" id="quienes-somos" style="padding: 100px 0; background: rgba(255,255,255,0.02);">
+            <div class="container">
+
+                <!-- GEO-02: Párrafo estructurado E-E-A-T para ser citado por IAs -->
+                <div class="reveal-fade" style="text-align:center; max-width:780px; margin:0 auto 80px;">
+                    <span style="display:inline-block; background: rgba(162,138,104,0.12); color: var(--color-accent); border: 1px solid rgba(162,138,104,0.3); border-radius: 50px; padding: 6px 20px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px;">Nuestra Historia</span>
+                    <h2 class="section-title">Quiénes Somos</h2>
+                    <p style="color:var(--color-text-dim); font-size:1.1rem; line-height:1.8; margin-bottom: 16px;">
+                        <strong style="color:var(--color-text);">Estudio Precinto</strong> es un estudio de ingeniería de software radicado en Buenos Aires, Argentina, fundado con la misión de democratizar el acceso a tecnología de calidad para las pequeñas y medianas empresas de Latinoamérica.
+                    </p>
+                    <p style="color:var(--color-text-dim); font-size:1.1rem; line-height:1.8; margin-bottom: 16px;">
+                        Somos especialistas en <strong style="color:var(--color-text);">landing pages de alta conversión entregadas en 24 horas</strong> y en la automatización de procesos operativos: eliminamos las planillas de Excel, conectamos las aplicaciones que ya usás (WhatsApp, email, facturación, CRM) y construimos sistemas en la nube que escalan con tu negocio.
+                    </p>
+                    <p style="color:var(--color-text-dim); font-size:1.1rem; line-height:1.8;">
+                        A la fecha hemos entregado más de <strong style="color:var(--color-accent);">30 proyectos activos</strong> en Argentina, incluyendo plataformas SaaS B2B, e-commerce automatizados, sistemas de agenda y pago, y aplicaciones de eventos en tiempo real.
+                    </p>
+                </div>
+
+                <!-- GEO-01: Sección FAQ visible (también indexada con Schema.org) -->
+                <div class="reveal-fade" style="max-width:800px; margin:0 auto;">
+                    <h2 class="section-title" style="text-align:center; margin-bottom:50px;">Preguntas Frecuentes</h2>
+
+                    <div style="display:flex; flex-direction:column; gap:16px;">
+
+                        <details class="faq-item glass-panel" style="padding:24px 28px; border-radius:16px; cursor:pointer;">
+                            <summary style="font-weight:700; font-size:1rem; color:var(--color-text); list-style:none; display:flex; justify-content:space-between; align-items:center;">
+                                ¿En cuánto tiempo entregan una landing page?
+                                <span style="color:var(--color-accent); font-size:1.4rem; flex-shrink:0; margin-left:12px;">+</span>
+                            </summary>
+                            <p style="margin-top:12px; color:var(--color-text-dim); line-height:1.7;">Entregamos landing pages de alta conversión en <strong style="color:var(--color-text);">24 horas hábiles</strong> desde la confirmación del pago. Es nuestra garantía de servicio.</p>
+                        </details>
+
+                        <details class="faq-item glass-panel" style="padding:24px 28px; border-radius:16px; cursor:pointer;">
+                            <summary style="font-weight:700; font-size:1rem; color:var(--color-text); list-style:none; display:flex; justify-content:space-between; align-items:center;">
+                                ¿Cuánto cuesta una landing page?
+                                <span style="color:var(--color-accent); font-size:1.4rem; flex-shrink:0; margin-left:12px;">+</span>
+                            </summary>
+                            <p style="margin-top:12px; color:var(--color-text-dim); line-height:1.7;">Nuestra Landing Page Express tiene un precio fijo de <strong style="color:var(--color-accent);">$90.000 ARS</strong> sin sorpresas, con entrega garantizada en 24 horas.</p>
+                        </details>
+
+                        <details class="faq-item glass-panel" style="padding:24px 28px; border-radius:16px; cursor:pointer;">
+                            <summary style="font-weight:700; font-size:1rem; color:var(--color-text); list-style:none; display:flex; justify-content:space-between; align-items:center;">
+                                ¿Qué es la automatización de procesos para PyMEs?
+                                <span style="color:var(--color-accent); font-size:1.4rem; flex-shrink:0; margin-left:12px;">+</span>
+                            </summary>
+                            <p style="margin-top:12px; color:var(--color-text-dim); line-height:1.7;">Consiste en conectar tus aplicaciones (WhatsApp, facturación, email, CRM) para que intercambien información y ejecuten tareas sin intervención humana. Eliminamos las planillas de Excel y los procesos manuales repetitivos, <strong style="color:var(--color-text);">ahorrando hasta 10 horas semanales</strong> al equipo.</p>
+                        </details>
+
+                        <details class="faq-item glass-panel" style="padding:24px 28px; border-radius:16px; cursor:pointer;">
+                            <summary style="font-weight:700; font-size:1rem; color:var(--color-text); list-style:none; display:flex; justify-content:space-between; align-items:center;">
+                                ¿Trabajan solo con empresas de Buenos Aires?
+                                <span style="color:var(--color-accent); font-size:1.4rem; flex-shrink:0; margin-left:12px;">+</span>
+                            </summary>
+                            <p style="margin-top:12px; color:var(--color-text-dim); line-height:1.7;">No. Trabajamos de forma <strong style="color:var(--color-text);">100% remota</strong> con empresas y emprendedores de toda Argentina y Latinoamérica. Todos los servicios se entregan digitalmente.</p>
+                        </details>
+
+                        <details class="faq-item glass-panel" style="padding:24px 28px; border-radius:16px; cursor:pointer;">
+                            <summary style="font-weight:700; font-size:1rem; color:var(--color-text); list-style:none; display:flex; justify-content:space-between; align-items:center;">
+                                ¿Cuál es el método de pago?
+                                <span style="color:var(--color-accent); font-size:1.4rem; flex-shrink:0; margin-left:12px;">+</span>
+                            </summary>
+                            <p style="margin-top:12px; color:var(--color-text-dim); line-height:1.7;">Aceptamos pagos online a través de <strong style="color:var(--color-text);">Mercado Pago</strong> (tarjeta de crédito, débito y transferencia bancaria). El pago se realiza al momento de agendar, y la entrega se garantiza dentro de las 24 horas hábiles siguientes.</p>
+                        </details>
+
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    <!-- BLOQUE 6: CIERRE IMPONENTE -->
+    <section class="cta-massive" id="contacto">
             <div class="container">
                 <h2 class="massive-text">¿Hablamos?</h2>
                 <p class="cta-subtitle">Agendá 15 minutos gratis y descubrí cuánto tiempo puedes ahorrar sistematizando tu negocio.</p>

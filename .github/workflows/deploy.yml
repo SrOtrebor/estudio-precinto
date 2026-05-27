@@ -5,7 +5,7 @@ on:
     branches: [ "main" ]
 
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
 
@@ -59,6 +59,9 @@ jobs:
           # Copiamos carpetas de recursos si existen
           [ -d assets ] && cp -r assets dist_final/ || true
           [ -d SVG ] && cp -r SVG dist_final/ || true
+          # Copiamos archivos SEO de la raíz
+          [ -f robots.txt ] && cp robots.txt dist_final/ || true
+          [ -f sitemap.xml ] && cp sitemap.xml dist_final/ || true
           
           # Copiamos el build de la app de sorteos a la subcarpeta /sorteo
           mkdir -p dist_final/sorteo

@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+Allow: /nueva_version/
+
+# Bloquear rutas internas y de herramientas (no deben indexarse)
+Disallow: /nueva_version/functions/
+Disallow: /nueva_version/modulo_reserva_pago/
+Disallow: /nueva_version/css/
+Disallow: /nueva_version/js/
+Disallow: /sitio-prueba/
+Disallow: /curso-maleki/
+Disallow: /sorteo/
+Disallow: /live-feed/
+Disallow: /subasta-silenciosa/
+
+# Sitemap
+Sitemap: https://estudioprecinto.com/sitemap.xml
