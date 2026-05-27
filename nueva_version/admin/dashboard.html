@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Estudio Precinto</title>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #050505; color: #fff; margin: 0; padding: 20px; }
+        .container { max-width: 800px; margin: 40px auto; background: rgba(255,255,255,0.02); padding: 30px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); }
+        h1 { color: #A28A68; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; margin-top: 0; }
+        
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .btn-logout { background: transparent; color: #ff4d4d; border: 1px solid #ff4d4d; padding: 8px 16px; border-radius: 4px; cursor: pointer; }
+        .btn-logout:hover { background: rgba(255, 77, 77, 0.1); }
+        
+        .section { margin-bottom: 40px; }
+        .section h2 { font-size: 1.2em; margin-bottom: 20px; }
+        
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; color: #aaa; font-size: 0.9em; }
+        input { width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 4px; box-sizing: border-box; }
+        
+        .slot-list { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px; }
+        .slot-item { background: rgba(162, 138, 104, 0.2); border: 1px solid #A28A68; padding: 5px 12px; border-radius: 20px; display: flex; align-items: center; gap: 10px; }
+        .slot-item button { background: none; border: none; color: #ff4d4d; cursor: pointer; font-weight: bold; padding: 0; }
+        
+        .add-slot-group { display: flex; gap: 10px; }
+        .add-slot-group input { flex: 1; }
+        
+        .btn-save { background: #A28A68; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 10px; }
+        .btn-save:hover { background: #8a7356; }
+        .btn-save:disabled { background: #555; cursor: not-allowed; }
+
+        .toast { position: fixed; bottom: 20px; right: 20px; background: #28a745; color: white; padding: 12px 20px; border-radius: 4px; display: none; }
+    </style>
+</head>
+<body style="display: none;" id="dashboard-body"> <!-- Oculto hasta verificar auth -->
+
+    <div class="container">
+        <div class="header">
+            <h1>Configuración General</h1>
+            <button class="btn-logout" id="btn-logout">Cerrar Sesión</button>
+        </div>
+
+        <div class="section">
+            <h2>💰 Precios de Servicios</h2>
+            <div class="form-group">
+                <label>Precio: Landing Page Express (ARS)</label>
+                <input type="number" id="price-individual" placeholder="Ej: 90000">
+            </div>
+            <button class="btn-save" id="btn-save-pricing">Guardar Precios</button>
+        </div>
+
+        <div class="section">
+            <h2>🕒 Horarios de Agenda</h2>
+            <p style="color: #888; font-size: 0.9em; margin-bottom: 15px;">Estos son los bloques de horarios fijos que se mostrarán disponibles todos los días en el calendario.</p>
+            
+            <div class="slot-list" id="slot-list">
+                <!-- Se llena con JS -->
+            </div>
+
+            <div class="add-slot-group">
+                <input type="time" id="new-slot-time">
+                <button class="btn-save" id="btn-add-slot" style="width: auto; margin-top: 0;">Agregar Horario</button>
+            </div>
+            
+            <button class="btn-save" id="btn-save-agenda" style="margin-top: 20px;">Guardar Calendario</button>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">¡Guardado con éxito!</div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
+    <!-- Lógica del admin -->
+    <script src="js/admin.js"></script>
+</body>
+</html>

@@ -13,6 +13,20 @@ async function fetchPricing() {
         if (res.ok) {
             const data = await res.json();
             globalPricing = data;
+            
+            // Actualizar DOM dinámicamente si los IDs existen
+            if (globalPricing.individual) {
+                const formattedPrice = new Intl.NumberFormat('es-AR').format(globalPricing.individual);
+                const priceStr = `$${formattedPrice} ARS`;
+                
+                const priceEl = document.getElementById('dynamic-landing-price');
+                if (priceEl) priceEl.innerHTML = `$${formattedPrice} <span class="currency">ARS</span>`;
+                
+                const btnPay = document.getElementById('btn-landing-pay');
+                if (btnPay) {
+                    btnPay.setAttribute('onclick', `openModal('landing', 'Landing Page Express (Entrega 24h)', '${priceStr}')`);
+                }
+            }
         }
     } catch (e) {
         console.warn('Error al obtener precios dinámicos', e);

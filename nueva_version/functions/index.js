@@ -5,13 +5,11 @@ const express = require("express");
 const cors = require("cors");
 const rateLimit = require("express-rate-limit");
 const { MercadoPagoConfig, Preference, Payment } = require("mercadopago");
+const nodemailer = require("nodemailer");
 
-// ─── CRIT-01: Token de Mercado Pago como Secret seguro de Firebase ───────────
-// Para configurarlo ejecutar una sola vez:
-//   firebase secrets:set MP_ACCESS_TOKEN
-// Luego pegar el token cuando lo solicite, y redesplegar:
-//   firebase deploy --only functions
+// ─── CRIT-01: Token de Mercado Pago y Contraseña de Email como Secrets ───────
 const mpAccessToken = defineSecret("MP_ACCESS_TOKEN");
+const zohoEmailPassword = defineSecret("ZOHO_EMAIL_PASSWORD");
 
 admin.initializeApp();
 const db = admin.firestore();
@@ -76,6 +74,53 @@ const sanitizeString = (str, maxLength = 200) => {
     return str.trim().replace(/[<>"'`]/g, "").slice(0, maxLength);
 };
 
+// ─── EMAIL SENDER (ZOHO SMTP) ────────────────────────────────────────────────
+const sendEmail = async (to, subject, htmlContent) => {
+    try {
+        const password = zohoEmailPassword.value();
+        if (!password) {
+            console.warn("ZOHO_EMAIL_PASSWORD no configurado. Se omite el envío de correo.");
+            return;
+        }
+
+        const transporter = nodemailer.createTransport({
+            host: "smtp.zoho.com",
+            port: 465,
+            secure: true, // true para port 465
+            auth: {
+                user: "info@estudioprecinto.com",
+                pass: password
+            }
+        });
+
+        await transporter.sendMail({
+            from: '"Estudio Precinto" <info@estudioprecinto.com>',
+            to: to,
+            subject: subject,
+            html: htmlContent
+        });
+
+        console.log(`Correo enviado exitosamente a ${to}`);
+    } catch (error) {
+        console.error("Error al enviar correo electrónico:", error);
+    }
+};
+
+// ─── 0. OBTENER PRECIOS DINÁMICOS ──────────────────────────────────────────────
+app.get("/pricing", async (req, res) => {
+    try {
+        const pricingDoc = await db.collection("settings").doc("pricing").get();
+        let prices = { individual: 90000, ventas_ya: 350000 }; // Fallback defaults
+        if (pricingDoc.exists) {
+            prices = { ...prices, ...pricingDoc.data() };
+        }
+        return res.status(200).json(prices);
+    } catch (error) {
+        console.error("Error al obtener precios:", error);
+        return res.status(500).json({ error: "Error al obtener precios." });
+    }
+});
+
 // ─── 1. OBTENER HORARIOS DISPONIBLES ─────────────────────────────────────────
 app.get("/getAvailableSlots", async (req, res) => {
     try {
@@ -86,7 +131,12 @@ app.get("/getAvailableSlots", async (req, res) => {
             return res.status(400).json({ error: "La fecha es inválida o ya pasó. Usa el formato YYYY-MM-DD." });
         }
 
-        const allPossibleSlots = ["09:00", "10:30", "12:00", "14:30", "16:00", "17:30"];
+        // Obtener los slots disponibles configurados en la BD (settings/agenda)
+        let allPossibleSlots = ["09:00", "10:30", "12:00", "14:30", "16:00", "17:30"];
+        const agendaDoc = await db.collection("settings").doc("agenda").get();
+        if (agendaDoc.exists && agendaDoc.data().slots && Array.isArray(agendaDoc.data().slots)) {
+            allPossibleSlots = agendaDoc.data().slots;
+        }
 
         const bookingsSnapshot = await db.collection("bookings")
             .where("date", "==", date)
@@ -122,10 +172,15 @@ app.post("/createBooking", bookingLimiter, async (req, res) => {
             return res.status(400).json({ error: "La fecha seleccionada es inválida." });
         }
 
-        // MED-02: Validar formato de hora
-        const validTimes = ["09:00", "10:30", "12:00", "14:30", "16:00", "17:30"];
+        // Obtener los slots válidos desde la DB para validar el input
+        let validTimes = ["09:00", "10:30", "12:00", "14:30", "16:00", "17:30"];
+        const agendaDoc = await db.collection("settings").doc("agenda").get();
+        if (agendaDoc.exists && agendaDoc.data().slots && Array.isArray(agendaDoc.data().slots)) {
+            validTimes = agendaDoc.data().slots;
+        }
+
         if (!validTimes.includes(time)) {
-            return res.status(400).json({ error: "El horario seleccionado no es válido." });
+            return res.status(400).json({ error: "El horario seleccionado no es válido o ya no está disponible." });
         }
 
         // MED-02: Validar formato de email
@@ -153,7 +208,13 @@ app.post("/createBooking", bookingLimiter, async (req, res) => {
         });
 
         const bookingId = bookingRef.id;
-        const price = 90000;
+
+        // CRIT-XX: Obtener precio dinámico de Firestore, evitar manipulaciones desde Frontend
+        let price = 90000;
+        const pricingDoc = await db.collection("settings").doc("pricing").get();
+        if (pricingDoc.exists && pricingDoc.data().individual) {
+            price = pricingDoc.data().individual;
+        }
 
         // CRIT-01: Obtener el token desde Firebase Secret Manager (no hardcodeado)
         const token = mpAccessToken.value();
@@ -198,9 +259,11 @@ app.post("/createBooking", bookingLimiter, async (req, res) => {
             }
         });
 
+        const paymentLink = mpResponse.init_point;
+
         return res.status(200).json({
             bookingId,
-            init_point: mpResponse.init_point
+            init_point: paymentLink
         });
 
     } catch (error) {
@@ -227,13 +290,38 @@ app.post("/mercadopagoWebhook", async (req, res) => {
             if (paymentData && paymentData.status === "approved" && paymentData.external_reference) {
                 const bookingId = paymentData.external_reference;
 
-                await db.collection("bookings").doc(bookingId).update({
+                // Actualizar DB
+                const bookingRef = db.collection("bookings").doc(bookingId);
+                const bookingDoc = await bookingRef.get();
+                
+                await bookingRef.update({
                     status: "approved",
                     paymentId: data.id,
                     updatedAt: admin.firestore.FieldValue.serverTimestamp()
                 });
 
                 console.log(`Reserva ${bookingId} aprobada y pagada con éxito.`);
+
+                // Enviar correo de confirmación si existe el documento
+                if (bookingDoc.exists) {
+                    const bData = bookingDoc.data();
+                    const confirmHtml = `
+                        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333;">
+                            <h2 style="color: #28a745;">¡Pago confirmado! Tu turno está reservado.</h2>
+                            <p>Hola ${bData.name},</p>
+                            <p>Hemos recibido tu pago exitosamente. Tu reserva está confirmada con los siguientes detalles:</p>
+                            <div style="background-color: #f8f9fa; border-left: 4px solid #28a745; padding: 15px; margin: 20px 0;">
+                                <p style="margin: 5px 0;"><strong>Servicio:</strong> ${bData.service}</p>
+                                <p style="margin: 5px 0;"><strong>Fecha:</strong> ${bData.date}</p>
+                                <p style="margin: 5px 0;"><strong>Horario:</strong> ${bData.time} hs</p>
+                            </div>
+                            <p>Nos contactaremos con vos a la brevedad al número ${bData.phone} para coordinar los próximos pasos o enviarte el enlace de la reunión si corresponde.</p>
+                            <p>¡Gracias por confiar en nosotros!</p>
+                            <p style="margin-top: 30px; font-size: 14px; color: #666;">Saludos,<br>El equipo de Estudio Precinto</p>
+                        </div>
+                    `;
+                    await sendEmail(bData.email, "✅ Confirmación de turno - Estudio Precinto", confirmHtml);
+                }
             }
         }
     } catch (error) {
@@ -241,5 +329,5 @@ app.post("/mercadopagoWebhook", async (req, res) => {
     }
 });
 
-// ─── Exportar la Cloud Function de Firebase Gen 2, declarando el Secret ──────
-exports.api = onRequest({ secrets: [mpAccessToken] }, app);
+// ─── Exportar la Cloud Function de Firebase Gen 2, declarando los Secrets ────
+exports.api = onRequest({ secrets: [mpAccessToken, zohoEmailPassword] }, app);
