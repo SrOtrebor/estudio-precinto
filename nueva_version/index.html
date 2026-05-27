@@ -55,11 +55,15 @@
             <div class="container">
                 <div class="pricing-grid">
                     <!-- Tarjeta 1 -->
-                    <div class="pricing-card glass-panel reveal-fade magnetic" data-strength="10">
+                    <div class="pricing-card glass-panel reveal-fade magnetic" data-strength="10" style="border-color: #22c55e;">
+                        <div class="best-seller" style="background: #22c55e; color: #050505; font-weight: 800; font-size: 0.75rem; letter-spacing: 0.5px;">Entrega en 24h</div>
                         <h3>Landing Page</h3>
                         <p class="price">$90.000 <span class="currency">ARS</span></p>
-                        <p class="pricing-desc">Páginas de alta conversión para un producto o servicio específico, diseñadas para capturar leads.</p>
-                        <a href="https://wa.me/541164481943?text=Hola!%20Quiero%20una%20Landing%20Page" target="_blank" class="btn btn-primary" style="width:100%; margin-top:20px;">Agendar Ahora</a>
+                        <p class="pricing-desc">
+                            <strong style="color: #22c55e; display: block; margin-bottom: 8px; font-size: 0.95rem;">⚡ ENTREGA EN 24 HORAS GARANTIZADA</strong>
+                            Páginas de alta conversión para un producto o servicio específico, diseñadas para capturar leads.
+                        </p>
+                        <a href="javascript:void(0)" onclick="openModal('landing', 'Landing Page Express (Entrega 24h)', '$90.000 ARS')" class="btn btn-primary" style="width:100%; margin-top:20px;">Agendar y Pagar</a>
                     </div>
                     <!-- Tarjeta 2 -->
                     <div class="pricing-card glass-panel reveal-fade magnetic" data-strength="10">
@@ -310,9 +314,77 @@
         </div>
     </div>
 
+    <!-- ===== BOOKING MODAL ( Firebase + Mercado Pago ) ===== -->
+    <div class="booking-modal" id="bookingModal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-overlay" id="modalOverlay"></div>
+        <div class="modal-card">
+            <button class="modal-close" onclick="closeModal()" aria-label="Cerrar">✕</button>
+
+            <div class="modal-step" id="step1">
+                <h2 id="modal-title" style="color: #050505; font-size: 1.6rem; font-weight: 800; margin-bottom: 5px;">Agendar Cita</h2>
+                <p style="font-size:0.85rem; color:#6b7280; margin-bottom:1.2rem;">
+                    Servicio: <span id="modal-service-label" style="font-weight:800; color:#4B1D61;"></span>
+                </p>
+
+                <p style="font-size:0.8rem; font-weight:700; color:#374151; margin-bottom:0.5rem; text-transform: uppercase; letter-spacing: 0.5px;">📅 Selecciona Fecha</p>
+                <div id="modal-calendar"></div>
+
+                <p style="font-size:0.8rem; font-weight:700; color:#374151; margin:1.2rem 0 0.5rem; text-transform: uppercase; letter-spacing: 0.5px;">🕐 Selecciona Horario</p>
+                <div id="modal-slots">
+                    <p class="mc-hint" style="font-size:0.85rem; color:#6b7280;">Por favor, selecciona una fecha para ver horarios disponibles.</p>
+                </div>
+
+                <form id="modal-booking-form" onsubmit="return false;" style="margin-top:1.2rem;">
+                    <div class="modal-row">
+                        <div class="modal-form-group">
+                            <label for="modal-name">Nombre completo *</label>
+                            <input type="text" id="modal-name" placeholder="Tu nombre" required autocomplete="name">
+                        </div>
+                        <div class="modal-form-group">
+                            <label for="modal-phone">WhatsApp *</label>
+                            <input type="tel" id="modal-phone" placeholder="11 7642-6155" required autocomplete="tel">
+                        </div>
+                    </div>
+                    <div class="modal-form-group">
+                        <label for="modal-email">Correo electrónico *</label>
+                        <input type="email" id="modal-email" placeholder="hola@empresa.com" required autocomplete="email">
+                    </div>
+                </form>
+
+                <div class="modal-summary" style="margin-top: 1.5rem; background: #f9fafb; padding: 1.2rem; border-radius: 12px; border: 1px solid #e5e7eb;">
+                    <p style="margin-bottom: 0.5rem; font-size: 0.85rem; color: #4b5563;"><span style="font-weight: 500;">Fecha:</span> <strong id="modal-sum-date" style="color: #111827; font-weight: 700; margin-left: 5px;">Sin seleccionar</strong></p>
+                    <p style="margin-bottom: 0.5rem; font-size: 0.85rem; color: #4b5563;"><span style="font-weight: 500;">Horario:</span> <strong id="modal-sum-time" style="color: #111827; font-weight: 700; margin-left: 5px;">Sin seleccionar</strong></p>
+                    <p style="margin-bottom: 0; font-size: 0.85rem; color: #4b5563;"><span style="font-weight: 500;">Inversión:</span> <strong id="modal-sum-price" style="color: #4B1D61; font-weight: 800; margin-left: 5px;">$90.000 ARS</strong></p>
+                </div>
+
+                <button class="btn-pay" id="modal-btn-pay" onclick="submitModalBooking()" disabled>
+                    Confirmar y Pagar
+                </button>
+            </div>
+
+            <!-- STEP 2 / STEP 3 -->
+            <div class="modal-step hidden" id="step2">
+                <div style="text-align:center; padding:3rem 0; color: #050505;">
+                    <h2 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 10px;">Procesando Reserva</h2>
+                    <p style="color:#4b5563;">Redirigiéndote a Mercado Pago para completar el pago de forma segura...</p>
+                </div>
+            </div>
+            <div class="modal-step hidden" id="step3">
+                <div style="text-align:center; padding:2rem 0; color: #050505;">
+                    <h2 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 10px; color: #10b981;">¡Reserva Solicitada!</h2>
+                    <p style="margin-bottom:1.8rem; color:#4b5563;">Tu solicitud ha sido enviada con éxito. Pronto recibirás todos los detalles de la confirmación en tu correo.</p>
+                    <button class="btn-pay" onclick="closeModal()">Entendido</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- GSAP & ScrollTrigger -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    
+    <!-- Lógica de Reservas y Mercado Pago -->
+    <script src="modulo_reserva_pago/reservas.js"></script>
     
     <!-- Lógica personalizada -->
     <script src="js/main.js"></script>
