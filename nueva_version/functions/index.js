@@ -85,7 +85,7 @@ app.post("/createBooking", async (req, res) => {
         const preference = new Preference(mpClient);
 
         // Base URL para redirecciones (Asegúrate de cambiarlo por tu dominio real de GitHub Pages o Firebase Hosting)
-        const baseUrl = `https://estudioprecinto.com/Nueva%20version`; 
+        const baseUrl = `https://estudioprecinto.com/nueva_version`; 
 
         const mpResponse = await preference.create({
             body: {
