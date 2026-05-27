@@ -78,6 +78,9 @@ jobs:
           # Copiamos sitio-prueba
           [ -d sitio-prueba ] && cp -r sitio-prueba dist_final/ || true
 
+          # Copiamos nueva_version
+          [ -d nueva_version ] && cp -r nueva_version dist_final/ || true
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
