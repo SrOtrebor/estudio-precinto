@@ -12,7 +12,7 @@ app.use(cors({ origin: true }));
 app.use(express.json());
 
 // Token de MercadoPago (Se recomienda configurar vía Firebase Config o dejar el placeholder para tu token real)
-const MP_ACCESS_TOKEN = "TU_ACCESS_TOKEN_REAL_DE_MERCADOPAGO_AQUÍ";
+const MP_ACCESS_TOKEN = "APP_USR-3879237058703015-052714-bb57c8ac2d27d0ea6a1abffdf821bbf7-83114702";
 
 // --- 1. OBTENER HORARIOS DISPONIBLES (CON FILTRADO REAL DESDE FIRESTORE) ---
 app.get("/getAvailableSlots", async (req, res) => {
