@@ -34,6 +34,8 @@ export default function MasterDashboard() {
   const [bannerFiles, setBannerFiles] = useState([]);
   const [uploadProgress, setUploadProgress] = useState("");
   const [editingEvent, setEditingEvent] = useState(null); // Para el modo edición
+  const [showQRModal, setShowQRModal] = useState(false);
+  const [qrEvent, setQrEvent] = useState(null);
 
   // ── Auth ──────────────────────────────────────────────────────────────────
   const handleLogin = (e) => {
@@ -374,6 +376,7 @@ export default function MasterDashboard() {
                 <button className="mod-btn" style={{ padding: '0.7rem' }} onClick={() => window.open(`${window.location.pathname}#/invitacion/${ev.id}`, '_blank')}>🎟️ Invitación</button>
                 <button className="mod-btn" style={{ padding: '0.7rem' }} onClick={() => window.open(`${window.location.pathname}#/monitor/${ev.id}`, '_blank')}>📺 Monitor</button>
                 <button className="mod-btn" style={{ padding: '0.7rem' }} onClick={() => openEdit(ev)}>⚙️ Editar Config</button>
+                <button className="mod-btn" style={{ padding: '0.7rem', background: 'var(--accent)', color: '#000' }} onClick={() => { setQrEvent(ev); setShowQRModal(true); }}>📱 Generar QR</button>
                 <button className="mod-btn" style={{ padding: '0.7rem' }} onClick={() => window.open(`${window.location.pathname}#/moderar/${ev.id}`, '_blank')}>🛠️ Moderación</button>
               </div>
             </div>
@@ -512,6 +515,125 @@ export default function MasterDashboard() {
           </div>
         </div>
       )}
+
+      {/* Modal de QR */}
+      {showQRModal && qrEvent && (
+        <QRCodeModal 
+          event={qrEvent} 
+          onClose={() => { setShowQRModal(false); setQrEvent(null); }} 
+        />
+      )}
+    </div>
+  );
+}
+
+// ── Componente Interno: QRCodeModal ───────────────────────────────────────
+function QRCodeModal({ event, onClose }) {
+  const qrRef = useRef(null);
+  const qrInstance = useRef(null);
+  const invitationUrl = `${window.location.origin}${window.location.pathname}#/invitacion/${event.id}`;
+  
+  const [qrOptions, setQrOptions] = useState({
+    dotsColor: event.accentColor || "#000000",
+    bgColor: "#ffffff",
+    dotsType: "rounded",
+    cornersType: "extra-rounded"
+  });
+
+  useEffect(() => {
+    if (!window.QRCodeStyling) return;
+    
+    qrInstance.current = new window.QRCodeStyling({
+      width: 300,
+      height: 300,
+      data: invitationUrl,
+      image: event.logoUrl || "",
+      dotsOptions: { color: qrOptions.dotsColor, type: qrOptions.dotsType },
+      backgroundOptions: { color: qrOptions.bgColor },
+      imageOptions: { crossOrigin: "anonymous", margin: 5 },
+      cornersSquareOptions: { type: qrOptions.cornersType, color: qrOptions.dotsColor }
+    });
+
+    qrInstance.current.append(qrRef.current);
+    
+    return () => {
+      if (qrRef.current) qrRef.current.innerHTML = "";
+    };
+  }, []);
+
+  useEffect(() => {
+    if (qrInstance.current) {
+      qrInstance.current.update({
+        dotsOptions: { color: qrOptions.dotsColor, type: qrOptions.dotsType },
+        backgroundOptions: { color: qrOptions.bgColor },
+        cornersSquareOptions: { type: qrOptions.cornersType, color: qrOptions.dotsColor }
+      });
+    }
+  }, [qrOptions]);
+
+  const download = (ext) => {
+    const res = ext === 'png' ? 2048 : 1024;
+    qrInstance.current.download({
+      name: `qr-${event.id}`,
+      extension: ext,
+      width: res,
+      height: res
+    });
+  };
+
+  return (
+    <div className="lightbox" onClick={onClose}>
+      <div className="qr-modal-content" onClick={e => e.stopPropagation()}>
+        <div className="qr-preview-side">
+          <div ref={qrRef}></div>
+          <p style={{ color: '#666', fontSize: '0.8rem', marginTop: '1rem', textAlign: 'center' }}>
+            {invitationUrl}
+          </p>
+        </div>
+
+        <div className="qr-controls-side">
+          <h2 style={{ color: 'var(--accent)', marginBottom: '0.5rem' }}>Generador QR Premium</h2>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '1rem' }}>Personalizá el código de acceso para los invitados.</p>
+          
+          <div className="qr-color-grid">
+            <div className="qr-input-group">
+              <label>Color de Puntos</label>
+              <input type="color" value={qrOptions.dotsColor} onChange={e => setQrOptions({...qrOptions, dotsColor: e.target.value})} />
+            </div>
+            <div className="qr-input-group">
+              <label>Color de Fondo</label>
+              <input type="color" value={qrOptions.bgColor} onChange={e => setQrOptions({...qrOptions, bgColor: e.target.value})} />
+            </div>
+          </div>
+
+          <div className="qr-input-group">
+            <label>Estilo de Puntos</label>
+            <select value={qrOptions.dotsType} onChange={e => setQrOptions({...qrOptions, dotsType: e.target.value})}>
+              <option value="square">Cuadrado</option>
+              <option value="dots">Círculos</option>
+              <option value="rounded">Redondeado</option>
+              <option value="extra-rounded">Extra Redondeado</option>
+              <option value="classy">Elegante</option>
+            </select>
+          </div>
+
+          <div className="qr-input-group">
+            <label>Estilo de Esquinas</label>
+            <select value={qrOptions.cornersType} onChange={e => setQrOptions({...qrOptions, cornersType: e.target.value})}>
+              <option value="square">Cuadrado</option>
+              <option value="dot">Círculo</option>
+              <option value="extra-rounded">Redondeado</option>
+            </select>
+          </div>
+
+          <div className="qr-download-grid">
+            <button className="btn-primary" onClick={() => download('png')}>Descargar PNG</button>
+            <button className="btn-secondary" onClick={() => download('svg')}>Descargar SVG</button>
+          </div>
+          
+          <button className="btn-secondary" style={{ marginTop: '0.5rem', width: '100%', border: 'none' }} onClick={onClose}>Cerrar</button>
+        </div>
+      </div>
     </div>
   );
 }

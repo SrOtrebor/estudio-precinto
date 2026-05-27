@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Módulo de Reservas y Pagos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="estilos.css">
+  <style>
+    body { font-family: 'Montserrat', sans-serif; background: #f3f4f6; padding: 2rem; }
+    .btn-test { padding: 12px 24px; background: #4B1D61; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+  <h1>Demo de Reservas</h1>
+  <button class="btn-test" onclick="openModal('asesoria', 'Consultoría Estratégica', '$70.000 ARS')">
+    Agendar Sesión
+  </button>
+
+  <!-- ===== BOOKING MODAL ===== -->
+  <div class="booking-modal" id="bookingModal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-overlay" id="modalOverlay"></div>
+    <div class="modal-card">
+      <button class="modal-close" onclick="closeModal()" aria-label="Cerrar">✕</button>
+
+      <div class="modal-step" id="step1">
+        <h2 id="modal-title">Agendar Consulta</h2>
+        <p style="font-size:0.82rem; color:#6b7280; margin-bottom:1rem;">
+          <span id="modal-service-label" style="font-weight:800; color:#4B1D61;"></span>
+        </p>
+
+        <p style="font-size:0.78rem; font-weight:700; color:#374151; margin-bottom:0.4rem;">📅 Elegí tu fecha</p>
+        <div id="modal-calendar"></div>
+
+        <p style="font-size:0.78rem; font-weight:700; color:#374151; margin:0.8rem 0 0.3rem;">🕐 Elegí tu horario</p>
+        <div id="modal-slots"><p class="mc-hint" style="font-size:0.8rem; color:#6b7280;">Seleccioná una fecha para ver horarios.</p></div>
+
+        <form id="modal-booking-form" onsubmit="return false;" style="margin-top:1.1rem;">
+          <div class="modal-row">
+            <div class="modal-form-group">
+              <label for="modal-name">Nombre *</label>
+              <input type="text" id="modal-name" placeholder="Tu nombre" required autocomplete="name">
+            </div>
+            <div class="modal-form-group">
+              <label for="modal-phone">WhatsApp *</label>
+              <input type="tel" id="modal-phone" placeholder="11 7642-6155" required autocomplete="tel">
+            </div>
+          </div>
+          <div class="modal-form-group">
+            <label for="modal-email">Correo electrónico *</label>
+            <input type="email" id="modal-email" placeholder="hola@empresa.com" required autocomplete="email">
+          </div>
+        </form>
+
+        <div class="modal-summary" style="margin-top: 1.2rem; background: #f9fafb; padding: 1rem; border-radius: 12px; border: 1px solid #e5e7eb;">
+          <p style="margin-bottom: 0.4rem; font-size: 0.85rem; color: #4b5563;"><span style="font-weight: 500;">Fecha:</span> <strong id="modal-sum-date" style="color: #111827; font-weight: 700; margin-left: 5px;">Sin seleccionar</strong></p>
+          <p style="margin-bottom: 0.4rem; font-size: 0.85rem; color: #4b5563;"><span style="font-weight: 500;">Horario:</span> <strong id="modal-sum-time" style="color: #111827; font-weight: 700; margin-left: 5px;">Sin seleccionar</strong></p>
+          <p style="margin-bottom: 0; font-size: 0.85rem; color: #4b5563;"><span style="font-weight: 500;">Inversión:</span> <strong id="modal-sum-price" style="color: var(--purpura); font-weight: 800; margin-left: 5px;">$70.000 ARS</strong></p>
+        </div>
+
+        <button class="btn-pay" id="modal-btn-pay" onclick="submitModalBooking()" disabled>
+          💳 Confirmar y Pagar
+        </button>
+      </div>
+
+      <!-- STEP 2 / STEP 3... -->
+      <div class="modal-step hidden" id="step2">
+        <div style="text-align:center; padding:2rem 0;"><h2>Redirigiendo a Mercado Pago...</h2></div>
+      </div>
+      <div class="modal-step hidden" id="step3">
+        <div style="text-align:center; padding:1.5rem 0;">
+          <h2>¡Solicitud enviada!</h2>
+          <p style="margin-bottom:1.5rem;">Pronto recibirás la confirmación por correo.</p>
+          <button class="btn-pay" onclick="closeModal()">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="reservas.js"></script>
+</body>
+</html>
