@@ -1023,3 +1023,34 @@ body {
   text-transform: uppercase;
 }
 
+
+@media (max-width: 768px) {
+  .horizontal-section {
+    height: auto !important;
+    overflow: visible !important;
+    padding: 80px 0 !important;
+  }
+  .horizontal-container {
+    flex-direction: column !important;
+    padding: 0 20px !important;
+    width: 100% !important;
+    height: auto !important;
+  }
+  .h-panel {
+    width: 100% !important;
+    height: auto !important;
+    margin-right: 0 !important;
+    margin-bottom: 40px !important;
+    padding: 30px !important;
+  }
+  .panel-intro {
+    width: 100% !important;
+  }
+  .panel-intro .h-title {
+    font-size: 2.5rem !important;
+  }
+  .panel-outro {
+    width: 100% !important;
+  }
+}
+
