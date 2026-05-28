@@ -132,19 +132,13 @@ app.get("/getAvailableSlots", async (req, res) => {
         }
 
         // Obtener la configuración de la agenda (settings/agenda)
-        let allPossibleSlots = ["09:00", "10:30", "12:00", "14:30", "16:00", "17:30"];
+        // CRIT-02: Modo Manual. Por defecto, un día no tiene horarios disponibles.
+        let allPossibleSlots = []; 
         const agendaDoc = await db.collection("settings").doc("agenda").get();
         if (agendaDoc.exists) {
             const data = agendaDoc.data();
-            // Primero buscar si hay una excepción para este día exacto
             if (data.exceptions && data.exceptions[date] !== undefined) {
-                allPossibleSlots = data.exceptions[date]; // Puede ser [] si está bloqueado
-            } else if (data.defaultSlots && Array.isArray(data.defaultSlots)) {
-                // Si no hay excepción, usar el horario general
-                allPossibleSlots = data.defaultSlots;
-            } else if (data.slots && Array.isArray(data.slots)) {
-                // Retrocompatibilidad temporal
-                allPossibleSlots = data.slots;
+                allPossibleSlots = data.exceptions[date]; // Array de slots para ese día
             }
         }
 
@@ -183,16 +177,13 @@ app.post("/createBooking", bookingLimiter, async (req, res) => {
         }
 
         // Obtener los slots válidos desde la DB para validar el input
-        let validTimes = ["09:00", "10:30", "12:00", "14:30", "16:00", "17:30"];
+        // CRIT-02: Modo Manual.
+        let validTimes = [];
         const agendaDoc = await db.collection("settings").doc("agenda").get();
         if (agendaDoc.exists) {
             const data = agendaDoc.data();
             if (data.exceptions && data.exceptions[date] !== undefined) {
                 validTimes = data.exceptions[date];
-            } else if (data.defaultSlots && Array.isArray(data.defaultSlots)) {
-                validTimes = data.defaultSlots;
-            } else if (data.slots && Array.isArray(data.slots)) {
-                validTimes = data.slots;
             }
         }
 

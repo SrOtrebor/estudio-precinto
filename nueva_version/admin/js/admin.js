@@ -50,9 +50,8 @@ if (loginForm) {
 // ─── DASHBOARD LOGIC (dashboard.html) ─────────────────────────────────────────
 const dashboardBody = document.getElementById("dashboard-body");
 if (dashboardBody) {
-    let globalAgenda = { defaultSlots: ["09:00", "10:30", "12:00", "14:30", "16:00", "17:30"], exceptions: {} };
+    let globalAgenda = { exceptions: {} }; // Solo manejamos el objeto exceptions ahora
     let currentSlots = [];
-    let currentMode = "base"; // "base" o "specific"
     let currentDate = "";
 
     // Verificar seguridad antes de mostrar la página
@@ -85,62 +84,51 @@ if (dashboardBody) {
             const agendaDoc = await db.collection("settings").doc("agenda").get();
             if (agendaDoc.exists) {
                 const data = agendaDoc.data();
-                if (data.defaultSlots) globalAgenda.defaultSlots = data.defaultSlots;
                 if (data.exceptions) globalAgenda.exceptions = data.exceptions;
-                
-                // Migración temporal si venía del modelo viejo
-                if (data.slots && !data.defaultSlots) globalAgenda.defaultSlots = data.slots;
             }
             
+            // Establecer el día de hoy por defecto al cargar
+            const today = new Date().toISOString().split('T')[0];
+            specificDateInput.value = today;
             updateUIState();
+
         } catch (error) {
             console.error("Error al cargar datos. Verifica las reglas de Firestore.", error);
             alert("No se pudieron cargar los datos. ¿Están configuradas las Reglas de Firestore?");
         }
     }
 
-    // -- Lógica de Interfaz Agenda (Radio y Fecha) --
-    const radioBase = document.getElementById("radio-base");
-    const radioSpecific = document.getElementById("radio-specific");
+    // -- Lógica de Interfaz Agenda (Fecha Específica) --
     const datePickerContainer = document.getElementById("date-picker-container");
     const specificDateInput = document.getElementById("specific-date");
     const scheduleSubtitle = document.getElementById("schedule-subtitle");
+    const slotsUiContainer = document.getElementById("slots-ui-container");
 
     function updateUIState() {
-        if (radioBase.checked) {
-            currentMode = "base";
-            datePickerContainer.style.display = "none";
-            currentSlots = [...globalAgenda.defaultSlots];
-            scheduleSubtitle.innerText = "Editando: Horarios Base (se aplican por defecto a todos los días)";
-            renderSlots();
-        } else {
-            currentMode = "specific";
-            datePickerContainer.style.display = "block";
-            
-            const selectedDate = specificDateInput.value;
-            if (!selectedDate) {
-                scheduleSubtitle.innerText = "Seleccioná una fecha para editar sus horarios.";
-                currentSlots = [];
-                renderSlots();
-                return;
-            }
-            
-            currentDate = selectedDate;
-            scheduleSubtitle.innerText = `Editando: Horarios del ${currentDate}`;
-            
-            if (globalAgenda.exceptions[currentDate] !== undefined) {
-                // Ya hay una excepción guardada
-                currentSlots = [...globalAgenda.exceptions[currentDate]];
-            } else {
-                // Copiar del default para que empiece a editar desde ahí
-                currentSlots = [...globalAgenda.defaultSlots];
-            }
-            renderSlots();
+        const selectedDate = specificDateInput.value;
+        if (!selectedDate) {
+            scheduleSubtitle.innerText = "Seleccioná una fecha arriba para ver o editar sus horarios.";
+            slotsUiContainer.style.display = "none";
+            currentSlots = [];
+            return;
         }
+        
+        currentDate = selectedDate;
+        scheduleSubtitle.innerText = `Editando: Horarios del ${currentDate}`;
+        slotsUiContainer.style.display = "block";
+        
+        if (globalAgenda.exceptions[currentDate] !== undefined) {
+            // Cargar lo guardado para este día
+            currentSlots = [...globalAgenda.exceptions[currentDate]];
+        } else {
+            // Por defecto, si el día no fue editado, arranca vacío (cerrado)
+            // CRIT: Para facilitar la carga manual, le pre-rellenamos unos comunes, 
+            // pero NO se guardan hasta que le de a "Guardar".
+            currentSlots = ["09:00", "10:30", "12:00", "14:30", "16:00", "17:30"];
+        }
+        renderSlots();
     }
 
-    radioBase.addEventListener("change", updateUIState);
-    radioSpecific.addEventListener("change", updateUIState);
     specificDateInput.addEventListener("change", updateUIState);
 
     // -- Lógica de Precios --
@@ -194,7 +182,7 @@ if (dashboardBody) {
     });
 
     document.getElementById("btn-save-agenda").addEventListener("click", async () => {
-        if (currentMode === "specific" && !currentDate) {
+        if (!currentDate) {
             return alert("Por favor seleccioná una fecha primero.");
         }
 
@@ -202,16 +190,11 @@ if (dashboardBody) {
         btn.disabled = true;
         btn.innerText = "Guardando...";
 
-        // Actualizar el estado local antes de subir
-        if (currentMode === "base") {
-            globalAgenda.defaultSlots = [...currentSlots].sort();
-        } else {
-            globalAgenda.exceptions[currentDate] = [...currentSlots].sort();
-        }
+        // Guardar bajo la fecha específica
+        globalAgenda.exceptions[currentDate] = [...currentSlots].sort();
 
         try {
             await db.collection("settings").doc("agenda").set({
-                defaultSlots: globalAgenda.defaultSlots,
                 exceptions: globalAgenda.exceptions
             }, { merge: true });
             showToast();
@@ -219,7 +202,7 @@ if (dashboardBody) {
             alert("Error al guardar la agenda: " + error.message);
         } finally {
             btn.disabled = false;
-            btn.innerText = "Guardar Calendario";
+            btn.innerText = "Guardar Calendario del Día";
         }
     });
 
