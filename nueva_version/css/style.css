@@ -974,3 +974,52 @@ body {
 .tool-modal-footer .btn {
   width: 100%;
 }
+
+/* === RESPONSIVE & MOBILE MENU === */
+@media (max-width: 768px) {
+  .menu-toggle {
+    display: flex !important;
+  }
+  .nav-links {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 80%;
+    height: 100vh;
+    background: #050505;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    transition: right 0.4s cubic-bezier(0.77, 0.2, 0.05, 1.0);
+    z-index: 100;
+    border-left: 1px solid rgba(255,255,255,0.05);
+  }
+  .nav-links.active {
+    right: 0;
+  }
+  body.menu-open {
+    overflow: hidden;
+  }
+  .header .container {
+    padding: 0 20px;
+  }
+  .btn-mobile-hablemos {
+    display: inline-block !important;
+    margin-right: 15px;
+    margin-left: auto;
+  }
+}
+.btn-mobile-hablemos {
+  display: none;
+  border: 1px solid var(--color-accent);
+  padding: 6px 16px;
+  border-radius: 50px;
+  color: var(--color-accent);
+  font-size: 0.85rem;
+  text-decoration: none;
+  font-family: var(--font-display);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+

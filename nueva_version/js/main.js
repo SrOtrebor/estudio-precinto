@@ -257,9 +257,6 @@ function openToolModal(toolKey) {
             <a href="${whatsappUrl}" target="_blank" class="btn btn-primary magnetic" data-strength="20" style="width:100%; text-align:center;">
                 <span class="btn-text">📲 Consultar por WhatsApp</span>
             </a>
-            <a href="${data.demoUrl}" class="btn btn-secondary magnetic" data-strength="15" style="width:100%; text-align:center;">
-                <span class="btn-text">⚡ Probar Demo en Vivo ↗</span>
-            </a>
         </div>
     `;
 
