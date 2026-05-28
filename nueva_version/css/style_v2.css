@@ -1150,8 +1150,17 @@ body::before {
 
   .services-grid { grid-template-columns: 1fr; max-width: 480px; margin: 64px auto 0; }
   .tools-grid { grid-template-columns: 1fr 1fr; }
-  .marketing-inner { flex-direction: column; text-align: center; gap: 48px; padding: 48px; }
-  .marketing-visual { width: 200px; height: 200px; margin: 0 auto; }
+  .marketing-inner { flex-direction: column; text-align: center; gap: 40px; padding: 40px; }
+  /* Reset del flex-basis (en row era el ancho; en column sería la ALTURA → rompe el círculo) */
+  .marketing-visual {
+    flex: 0 0 auto !important;
+    width: 200px !important;
+    height: 200px !important;
+    min-width: 200px;
+    min-height: 200px;
+    margin: 0 auto;
+    align-self: center;
+  }
   .about-faq-grid { grid-template-columns: 1fr; gap: 60px; }
   .footer-grid { grid-template-columns: 1fr; gap: 32px; }
 }
@@ -1194,6 +1203,14 @@ body::before {
   .cta-title { letter-spacing: -2px; }
   .hero-trust { flex-wrap: wrap; gap: 16px; }
   .trust-sep { display: none; }
+  .marketing-inner { padding: 28px 20px; gap: 32px; }
+  .marketing-visual {
+    flex: 0 0 auto !important;
+    width: 160px !important;
+    height: 160px !important;
+    min-width: 160px;
+    min-height: 160px;
+  }
 
   /* Horizontal scroll → vertical */
   .horizontal-section { height: auto !important; overflow: visible !important; padding: 80px 0 !important; }
