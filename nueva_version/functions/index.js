@@ -131,11 +131,21 @@ app.get("/getAvailableSlots", async (req, res) => {
             return res.status(400).json({ error: "La fecha es inválida o ya pasó. Usa el formato YYYY-MM-DD." });
         }
 
-        // Obtener los slots disponibles configurados en la BD (settings/agenda)
+        // Obtener la configuración de la agenda (settings/agenda)
         let allPossibleSlots = ["09:00", "10:30", "12:00", "14:30", "16:00", "17:30"];
         const agendaDoc = await db.collection("settings").doc("agenda").get();
-        if (agendaDoc.exists && agendaDoc.data().slots && Array.isArray(agendaDoc.data().slots)) {
-            allPossibleSlots = agendaDoc.data().slots;
+        if (agendaDoc.exists) {
+            const data = agendaDoc.data();
+            // Primero buscar si hay una excepción para este día exacto
+            if (data.exceptions && data.exceptions[date] !== undefined) {
+                allPossibleSlots = data.exceptions[date]; // Puede ser [] si está bloqueado
+            } else if (data.defaultSlots && Array.isArray(data.defaultSlots)) {
+                // Si no hay excepción, usar el horario general
+                allPossibleSlots = data.defaultSlots;
+            } else if (data.slots && Array.isArray(data.slots)) {
+                // Retrocompatibilidad temporal
+                allPossibleSlots = data.slots;
+            }
         }
 
         const bookingsSnapshot = await db.collection("bookings")
@@ -175,8 +185,15 @@ app.post("/createBooking", bookingLimiter, async (req, res) => {
         // Obtener los slots válidos desde la DB para validar el input
         let validTimes = ["09:00", "10:30", "12:00", "14:30", "16:00", "17:30"];
         const agendaDoc = await db.collection("settings").doc("agenda").get();
-        if (agendaDoc.exists && agendaDoc.data().slots && Array.isArray(agendaDoc.data().slots)) {
-            validTimes = agendaDoc.data().slots;
+        if (agendaDoc.exists) {
+            const data = agendaDoc.data();
+            if (data.exceptions && data.exceptions[date] !== undefined) {
+                validTimes = data.exceptions[date];
+            } else if (data.defaultSlots && Array.isArray(data.defaultSlots)) {
+                validTimes = data.defaultSlots;
+            } else if (data.slots && Array.isArray(data.slots)) {
+                validTimes = data.slots;
+            }
         }
 
         if (!validTimes.includes(time)) {

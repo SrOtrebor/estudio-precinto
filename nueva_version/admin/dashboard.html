@@ -53,7 +53,27 @@
 
         <div class="section">
             <h2>🕒 Horarios de Agenda</h2>
-            <p style="color: #888; font-size: 0.9em; margin-bottom: 15px;">Estos son los bloques de horarios fijos que se mostrarán disponibles todos los días en el calendario.</p>
+            
+            <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.05);">
+                <label style="margin-bottom: 10px; font-weight: bold; color: #fff;">¿Qué horario querés editar?</label>
+                <div style="display: flex; gap: 15px; margin-bottom: 15px;">
+                    <label style="display: flex; align-items: center; gap: 5px; cursor: pointer; color: #fff; font-size: 1em;">
+                        <input type="radio" name="schedule-type" value="base" checked id="radio-base">
+                        Horario Base (Todos los días)
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px; cursor: pointer; color: #fff; font-size: 1em;">
+                        <input type="radio" name="schedule-type" value="specific" id="radio-specific">
+                        Día Específico (Excepción)
+                    </label>
+                </div>
+
+                <div id="date-picker-container" style="display: none; margin-top: 10px;">
+                    <label>Elegí la fecha exacta a modificar:</label>
+                    <input type="date" id="specific-date" style="width: auto;">
+                </div>
+            </div>
+
+            <p id="schedule-subtitle" style="color: #A28A68; font-size: 0.9em; margin-bottom: 15px; font-weight: bold;">Editando: Horarios Base</p>
             
             <div class="slot-list" id="slot-list">
                 <!-- Se llena con JS -->
@@ -65,6 +85,7 @@
             </div>
             
             <button class="btn-save" id="btn-save-agenda" style="margin-top: 20px;">Guardar Calendario</button>
+            <p style="font-size: 0.8em; color: #888; margin-top: 10px;">* Si borrás todos los horarios de un Día Específico, ese día quedará completamente bloqueado (ej: Feriado).</p>
         </div>
     </div>
 
