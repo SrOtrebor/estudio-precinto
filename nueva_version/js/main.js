@@ -166,6 +166,30 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
     }
+    // 8. EVENTOS DE MODALES (Refactorizado sin onclick inline)
+    const bookingModals = document.querySelectorAll('.js-booking-modal');
+    bookingModals.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const modalType = btn.getAttribute('data-modal');
+            const modalTitle = btn.getAttribute('data-modal-title');
+            const modalPrice = btn.getAttribute('data-modal-price');
+            if (typeof openModal === 'function') {
+                openModal(modalType, modalTitle, modalPrice);
+            }
+        });
+    });
+
+    const toolModals = document.querySelectorAll('.js-tool-modal');
+    toolModals.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const toolKey = btn.getAttribute('data-tool');
+            if (typeof openToolModal === 'function') {
+                openToolModal(toolKey);
+            }
+        });
+    });
 });
 
 // --- LÓGICA DE DETALLES DE HERRAMIENTAS (MODAL DINÁMICO) ---

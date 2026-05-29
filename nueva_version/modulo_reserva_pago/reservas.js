@@ -14,17 +14,63 @@ async function fetchPricing() {
             const data = await res.json();
             globalPricing = data;
             
-            // Actualizar DOM dinámicamente si los IDs existen
             if (globalPricing.individual) {
-                const formattedPrice = new Intl.NumberFormat('es-AR').format(globalPricing.individual);
-                const priceStr = `$${formattedPrice} ARS`;
+                const numericPrice = globalPricing.individual; // ej. 90000
+                const formattedPrice = new Intl.NumberFormat('es-AR').format(numericPrice); // 90.000
+                const priceStr = `$${formattedPrice} ARS`; // $90.000 ARS
+                const priceShort = `$${Math.round(numericPrice / 1000)}k`; // $90k
                 
+                // 1. Update dynamic-landing-price inside service card
                 const priceEl = document.getElementById('dynamic-landing-price');
-                if (priceEl) priceEl.innerHTML = `$${formattedPrice} <span class="currency">ARS</span>`;
+                if (priceEl) priceEl.innerHTML = `$${formattedPrice} <span class="curr">ARS</span>`;
                 
-                const btnPay = document.getElementById('btn-landing-pay');
-                if (btnPay) {
-                    btnPay.setAttribute('onclick', `openModal('landing', 'Landing Page Express (Entrega 24h)', '${priceStr}')`);
+                // 2. Update hero-price-display
+                const heroPrice = document.getElementById('hero-price-display');
+                if (heroPrice) heroPrice.textContent = `$${formattedPrice}`;
+                
+                // 3. Update GEO ENTITY text
+                const geoPrice = document.getElementById('geo-price-display');
+                if (geoPrice) geoPrice.textContent = `$${formattedPrice} ARS`;
+                
+                // 4. Update data-modal-price on all .js-booking-modal buttons
+                const bookingModals = document.querySelectorAll('.js-booking-modal');
+                bookingModals.forEach(btn => {
+                    btn.setAttribute('data-modal-price', priceStr);
+                });
+                
+                // 5. Update short price texts in nav and cta
+                const shortTexts = document.querySelectorAll('.js-dynamic-price-k');
+                shortTexts.forEach(el => {
+                    el.textContent = `Landing en 24h — ${priceShort}`;
+                });
+                
+                // 6. Update JSON-LD Schema
+                const schemaEl = document.getElementById('schema-jsonld');
+                if (schemaEl) {
+                    try {
+                        const schema = JSON.parse(schemaEl.textContent);
+                        const graph = schema['@graph'];
+                        if (graph) {
+                            // Update Service price
+                            const service = graph.find(item => item['@id'] === 'https://estudioprecinto.com/#service-landing');
+                            if (service && service.offers) {
+                                service.offers.price = numericPrice.toString();
+                            }
+                            
+                            // Update descriptions matching the price
+                            graph.forEach(item => {
+                                if (item.description && typeof item.description === 'string') {
+                                    item.description = item.description.replace(/\$\d{1,3}\.\d{3}\s+ARS/g, priceStr);
+                                }
+                                if (item.acceptedAnswer && item.acceptedAnswer.text) {
+                                    item.acceptedAnswer.text = item.acceptedAnswer.text.replace(/\$\d{1,3}\.\d{3}\s+ARS/g, priceStr);
+                                }
+                            });
+                        }
+                        schemaEl.textContent = JSON.stringify(schema, null, 2);
+                    } catch(e) {
+                        console.error('Error updating JSON-LD Schema:', e);
+                    }
                 }
             }
         }

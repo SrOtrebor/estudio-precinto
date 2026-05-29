@@ -68,7 +68,7 @@
        Incluye: WebSite · Organization · LocalBusiness · 3× Service
        FAQPage · HowTo · WebPage · SpeakableSpecification
   ════════════════════════════════════════════════════════════ -->
-  <script type="application/ld+json">
+  <script type="application/ld+json" id="schema-jsonld">
   {
     "@context": "https://schema.org",
     "@graph": [
@@ -162,6 +162,11 @@
         "priceRange": "$$ (desde $90.000 ARS)",
         "currenciesAccepted": "ARS",
         "paymentAccepted": "Mercado Pago, Tarjeta de crédito, Débito, Transferencia bancaria",
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "5.0",
+          "reviewCount": "30"
+        },
         "address": {
           "@type": "PostalAddress",
           "addressLocality": "Buenos Aires",
@@ -364,15 +369,6 @@
           "itemListElement": [
             { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://estudioprecinto.com/" }
           ]
-        },
-        "speakable": {
-          "@type": "SpeakableSpecification",
-          "cssSelector": [
-            ".hero-desc",
-            ".cta-sub",
-            ".faq-item p",
-            ".section-p"
-          ]
         }
       }
 
@@ -387,7 +383,7 @@
   <div class="bg-orb" id="bg-orb"></div>
 
   <!-- ── FLOATING WHATSAPP ──────────────────────────── -->
-  <a href="https://wa.me/541164481943" target="_blank" class="wa-float" aria-label="WhatsApp">
+  <a href="https://wa.me/541164481943" target="_blank" rel="noopener noreferrer" class="wa-float" aria-label="WhatsApp">
     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
       <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
     </svg>
@@ -400,12 +396,12 @@
         <img src="../SVG/logoblanco.svg" alt="Estudio Precinto" class="magnetic" data-strength="12">
       </a>
 
-      <a href="https://wa.me/541164481943" target="_blank" class="btn-mobile-hablemos">Hablemos</a>
+      <a href="https://wa.me/541164481943" target="_blank" rel="noopener noreferrer" class="btn-mobile-hablemos">Hablemos</a>
 
       <nav class="nav-links">
         <a href="#herramientas" class="nav-btn magnetic" data-strength="8">Herramientas</a>
         <a href="#portfolio" class="nav-btn magnetic" data-strength="8">Portfolio</a>
-        <a href="javascript:void(0)" onclick="openModal('landing','Landing Page Express (Entrega 24h)','$90.000 ARS')" class="nav-btn nav-cta-pill magnetic" data-strength="20" id="nav-cta-btn">Landing en 24h — $90k</a>
+        <a href="#" class="js-booking-modal" data-modal="landing" data-modal-title="Landing Page Express (Entrega 24h)" data-modal-price="$90.000 ARS" class="nav-btn nav-cta-pill magnetic" data-strength="20" id="nav-cta-btn"><span class="js-dynamic-price-k">Landing en 24h — $90k</span></a>
       </nav>
 
       <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú">
@@ -429,10 +425,10 @@
             Estudio de Software · Buenos Aires, AR
           </div>
 
-          <h1 class="hero-title">
-            <span class="line"><span class="word">Tu negocio</span></span>
-            <span class="line"><span class="word">en piloto</span></span>
-            <span class="line"><span class="word hero-gold">automático.</span></span>
+          <h1 class="hero-title" aria-label="Tu negocio en piloto automático.">
+            <span class="line" aria-hidden="true"><span class="word">Tu negocio</span></span>
+            <span class="line" aria-hidden="true"><span class="word">en piloto</span></span>
+            <span class="line" aria-hidden="true"><span class="word hero-gold">automático.</span></span>
           </h1>
 
           <p class="hero-desc reveal-fade">
@@ -440,7 +436,7 @@
           </p>
 
           <div class="hero-actions reveal-fade">
-            <a href="javascript:void(0)" onclick="openModal('landing','Landing Page Express (Entrega 24h)','$90.000 ARS')" class="btn btn-gold btn-giant magnetic" data-strength="30" id="hero-main-cta">
+            <a href="#" class="js-booking-modal" data-modal="landing" data-modal-title="Landing Page Express (Entrega 24h)" data-modal-price="$90.000 ARS" class="btn btn-gold btn-giant magnetic" data-strength="30" id="hero-main-cta">
               <span class="btn-text">Quiero mi Landing Page →</span>
             </a>
           </div>
@@ -473,7 +469,7 @@
           <div class="hero-card-title">Landing Page Express</div>
 
           <div class="hero-card-price">
-            $90.000 <span class="hero-card-currency">ARS</span>
+            <span id="hero-price-display">$90.000</span> <span class="hero-card-currency">ARS</span>
           </div>
           <div class="hero-card-note">✓ Precio fijo · Sin sorpresas</div>
 
@@ -485,7 +481,7 @@
             <li>Entrega garantizada en 24 horas hábiles</li>
           </ul>
 
-          <a href="javascript:void(0)" onclick="openModal('landing','Landing Page Express (Entrega 24h)','$90.000 ARS')" class="hero-card-cta" id="hero-card-cta-btn">
+          <a href="#" class="js-booking-modal" data-modal="landing" data-modal-title="Landing Page Express (Entrega 24h)" data-modal-price="$90.000 ARS" class="hero-card-cta" id="hero-card-cta-btn">
             Agendar y Pagar →
           </a>
         </div>
@@ -572,7 +568,7 @@
               <li>SEO técnico incluido</li>
               <li>Entrega en 24 horas hábiles</li>
             </ul>
-            <a href="javascript:void(0)" id="btn-landing-pay" onclick="openModal('landing','Landing Page Express (Entrega 24h)','$90.000 ARS')" class="btn btn-gold" style="width:100%;">
+            <a href="#" id="btn-landing-pay" class="js-booking-modal" data-modal="landing" data-modal-title="Landing Page Express (Entrega 24h)" data-modal-price="$90.000 ARS" class="btn btn-gold" style="width:100%;">
               <span class="btn-text">Agendar y Pagar</span>
             </a>
           </div>
@@ -585,7 +581,7 @@
             <p class="service-desc">
               Tu negocio en internet. Webs completas con múltiples secciones, panel administrable y diseño premium adaptado a tu identidad de marca.
             </p>
-            <a href="https://wa.me/541164481943?text=Hola!%20Quiero%20una%20Página%20Web" target="_blank" class="btn btn-outline" style="width:100%; margin-top:auto;">
+            <a href="https://wa.me/541164481943?text=Hola!%20Quiero%20una%20Página%20Web" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="width:100%; margin-top:auto;">
               <span class="btn-text">Consultar Precio →</span>
             </a>
           </div>
@@ -599,7 +595,7 @@
             <p class="service-desc">
               Eliminamos tareas manuales. Conectamos tus apps — facturación, WhatsApp, CRM, email — para que funcionen solas y ahorren 10h semanales.
             </p>
-            <a href="https://wa.me/541164481943?text=Hola!%20Necesito%20Automatizar%20procesos" target="_blank" class="btn btn-gold" style="width:100%; margin-top:auto;">
+            <a href="https://wa.me/541164481943?text=Hola!%20Necesito%20Automatizar%20procesos" target="_blank" rel="noopener noreferrer" class="btn btn-gold" style="width:100%; margin-top:auto;">
               <span class="btn-text">Agendar Asesoría →</span>
             </a>
           </div>
@@ -664,7 +660,7 @@
               <li>📈 Estrategias agresivas de ROAS y retorno de inversión.</li>
               <li>🚀 Nosotros ponemos la máquina. Ellos ponen el combustible.</li>
             </ul>
-            <a href="https://morehdmkt.com/" target="_blank" class="btn btn-outline magnetic" data-strength="20">
+            <a href="https://morehdmkt.com/" target="_blank" rel="noopener noreferrer" class="btn btn-outline magnetic" data-strength="20">
               <span class="btn-text">Conocé MoreMKT →</span>
             </a>
           </div>
@@ -693,7 +689,7 @@
             <div class="tool-icon-box">🎟️</div>
             <h3>Módulo de Sorteos</h3>
             <p>Plataforma transparente y automatizada para gestionar sorteos en vivo, captura de leads y selección aleatoria verificable. Ideal para eventos y marcas.</p>
-            <a href="javascript:void(0)" onclick="openToolModal('sorteos')" class="tool-link magnetic" data-strength="8">
+            <a href="#" class="js-tool-modal" data-tool="sorteos" class="tool-link magnetic" data-strength="8">
               Saber Más →
             </a>
           </div>
@@ -702,7 +698,7 @@
             <div class="tool-icon-box">🔨</div>
             <h3>Subasta Silenciosa</h3>
             <p>Sistema digital para eventos de recaudación. Tus invitados pujan desde sus celulares en tiempo real, viendo el tablero de líderes en pantalla grande.</p>
-            <a href="javascript:void(0)" onclick="openToolModal('subastas')" class="tool-link magnetic" data-strength="8">
+            <a href="#" class="js-tool-modal" data-tool="subastas" class="tool-link magnetic" data-strength="8">
               Saber Más →
             </a>
           </div>
@@ -711,7 +707,7 @@
             <div class="tool-icon-box">📱</div>
             <h3>Live Feed & Eventos</h3>
             <p>Invitaciones digitales dinámicas con Live Feed. Tus invitados suben fotos que se proyectan en tiempo real en las pantallas del evento.</p>
-            <a href="javascript:void(0)" onclick="openToolModal('feed')" class="tool-link magnetic" data-strength="8">
+            <a href="#" class="js-tool-modal" data-tool="feed" class="tool-link magnetic" data-strength="8">
               Saber Más →
             </a>
           </div>
@@ -733,8 +729,8 @@
 
         <div class="portfolio-grid" style="margin-top: 64px;">
 
-          <a href="https://mentorhub.com.ar" target="_blank" class="proof-card magnetic" data-strength="8">
-            <div class="card-image" style="background-image:url('../assets/mentorhub.png')"></div>
+          <a href="https://mentorhub.com.ar" target="_blank" rel="noopener noreferrer" class="proof-card magnetic" data-strength="8">
+            <div class="card-image"><img src="../assets/mentorhub.png" alt="Screenshot de MentorHub" loading="lazy"></div>
             <div class="card-content">
               <h3>MentorHub</h3>
               <p>Plataforma de mentoría académica con reservas y pagos integrados.</p>
@@ -742,8 +738,8 @@
             </div>
           </a>
 
-          <a href="https://tramando.com.ar" target="_blank" class="proof-card magnetic" data-strength="8">
-            <div class="card-image" style="background-image:url('../assets/tramando.png')"></div>
+          <a href="https://tramando.com.ar" target="_blank" rel="noopener noreferrer" class="proof-card magnetic" data-strength="8">
+            <div class="card-image"><img src="../assets/tramando.png" alt="Screenshot de Tramando" loading="lazy"></div>
             <div class="card-content">
               <h3>Tramando</h3>
               <p>Plataforma de venta de infoproductos con funnel automatizado.</p>
@@ -751,8 +747,8 @@
             </div>
           </a>
 
-          <a href="https://movaroapp.com" target="_blank" class="proof-card magnetic" data-strength="8">
-            <div class="card-image" style="background-image:url('../assets/movaro.png')"></div>
+          <a href="https://movaroapp.com" target="_blank" rel="noopener noreferrer" class="proof-card magnetic" data-strength="8">
+            <div class="card-image"><img src="../assets/movaro.png" alt="Screenshot de Movaro" loading="lazy"></div>
             <div class="card-content">
               <h3>Movaro</h3>
               <p>Plataforma SaaS para automatización de agendas de negocios.</p>
@@ -760,8 +756,8 @@
             </div>
           </a>
 
-          <a href="https://fulbitoplay.com.ar" target="_blank" class="proof-card magnetic" data-strength="8">
-            <div class="card-image" style="background-image:url('../assets/fulbito.png')"></div>
+          <a href="https://fulbitoplay.com.ar" target="_blank" rel="noopener noreferrer" class="proof-card magnetic" data-strength="8">
+            <div class="card-image"><img src="../assets/fulbito.png" alt="Screenshot de Fulbito Play" loading="lazy"></div>
             <div class="card-content">
               <h3>Fulbito Play</h3>
               <p>App web para gestión integral de partidos de fútbol amateur.</p>
@@ -769,8 +765,8 @@
             </div>
           </a>
 
-          <a href="https://srotrebor.github.io/Rastreador-Hidrido-Web/" target="_blank" class="proof-card magnetic" data-strength="8">
-            <div class="card-image" style="background-image:url('../assets/rastreador.png')"></div>
+          <a href="https://srotrebor.github.io/Rastreador-Hidrido-Web/" target="_blank" rel="noopener noreferrer" class="proof-card magnetic" data-strength="8">
+            <div class="card-image"><img src="../assets/rastreador.png" alt="Screenshot de Rastreador GPS" loading="lazy"></div>
             <div class="card-content">
               <h3>Rastreador GPS</h3>
               <p>Tracking satelital en tiempo real con alertas y conexión Bluetooth.</p>
@@ -778,8 +774,8 @@
             </div>
           </a>
 
-          <a href="https://curso-piano.web.app/" target="_blank" class="proof-card magnetic" data-strength="8">
-            <div class="card-image" style="background-image:url('../assets/piano.png')"></div>
+          <a href="https://curso-piano.web.app/" target="_blank" rel="noopener noreferrer" class="proof-card magnetic" data-strength="8">
+            <div class="card-image"><img src="../assets/piano.png" alt="Screenshot de Mi Primer Piano" loading="lazy"></div>
             <div class="card-content">
               <h3>Mi Primer Piano</h3>
               <p>App interactiva de educación musical gamificada para niños.</p>
@@ -787,8 +783,8 @@
             </div>
           </a>
 
-          <a href="https://celestevanesa.art" target="_blank" class="proof-card magnetic" data-strength="8">
-            <div class="card-image" style="background-image:url('../assets/celestevanesa.png')"></div>
+          <a href="https://celestevanesa.art" target="_blank" rel="noopener noreferrer" class="proof-card magnetic" data-strength="8">
+            <div class="card-image"><img src="../assets/celestevanesa.png" alt="Screenshot de Celeste Vanesa Art" loading="lazy"></div>
             <div class="card-content">
               <h3>Celeste Vanesa Art</h3>
               <p>Portfolio artístico premium interactivo con galería dinámica.</p>
@@ -900,10 +896,10 @@
           15 minutos gratis. Descubrí cuánto tiempo podés ahorrar sistematizando tu negocio.
         </p>
         <div class="cta-actions reveal-fade">
-          <a href="https://wa.me/541164481943" target="_blank" class="btn btn-light btn-giant magnetic" data-strength="35" id="cta-final-btn">
+          <a href="https://wa.me/541164481943" target="_blank" rel="noopener noreferrer" class="btn btn-light btn-giant magnetic" data-strength="35" id="cta-final-btn">
             <span class="btn-text">Agendar Asesoría Gratis →</span>
           </a>
-          <a href="javascript:void(0)" onclick="openModal('landing','Landing Page Express (Entrega 24h)','$90.000 ARS')" class="btn btn-gold btn-giant magnetic" data-strength="25">
+          <a href="#" class="js-booking-modal" data-modal="landing" data-modal-title="Landing Page Express (Entrega 24h)" data-modal-price="$90.000 ARS" class="btn btn-gold btn-giant magnetic" data-strength="25">
             <span class="btn-text">Landing en 24h — $90k</span>
           </a>
         </div>
@@ -925,23 +921,21 @@
        Perplexity, ChatGPT, Gemini y otros motores generativos.
   ════════════════════════════════════════════════════════== -->
   <aside aria-label="Información sobre Estudio Precinto"
-         itemscope itemtype="https://schema.org/Organization"
          style="background:var(--navy-2); border-top:1px solid var(--border-2); padding:60px 0;">
     <div class="container">
       <div style="max-width:880px; margin:0 auto;">
         <p style="font-size:.7rem; font-weight:700; letter-spacing:2.5px; text-transform:uppercase; color:var(--light-3); margin-bottom:20px;">
           Sobre Estudio Precinto
         </p>
-        <p itemprop="description"
-           style="font-size:.98rem; color:var(--light-2); line-height:1.85; margin-bottom:16px;">
-          <strong itemprop="name" style="color:var(--white);">Estudio Precinto</strong>
+        <p style="font-size:.98rem; color:var(--light-2); line-height:1.85; margin-bottom:16px;">
+          <strong style="color:var(--white);">Estudio Precinto</strong>
           es un estudio de ingeniería de software con base en
-          <span itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
-            <span itemprop="addressLocality">Buenos Aires</span>,
-            <span itemprop="addressCountry">Argentina</span></span>,
+          <span>
+            <span>Buenos Aires</span>,
+            <span>Argentina</span></span>,
           especializado en el diseño y desarrollo de
           <strong style="color:var(--gold);">landing pages de alta conversión entregadas en 24 horas hábiles</strong>
-          a un precio fijo de <strong style="color:var(--gold);">$90.000 ARS</strong>
+          a un precio fijo de <strong style="color:var(--gold);" id="geo-price-display">$90.000 ARS</strong>
           sin costos adicionales. Opera de forma 100% remota atendiendo clientes en Argentina, Uruguay, Chile, Colombia y México.
         </p>
         <p style="font-size:.98rem; color:var(--light-2); line-height:1.85; margin-bottom:16px;">
@@ -959,8 +953,8 @@
           El pago de todos los servicios se realiza de forma online a través de
           <strong style="color:var(--white);">Mercado Pago</strong>
           (tarjeta de crédito, débito o transferencia bancaria).
-          Contacto: <a href="tel:+541164481943" itemprop="telephone" style="color:var(--gold); text-decoration:none;">+54 11 6448-1943</a> ·
-          <a href="mailto:hola@estudioprecinto.com" itemprop="email" style="color:var(--gold); text-decoration:none;">hola@estudioprecinto.com</a>.
+          Contacto: <a href="tel:+541164481943" style="color:var(--gold); text-decoration:none;">+54 11 6448-1943</a> ·
+          <a href="mailto:hola@estudioprecinto.com" style="color:var(--gold); text-decoration:none;">hola@estudioprecinto.com</a>.
         </p>
       </div>
     </div>
@@ -1079,8 +1073,8 @@
   </div>
 
   <!-- GSAP -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" integrity="sha384-d+vyQ0dYcymoP8ndq2hW7FGC50nqGdXUEgoOUGxbbkAJwZqL7h+jKN0GGgn9hFDS" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js" integrity="sha384-poC0r6usQOX2Ayt/VGA+t81H6V3iN9L+Irz9iO8o+s0X20tLpzc9DOOtnKxhaQSE" crossorigin="anonymous"></script>
   <!-- Reservas + Mercado Pago -->
   <script src="modulo_reserva_pago/reservas.js"></script>
   <!-- JS principal -->
