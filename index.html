@@ -1,498 +1,1111 @@
 <!DOCTYPE html>
-<html lang="es">
-
+<html lang="es-AR" prefix="og: https://ogp.me/ns#" itemscope itemtype="https://schema.org/WebPage">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- SEO Meta Tags -->
-  <title>Estudio Precinto | Tecnología que resuelve</title>
-  <meta name="description"
-    content="Consultora de soluciones tecnológicas pragmáticas para PyMEs. Matamos planillas de Excel complejas, automatizamos tareas repetitivas y creamos webs funcionales. Orden y firmeza.">
-  <meta name="keywords"
-    content="consultora tecnológica, automatización, desarrollo web, gestión IT, PyMEs, sistemas a medida">
+  <!-- ═══ SEO PRIMARIO ═══════════════════════════════════════ -->
+  <!-- Title: keyword principal + marca + diferenciador | 60 chars -->
+  <title>Landing Pages en 24h | Estudio Precinto — Software y Automatización para PyMEs Argentina</title>
+
+  <!-- Meta description: 155 chars, CTA, keyword principal -->
+  <meta name="description" content="Diseñamos tu landing page de alta conversión en 24 horas garantizadas y automatizamos los procesos de tu PyME. Precio fijo $90.000 ARS. Agendá hoy.">
+
+  <!-- Keywords (legacy, aún leído por algunos motores) -->
+  <meta name="keywords" content="landing page 24 horas Argentina, automatización procesos PyMEs, software a medida Buenos Aires, desarrollo web express, landing page precio Argentina, sistemas automatizados empresas">
+
   <meta name="author" content="Estudio Precinto">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="revisit-after" content="7 days">
+  <meta name="language" content="Spanish">
+  <meta name="rating" content="general">
+  <meta name="category" content="Software Development, Web Design, Business Automation">
 
-  <!-- Open Graph / Social Media -->
+  <!-- Geo signals -->
+  <meta name="geo.region" content="AR-C">
+  <meta name="geo.placename" content="Buenos Aires, Argentina">
+  <meta name="geo.position" content="-34.6037;-58.3816">
+  <meta name="ICBM" content="-34.6037, -58.3816">
+
+  <link rel="canonical" href="https://estudioprecinto.com/">
+
+  <!-- ═══ OPEN GRAPH (Facebook, WhatsApp, LinkedIn) ═══════════ -->
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Estudio Precinto | Tecnología que resuelve">
-  <meta property="og:description" content="Soluciones tecnológicas pragmáticas para PyMEs. Orden y firmeza.">
-  <meta property="og:url" content="https://estudioprecinto.com">
+  <meta property="og:site_name" content="Estudio Precinto">
+  <meta property="og:title" content="Landing Pages en 24h Garantizadas — Estudio Precinto">
+  <meta property="og:description" content="Landing pages de alta conversión entregadas en 24 horas hábiles. Precio fijo $90.000 ARS. Automatizamos tu PyME. 30+ proyectos activos en Argentina.">
+  <meta property="og:url" content="https://estudioprecinto.com/">
+  <meta property="og:image" content="https://estudioprecinto.com/assets/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Estudio Precinto — Landing Pages en 24h y Automatizaciones para PyMEs Argentina">
+  <meta property="og:locale" content="es_AR">
 
-  <!-- Favicon -->
+  <!-- ═══ TWITTER / X CARDS ═══════════════════════════════════ -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@estudioprecinto">
+  <meta name="twitter:title" content="Landing Pages en 24h | Estudio Precinto">
+  <meta name="twitter:description" content="Tu landing page lista en 24 horas hábiles. Precio fijo $90.000 ARS. Automatizamos procesos para PyMEs argentinas.">
+  <meta name="twitter:image" content="https://estudioprecinto.com/assets/og-image.png">
+  <meta name="twitter:image:alt" content="Estudio Precinto — Software y Automatización para PyMEs">
+
+  <!-- ═══ FAVICONS ═════════════════════════════════════════════ -->
   <link rel="icon" type="image/svg+xml" href="SVG/isofull.svg">
+  <link rel="apple-touch-icon" href="SVG/isofull.svg">
 
-  <!-- Fonts -->
+  <!-- ═══ PERFORMANCE ══════════════════════════════════════════ -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+  <link rel="dns-prefetch" href="https://wa.me">
+  <link rel="dns-prefetch" href="https://firestore.googleapis.com">
 
-  <!-- Styles -->
-  <link rel="stylesheet" href="index.css">
+  <!-- ═══ CSS ══════════════════════════════════════════════════ -->
+  <link rel="stylesheet" href="nueva_version/css/style_v2.css">
+
+  <!-- ═══════════════════════════════════════════════════════════
+       SCHEMA.ORG JSON-LD — COMPLETO PARA SEO + GEO + AI
+       Incluye: WebSite · Organization · LocalBusiness · 3× Service
+       FAQPage · HowTo · WebPage · SpeakableSpecification
+  ════════════════════════════════════════════════════════════ -->
+  <script type="application/ld+json" id="schema-jsonld">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+
+      {
+        "@type": "WebSite",
+        "@id": "https://estudioprecinto.com/#website",
+        "url": "https://estudioprecinto.com/",
+        "name": "Estudio Precinto",
+        "description": "Estudio de software especializado en landing pages de alta conversión entregadas en 24 horas y automatización de procesos para PyMEs en Argentina.",
+        "inLanguage": "es-AR",
+        "publisher": { "@id": "https://estudioprecinto.com/#organization" },
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": { "@type": "EntryPoint", "urlTemplate": "https://estudioprecinto.com/?q={search_term_string}" },
+          "query-input": "required name=search_term_string"
+        }
+      },
+
+      {
+        "@type": "Organization",
+        "@id": "https://estudioprecinto.com/#organization",
+        "name": "Estudio Precinto",
+        "alternateName": "Precinto Studio",
+        "url": "https://estudioprecinto.com/",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://estudioprecinto.com/SVG/logoblanco.svg",
+          "width": 300,
+          "height": 60
+        },
+        "description": "Estudio Precinto es un estudio de ingeniería de software radicado en Buenos Aires, Argentina. Fundado para democratizar el acceso a tecnología de calidad para PyMEs latinoamericanas. Especialistas en landing pages de alta conversión (entrega en 24 horas), automatización de procesos y sistemas a medida.",
+        "foundingDate": "2020",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Buenos Aires",
+          "addressRegion": "Buenos Aires",
+          "addressCountry": "AR"
+        },
+        "contactPoint": [
+          {
+            "@type": "ContactPoint",
+            "telephone": "+54-11-6448-1943",
+            "contactType": "sales",
+            "availableLanguage": "Spanish",
+            "areaServed": "AR",
+            "contactOption": "TollFree"
+          },
+          {
+            "@type": "ContactPoint",
+            "email": "hola@estudioprecinto.com",
+            "contactType": "customer service",
+            "availableLanguage": "Spanish"
+          }
+        ],
+        "sameAs": [
+          "https://wa.me/541164481943",
+          "https://instagram.com/estudioprecinto"
+        ],
+        "knowsAbout": [
+          "Desarrollo web",
+          "Landing pages de alta conversión",
+          "Automatización de procesos empresariales",
+          "Software a medida",
+          "Firebase",
+          "React",
+          "Mercado Pago integrations",
+          "CRM automation",
+          "WhatsApp Business API"
+        ],
+        "hasOfferCatalog": {
+          "@type": "OfferCatalog",
+          "name": "Servicios de Estudio Precinto",
+          "itemListElement": [
+            { "@type": "Offer", "itemOffered": { "@id": "https://estudioprecinto.com/#service-landing" } },
+            { "@type": "Offer", "itemOffered": { "@id": "https://estudioprecinto.com/#service-web" } },
+            { "@type": "Offer", "itemOffered": { "@id": "https://estudioprecinto.com/#service-automatizacion" } }
+          ]
+        }
+      },
+
+      {
+        "@type": ["LocalBusiness", "ProfessionalService"],
+        "@id": "https://estudioprecinto.com/#localbusiness",
+        "name": "Estudio Precinto",
+        "image": "https://estudioprecinto.com/assets/og-image.png",
+        "description": "Estudio Precinto ofrece landing pages de alta conversión entregadas en 24 horas hábiles a $90.000 ARS precio fijo, y automatización de procesos para PyMEs en Argentina y Latinoamérica.",
+        "url": "https://estudioprecinto.com/",
+        "telephone": "+54-11-6448-1943",
+        "email": "hola@estudioprecinto.com",
+        "priceRange": "$$ (desde $90.000 ARS)",
+        "currenciesAccepted": "ARS",
+        "paymentAccepted": "Mercado Pago, Tarjeta de crédito, Débito, Transferencia bancaria",
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "5.0",
+          "reviewCount": "30"
+        },
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Buenos Aires",
+          "addressRegion": "Ciudad Autónoma de Buenos Aires",
+          "addressCountry": "AR"
+        },
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": -34.6037,
+          "longitude": -58.3816
+        },
+        "areaServed": [
+          { "@type": "Country", "name": "Argentina" },
+          { "@type": "Country", "name": "Uruguay" },
+          { "@type": "Country", "name": "Chile" },
+          { "@type": "Country", "name": "Colombia" },
+          { "@type": "Country", "name": "Mexico" }
+        ],
+        "openingHoursSpecification": {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"],
+          "opens": "09:00",
+          "closes": "18:00"
+        },
+        "parentOrganization": { "@id": "https://estudioprecinto.com/#organization" }
+      },
+
+      {
+        "@type": "Service",
+        "@id": "https://estudioprecinto.com/#service-landing",
+        "name": "Landing Page Express — Entrega en 24 Horas",
+        "alternateName": "Landing Page en 24h",
+        "description": "Landing page de alta conversión diseñada específicamente para un producto o servicio. Optimizada para tráfico pagado (Meta Ads, Google Ads). Incluye diseño premium, formulario de captura de leads, integración con WhatsApp y optimización SEO básica. Entrega garantizada en 24 horas hábiles desde la confirmación del pago.",
+        "provider": { "@id": "https://estudioprecinto.com/#organization" },
+        "serviceType": "Web Design",
+        "category": "Landing Page",
+        "areaServed": { "@type": "Country", "name": "Argentina" },
+        "offers": {
+          "@type": "Offer",
+          "name": "Landing Page Express",
+          "price": "90000",
+          "priceCurrency": "ARS",
+          "priceValidUntil": "2025-12-31",
+          "availability": "https://schema.org/InStock",
+          "url": "https://estudioprecinto.com/#precios",
+          "deliveryLeadTime": {
+            "@type": "QuantitativeValue",
+            "value": 1,
+            "unitCode": "DAY",
+            "description": "24 horas hábiles desde la confirmación del pago"
+          },
+          "seller": { "@id": "https://estudioprecinto.com/#organization" }
+        },
+        "hasOfferCatalog": {
+          "@type": "OfferCatalog",
+          "name": "Incluye",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Diseño premium de alta conversión" },
+            { "@type": "ListItem", "position": 2, "name": "Formulario de captura de leads integrado" },
+            { "@type": "ListItem", "position": 3, "name": "Optimización para tráfico pagado (Meta/Google Ads)" },
+            { "@type": "ListItem", "position": 4, "name": "SEO técnico optimizado" },
+            { "@type": "ListItem", "position": 5, "name": "Entrega garantizada en 24 horas hábiles" }
+          ]
+        }
+      },
+
+      {
+        "@type": "Service",
+        "@id": "https://estudioprecinto.com/#service-web",
+        "name": "Páginas Web Institucionales",
+        "description": "Sitios web completos con múltiples secciones, panel administrable, diseño premium adaptado a identidad de marca y optimización SEO. Modalidad 100% remota para empresas de toda Argentina.",
+        "provider": { "@id": "https://estudioprecinto.com/#organization" },
+        "serviceType": "Web Development",
+        "category": "Sitio Web Institucional",
+        "areaServed": { "@type": "Country", "name": "Argentina" },
+        "offers": {
+          "@type": "Offer",
+          "availability": "https://schema.org/InStock",
+          "url": "https://estudioprecinto.com/#precios",
+          "seller": { "@id": "https://estudioprecinto.com/#organization" }
+        }
+      },
+
+      {
+        "@type": "Service",
+        "@id": "https://estudioprecinto.com/#service-automatizacion",
+        "name": "Automatización de Procesos y Sistemas a Medida",
+        "alternateName": "Automatización de PyMEs",
+        "description": "Eliminamos las planillas de Excel y los procesos manuales repetitivos de tu empresa. Conectamos tus aplicaciones (WhatsApp Business, facturación electrónica, email, CRM, Mercado Pago) para que intercambien información y ejecuten tareas sin intervención humana. Resultado: hasta 10 horas de ahorro semanal para tu equipo.",
+        "provider": { "@id": "https://estudioprecinto.com/#organization" },
+        "serviceType": "Business Process Automation",
+        "category": "Software a Medida",
+        "areaServed": { "@type": "Country", "name": "Argentina" },
+        "offers": {
+          "@type": "Offer",
+          "availability": "https://schema.org/InStock",
+          "url": "https://estudioprecinto.com/#precios",
+          "seller": { "@id": "https://estudioprecinto.com/#organization" }
+        }
+      },
+
+      {
+        "@type": "FAQPage",
+        "@id": "https://estudioprecinto.com/#faq",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "¿En cuánto tiempo entregan una landing page?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Estudio Precinto entrega landing pages de alta conversión en 24 horas hábiles desde la confirmación del pago. Es una garantía de servicio sin excepciones. Si la empresa paga el lunes a las 10 AM, la landing page está entregada el martes antes de las 10 AM."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "¿Cuánto cuesta una landing page en Estudio Precinto?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "El servicio Landing Page Express de Estudio Precinto tiene un precio fijo de $90.000 ARS, sin costos ocultos ni sorpresas. El precio incluye diseño premium, formulario de captura de leads, optimización SEO básica y entrega garantizada en 24 horas hábiles. El pago se realiza online a través de Mercado Pago."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "¿Qué es la automatización de procesos para PyMEs?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "La automatización de procesos para PyMEs consiste en conectar las aplicaciones que la empresa ya usa (WhatsApp, sistema de facturación, email, CRM) para que intercambien información y ejecuten tareas sin intervención humana. Estudio Precinto elimina las planillas de Excel y los procesos manuales repetitivos, logrando un ahorro de hasta 10 horas semanales para el equipo."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "¿Trabajan solo con empresas de Buenos Aires?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. Estudio Precinto trabaja de forma 100% remota con empresas y emprendedores de toda Argentina, Uruguay, Chile, Colombia y México. Todos los servicios —landing pages, automatizaciones y sistemas a medida— se entregan digitalmente sin importar la ubicación geográfica del cliente."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "¿Cómo se paga y cuáles son los métodos disponibles?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Estudio Precinto acepta pagos online a través de Mercado Pago: tarjeta de crédito, tarjeta de débito y transferencia bancaria. El pago se realiza al momento de agendar la cita, y la entrega de la landing page se garantiza dentro de las 24 horas hábiles siguientes a la confirmación del pago."
+            }
+          }
+        ]
+      },
+
+      {
+        "@type": "HowTo",
+        "@id": "https://estudioprecinto.com/#howto-landing",
+        "name": "Cómo contratar una Landing Page Express en Estudio Precinto",
+        "description": "Proceso simple en 4 pasos para obtener tu landing page de alta conversión en 24 horas hábiles.",
+        "totalTime": "PT24H",
+        "estimatedCost": {
+          "@type": "MonetaryAmount",
+          "currency": "ARS",
+          "value": "90000"
+        },
+        "step": [
+          {
+            "@type": "HowToStep",
+            "position": 1,
+            "name": "Agendá la cita",
+            "text": "Seleccioná la fecha y horario disponible en el calendario de Estudio Precinto directamente desde la web.",
+            "url": "https://estudioprecinto.com/#precios"
+          },
+          {
+            "@type": "HowToStep",
+            "position": 2,
+            "name": "Pagá online con Mercado Pago",
+            "text": "Completá el pago de $90.000 ARS de forma segura a través de Mercado Pago. Se acepta tarjeta de crédito, débito y transferencia bancaria."
+          },
+          {
+            "@type": "HowToStep",
+            "position": 3,
+            "name": "El equipo de Estudio Precinto construye tu landing page",
+            "text": "En las siguientes 24 horas hábiles, el equipo diseña y desarrolla tu landing page de alta conversión según tu producto o servicio."
+          },
+          {
+            "@type": "HowToStep",
+            "position": 4,
+            "name": "Recibís tu página publicada y lista",
+            "text": "Recibirás la landing page terminada, publicada y activa dentro de las 24 horas hábiles desde la confirmación del pago. Lista para recibir tráfico pagado."
+          }
+        ]
+      },
+
+      {
+        "@type": "WebPage",
+        "@id": "https://estudioprecinto.com/#webpage",
+        "url": "https://estudioprecinto.com/",
+        "name": "Landing Pages en 24h | Estudio Precinto — Software y Automatización para PyMEs Argentina",
+        "description": "Diseñamos landing pages de alta conversión en 24 horas garantizadas y automatizamos los procesos de tu PyME. Precio fijo $90.000 ARS.",
+        "inLanguage": "es-AR",
+        "isPartOf": { "@id": "https://estudioprecinto.com/#website" },
+        "about": { "@id": "https://estudioprecinto.com/#organization" },
+        "breadcrumb": {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://estudioprecinto.com/" }
+          ]
+        }
+      }
+
+    ]
+  }
+  </script>
 </head>
-
 <body>
 
-  <!-- HEADER -->
-  <header class="header" id="header">
+  <!-- ── CURSOR ──────────────────────────────────────── -->
+  <div class="cursor" id="cursor"></div>
+  <div class="bg-orb" id="bg-orb"></div>
+
+  <!-- ── FLOATING WHATSAPP ──────────────────────────── -->
+  <a href="https://wa.me/541164481943" target="_blank" rel="noopener noreferrer" class="wa-float" aria-label="WhatsApp">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+    </svg>
+  </a>
+
+  <!-- ── HEADER ──────────────────────────────────────── -->
+  <header class="header">
     <div class="container">
-      <div class="header-content">
-        <a href="#hero">
-          <img src="SVG/logoblanco.svg" alt="Estudio Precinto" class="logo">
-        </a>
+      <a href="#" style="display:flex;align-items:center;">
+        <img src="SVG/logoblanco.svg" alt="Estudio Precinto" class="magnetic" data-strength="12">
+      </a>
 
-        <nav class="nav" id="nav">
-          <a href="#servicios" class="nav-link">Servicios</a>
-          <a href="#portfolio" class="nav-link">Portfolio</a>
-          <a href="#testimonios" class="nav-link">Testimonios</a>
-          <a href="#nosotros" class="nav-link">Nosotros</a>
-          <a href="https://wa.me/541164481943" class="btn btn-primary" target="_blank">
-            Contactar
-          </a>
-        </nav>
+      <a href="https://wa.me/541164481943" target="_blank" rel="noopener noreferrer" class="btn-mobile-hablemos">Hablemos</a>
 
-        <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
-      </div>
+      <nav class="nav-links">
+        <a href="#herramientas" class="nav-btn magnetic" data-strength="8">Herramientas</a>
+        <a href="#portfolio" class="nav-btn magnetic" data-strength="8">Portfolio</a>
+        <a href="#"  data-modal="landing" data-modal-title="Landing Page Express (Entrega 24h)" data-modal-price="$90.000 ARS" class="js-booking-modal nav-btn nav-cta-pill magnetic" data-strength="20" id="nav-cta-btn"><span class="js-dynamic-price-k">Landing en 24h — $90k</span></a>
+      </nav>
+
+      <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú">
+        <span></span><span></span><span></span>
+      </button>
     </div>
   </header>
 
-  <!-- HERO SECTION -->
-  <section class="hero" id="hero">
-    <div class="container">
-      <div class="hero-content">
-        <h1 class="hero-title">
-          Tecnología que <span class="text-accent">resuelve</span>
-        </h1>
-        <p class="hero-subtitle">
-          Matamos planillas de Excel complejas, automatizamos tareas repetitivas y creamos webs funcionales.
-          <strong>Orden y firmeza.</strong>
-        </p>
-        <div class="hero-cta">
-          <a href="https://wa.me/541164481943?text=Hola!%20Quiero%20poner%20orden%20en%20mi%20tecnología"
-            class="btn btn-primary" target="_blank">
-            ¿Listo para poner orden?
-          </a>
-        </div>
-      </div>
-    </div>
-  </section>
+  <main>
 
-  <!-- SERVICIOS -->
-  <section class="section" id="servicios">
-    <div class="container">
-      <h2 class="section-title">Nuestros Servicios</h2>
+    <!-- ══════════════════════════════════════════════════
+         HERO
+    ═══════════════════════════════════════════════════ -->
+    <section class="hero" id="hero">
+      <!-- LEFT — Copy -->
+      <div class="hero-left">
+        <div style="max-width: 580px;">
 
-      <div class="services-grid">
-        <!-- Servicio 1: Presencia Firme -->
-        <div class="card service-card reveal">
-          <div class="service-icon">🌐</div>
-          <h3 class="service-title">Presencia Firme</h3>
-          <p class="service-description">
-            Desarrollo de Sitios de Presentación y webs institucionales rápidas, responsive y enfocadas en la
-            conversión. Tu
-            negocio en la web, sin complicaciones.
+          <div class="hero-badge reveal-fade">
+            <span class="hero-badge-dot"></span>
+            Estudio de Software · Buenos Aires, AR
+          </div>
+
+          <h1 class="hero-title" aria-label="Tu negocio en piloto automático.">
+            <span class="line" aria-hidden="true"><span class="word">Tu negocio</span></span>
+            <span class="line" aria-hidden="true"><span class="word">en piloto</span></span>
+            <span class="line" aria-hidden="true"><span class="word hero-gold">automático.</span></span>
+          </h1>
+
+          <p class="hero-desc reveal-fade">
+            Construimos sistemas que trabajan por vos. Landing pages que convierten en 24 horas y automatizaciones que eliminan el trabajo manual de tu empresa.
           </p>
+
+          <div class="hero-actions reveal-fade">
+            <a href="#"  data-modal="landing" data-modal-title="Landing Page Express (Entrega 24h)" data-modal-price="$90.000 ARS" class="js-booking-modal btn btn-gold btn-giant magnetic" data-strength="30" id="hero-main-cta">
+              <span class="btn-text">Quiero mi Landing Page →</span>
+            </a>
+          </div>
+
+          <div class="hero-trust reveal-fade">
+            <div class="trust-item">
+              <div class="trust-num" data-count="30" data-suffix="+">30+</div>
+              <div class="trust-label">Proyectos</div>
+            </div>
+            <div class="trust-sep"></div>
+            <div class="trust-item">
+              <div class="trust-num">24h</div>
+              <div class="trust-label">Entrega Garantizada</div>
+            </div>
+            <div class="trust-sep"></div>
+            <div class="trust-item">
+              <div class="trust-num">10h</div>
+              <div class="trust-label">Ahorro Semanal</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT — Pricing Card -->
+      <div class="hero-right">
+
+        <div class="hero-card-main magnetic" data-strength="8" id="hero-pricing-card">
+          <div class="hero-card-tag">⚡ Disponible Ahora</div>
+
+          <div class="hero-card-title">Landing Page Express</div>
+
+          <div class="hero-card-price">
+            <span id="hero-price-display">$90.000</span> <span class="hero-card-currency">ARS</span>
+          </div>
+          <div class="hero-card-note">✓ Precio fijo · Sin sorpresas</div>
+
+          <ul class="hero-card-features">
+            <li>Diseño premium de alta conversión</li>
+            <li>Formulario y captura de leads integrada</li>
+            <li>SEO técnico optimizado</li>
+            <li>Optimizado para tráfico pagado</li>
+            <li>Entrega garantizada en 24 horas hábiles</li>
+          </ul>
+
+          <a href="#"  data-modal="landing" data-modal-title="Landing Page Express (Entrega 24h)" data-modal-price="$90.000 ARS" class="js-booking-modal hero-card-cta" id="hero-card-cta-btn">
+            Agendar y Pagar →
+          </a>
         </div>
 
-        <!-- Servicio 2: Orden Digital -->
-        <div class="card service-card reveal">
-          <div class="service-icon">⚙️</div>
-          <h3 class="service-title">Sistematización de Procesos</h3>
-          <p class="service-description">
-            Creamos herramientas personalizadas para tu negocio. Reemplazamos el caos de archivos sueltos y procesos
-            manuales por sistemas automáticos que funcionan solos y te dan tranquilidad.
-          </p>
+        <div class="hero-mini-cards">
+          <div class="hero-mini-card">
+            <div class="hero-mini-label">Método de pago</div>
+            <div class="hero-mini-value" style="font-size:1rem; color: var(--light-2); font-weight:600;">Mercado Pago</div>
+          </div>
+          <div class="hero-mini-card">
+            <div class="hero-mini-label">Modalidad</div>
+            <div class="hero-mini-value" style="font-size:1rem; color: var(--light-2); font-weight:600;">100% Remoto</div>
+          </div>
         </div>
 
-        <!-- Servicio 3: Gestión IT Remota -->
-        <div class="card service-card reveal">
-          <div class="service-icon">🛡️</div>
-          <h3 class="service-title">Gestión IT Remota</h3>
-          <p class="service-description">
-            Tu departamento de sistemas externo. Administración de correos, dominios, seguridad y consultoría. 100%
-            remoto, sin reparaciones de hardware.
-          </p>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════
+         PROCESS STRIP
+    ═══════════════════════════════════════════════════ -->
+    <div class="process-strip">
+      <div class="container">
+        <div class="strip-step">
+          <div class="strip-num">01</div>
+          <div class="strip-text">
+            <strong>Agendás la cita</strong>
+            <span>Elegís fecha y horario</span>
+          </div>
+        </div>
+        <div class="strip-arrow">→</div>
+        <div class="strip-step">
+          <div class="strip-num">02</div>
+          <div class="strip-text">
+            <strong>Pagás online</strong>
+            <span>Mercado Pago seguro</span>
+          </div>
+        </div>
+        <div class="strip-arrow">→</div>
+        <div class="strip-step">
+          <div class="strip-num">03</div>
+          <div class="strip-text">
+            <strong>Entregamos</strong>
+            <span>En 24 horas hábiles</span>
+          </div>
+        </div>
+        <div class="strip-arrow">→</div>
+        <div class="strip-step">
+          <div class="strip-num">✓</div>
+          <div class="strip-text">
+            <strong>Resultado</strong>
+            <span>Página publicada y activa</span>
+          </div>
         </div>
       </div>
     </div>
-  </section>
 
-  <!-- PORTFOLIO -->
-  <section class="section" id="portfolio">
-    <div class="container">
-      <h2 class="section-title">Portfolio</h2>
-
-      <div class="portfolio-carousel">
-        <div class="portfolio-track" id="portfolioTrack">
-          <!-- Proyecto 1: Celeste Vanesa Art -->
-          <a href="https://celestevanesa.art" target="_blank" class="portfolio-item card"
-            style="text-decoration: none; color: inherit;">
-            <img src="assets/celestevanesa.png" alt="Celeste Vanesa Art" class="portfolio-image">
-            <div class="portfolio-overlay">
-              <h3 class="portfolio-title">Celeste Vanesa Art</h3>
-              <p style="font-size: 0.875rem; margin-bottom: 0.5rem; color: var(--color-text-secondary);">Portfolio
-                artístico profesional con galería de tatuajes y obras</p>
-              <div class="portfolio-tags">
-                <span class="portfolio-tag">Portfolio</span>
-                <span class="portfolio-tag">Arte</span>
-                <span class="portfolio-tag">Responsive</span>
-              </div>
-            </div>
-          </a>
-
-          <!-- Proyecto 2: MentorHub -->
-          <a href="https://mentorhub.com.ar" target="_blank" class="portfolio-item card"
-            style="text-decoration: none; color: inherit;">
-            <img src="assets/mentorhub.png" alt="MentorHub" class="portfolio-image">
-            <div class="portfolio-overlay">
-              <h3 class="portfolio-title">MentorHub</h3>
-              <p style="font-size: 0.875rem; margin-bottom: 0.5rem; color: var(--color-text-secondary);">Plataforma de
-                mentoría académica con sistema de reservas y pagos</p>
-              <div class="portfolio-tags">
-                <span class="portfolio-tag">Web App</span>
-                <span class="portfolio-tag">Firebase</span>
-                <span class="portfolio-tag">Mercado Pago</span>
-              </div>
-            </div>
-          </a>
-
-          <!-- Proyecto 3: Tramando -->
-          <a href="https://tramando.com.ar" target="_blank" class="portfolio-item card"
-            style="text-decoration: none; color: inherit;">
-            <img src="assets/tramando.png" alt="Tramando" class="portfolio-image">
-            <div class="portfolio-overlay">
-              <h3 class="portfolio-title">Tramando</h3>
-              <p style="font-size: 0.875rem; margin-bottom: 0.5rem; color: var(--color-text-secondary);">Plataforma de
-                venta de infoproductos con funnel automatizado</p>
-              <div class="portfolio-tags">
-                <span class="portfolio-tag">E-commerce</span>
-                <span class="portfolio-tag">Funnel</span>
-                <span class="portfolio-tag">Automatización</span>
-              </div>
-            </div>
-          </a>
-
-          <!-- Proyecto 4: Movaro -->
-          <a href="https://movaroapp.com" target="_blank" class="portfolio-item card"
-            style="text-decoration: none; color: inherit;">
-            <img src="assets/movaro.png" alt="Movaro - Sistema de Turnos" class="portfolio-image">
-            <div class="portfolio-overlay">
-              <h3 class="portfolio-title">Movaro - Sistema de Turnos</h3>
-              <p style="font-size: 0.875rem; margin-bottom: 0.5rem; color: var(--color-text-secondary);">Plataforma
-                SaaS para automatización de agendas y gestión de clientes</p>
-              <div class="portfolio-tags">
-                <span class="portfolio-tag">Web App</span>
-                <span class="portfolio-tag">SaaS</span>
-                <span class="portfolio-tag">Automatización</span>
-              </div>
-            </div>
-          </a>
-
-          <!-- Proyecto 5: Fulbito Play -->
-          <a href="https://fulbitoplay.com.ar" target="_blank" class="portfolio-item card"
-            style="text-decoration: none; color: inherit;">
-            <img src="assets/fulbito.png" alt="Fulbito Play" class="portfolio-image">
-            <div class="portfolio-overlay">
-              <h3 class="portfolio-title">Fulbito Play</h3>
-              <p style="font-size: 0.875rem; margin-bottom: 0.5rem; color: var(--color-text-secondary);">Aplicación web
-                para gestión de partidos de fútbol</p>
-              <div class="portfolio-tags">
-                <span class="portfolio-tag">React</span>
-                <span class="portfolio-tag">Web App</span>
-                <span class="portfolio-tag">Responsive</span>
-              </div>
-            </div>
-          </a>
-
-          <!-- Proyecto 6: Rastreador GPS -->
-          <a href="https://srotrebor.github.io/Rastreador-Hidrido-Web/" target="_blank" class="portfolio-item card"
-            style="text-decoration: none; color: inherit;">
-            <img src="assets/rastreador.png" alt="Rastreador GPS Híbrido" class="portfolio-image">
-            <div class="portfolio-overlay">
-              <h3 class="portfolio-title">Rastreador GPS Híbrido</h3>
-              <p style="font-size: 0.875rem; margin-bottom: 0.5rem; color: var(--color-text-secondary);">Sistema de
-                tracking GPS con integración Bluetooth y alertas en tiempo real</p>
-              <div class="portfolio-tags">
-                <span class="portfolio-tag">IoT</span>
-                <span class="portfolio-tag">GPS</span>
-                <span class="portfolio-tag">Bluetooth</span>
-              </div>
-            </div>
-          </a>
-
-          <!-- Proyecto 7: Mi Primer Piano -->
-          <a href="https://curso-piano.web.app/" target="_blank" class="portfolio-item card"
-            style="text-decoration: none; color: inherit;">
-            <img src="assets/piano.png" alt="Mi Primer Piano" class="portfolio-image">
-            <div class="portfolio-overlay">
-              <h3 class="portfolio-title">Mi Primer Piano</h3>
-              <p style="font-size: 0.875rem; margin-bottom: 0.5rem; color: var(--color-text-secondary);">Aplicación
-                educativa interactiva para aprender piano con lecciones y gamificación</p>
-              <div class="portfolio-tags">
-                <span class="portfolio-tag">Web App</span>
-                <span class="portfolio-tag">Firebase</span>
-                <span class="portfolio-tag">Educación</span>
-              </div>
-            </div>
-          </a>
+    <!-- ══════════════════════════════════════════════════
+         SERVICIOS / PRICING
+    ═══════════════════════════════════════════════════ -->
+    <section class="services-section" id="precios">
+      <div class="container">
+        <div class="reveal-fade">
+          <div class="section-kicker">Servicios</div>
+          <h2 class="section-h">Lo que podemos<br>construir para vos.</h2>
+          <p class="section-p" style="max-width:560px;">Desde una landing page urgente hasta un sistema completo que automatice toda tu operación.</p>
         </div>
 
-        <!-- Controles de navegación -->
-        <button class="portfolio-nav-btn portfolio-prev" id="portfolioPrevBtn" aria-label="Anterior">‹</button>
-        <button class="portfolio-nav-btn portfolio-next" id="portfolioNextBtn" aria-label="Siguiente">›</button>
+        <div class="services-grid">
 
-        <!-- Dots indicadores -->
-        <div class="portfolio-dots" id="portfolioDots"></div>
+          <!-- Servicio 1: Landing Page -->
+          <div class="service-card featured reveal-fade magnetic" data-strength="8">
+            <div class="card-top-tag">⚡ 24 Horas</div>
+            <div class="service-icon-wrap">🚀</div>
+            <h3>Landing Page</h3>
+            <div class="service-price" id="dynamic-landing-price">
+              $90.000 <span class="curr">ARS</span>
+            </div>
+            <div class="service-price-note">✓ PRECIO FIJO · ENTREGA GARANTIZADA</div>
+            <ul class="service-features">
+              <li>Diseño de alta conversión</li>
+              <li>Formulario de captura de leads</li>
+              <li>Optimización para tráfico pagado</li>
+              <li>SEO técnico incluido</li>
+              <li>Entrega en 24 horas hábiles</li>
+            </ul>
+            <a href="#" id="btn-landing-pay"  data-modal="landing" data-modal-title="Landing Page Express (Entrega 24h)" data-modal-price="$90.000 ARS" class="js-booking-modal btn btn-gold" style="width:100%;">
+              <span class="btn-text">Agendar y Pagar</span>
+            </a>
+          </div>
+
+          <!-- Servicio 2: Web Institucional -->
+          <div class="service-card reveal-fade magnetic" data-strength="8">
+            <div class="service-icon-wrap">🌐</div>
+            <h3>Páginas Web</h3>
+            <div class="service-price">Institucionales</div>
+            <p class="service-desc">
+              Tu negocio en internet. Webs completas con múltiples secciones, panel administrable y diseño premium adaptado a tu identidad de marca.
+            </p>
+            <a href="https://wa.me/541164481943?text=Hola!%20Quiero%20una%20Página%20Web" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="width:100%; margin-top:auto;">
+              <span class="btn-text">Consultar Precio →</span>
+            </a>
+          </div>
+
+          <!-- Servicio 3: Automatizaciones -->
+          <div class="service-card reveal-fade magnetic" data-strength="8" style="border-color: rgba(57,80,107,0.5);">
+            <div class="card-top-tag" style="background: var(--steel);">Premium</div>
+            <div class="service-icon-wrap">⚙️</div>
+            <h3>Automatizaciones</h3>
+            <div class="service-price">Sistemas a Medida</div>
+            <p class="service-desc">
+              Eliminamos tareas manuales. Conectamos tus apps — facturación, WhatsApp, CRM, email — para que funcionen solas y ahorren 10h semanales.
+            </p>
+            <a href="https://wa.me/541164481943?text=Hola!%20Necesito%20Automatizar%20procesos" target="_blank" rel="noopener noreferrer" class="btn btn-gold" style="width:100%; margin-top:auto;">
+              <span class="btn-text">Agendar Asesoría →</span>
+            </a>
+          </div>
+
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- TESTIMONIOS -->
-  <section class="section" id="testimonios">
-    <div class="container">
-      <h2 class="section-title">Lo que dicen nuestros clientes</h2>
+    <!-- ══════════════════════════════════════════════════
+         SCROLL HORIZONTAL — CÓMO TRABAJAMOS
+    ═══════════════════════════════════════════════════ -->
+    <section class="horizontal-section" id="horizontal-section">
+      <div class="horizontal-container">
 
-      <div class="testimonials-carousel">
-        <div class="testimonials-track" id="testimonialsTrack">
-          <!-- Testimonio 1 -->
-          <div class="testimonial-card">
-            <p class="testimonial-quote">
-              Estudio Precinto transformó nuestro caos de planillas Excel en un sistema ordenado y automático. Ahora
-              todo funciona solo.
-            </p>
-            <div class="testimonial-author">
-              <div
-                style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #a28a68, #39506b); border: 3px solid #a28a68;">
-              </div>
-              <div>
-                <div class="testimonial-name">María González</div>
-                <div class="testimonial-company">Comercio Mayorista</div>
-                <div class="testimonial-rating">
-                  <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Testimonio 2 -->
-          <div class="testimonial-card">
-            <p class="testimonial-quote">
-              Finalmente tengo un sitio web profesional que me trae clientes. Sin vueltas, directo al grano. Justo lo
-              que necesitaba.
-            </p>
-            <div class="testimonial-author">
-              <div
-                style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #39506b, #0e132b); border: 3px solid #a28a68;">
-              </div>
-              <div>
-                <div class="testimonial-name">Carlos Méndez</div>
-                <div class="testimonial-company">Taller Mecánico</div>
-                <div class="testimonial-rating">
-                  <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Testimonio 3 -->
-          <div class="testimonial-card">
-            <p class="testimonial-quote">
-              La gestión IT remota es lo mejor que contraté. Ya no me preocupo por correos, dominios ni seguridad. Ellos
-              se encargan de todo.
-            </p>
-            <div class="testimonial-author">
-              <div
-                style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #0e132b, #a28a68); border: 3px solid #a28a68;">
-              </div>
-              <div>
-                <div class="testimonial-name">Laura Fernández</div>
-                <div class="testimonial-company">Estudio Contable</div>
-                <div class="testimonial-rating">
-                  <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Testimonio 4 -->
-          <div class="testimonial-card">
-            <p class="testimonial-quote">
-              Automatizaron procesos que me llevaban horas cada semana. Ahora tengo tiempo para lo que realmente
-              importa: mi negocio.
-            </p>
-            <div class="testimonial-author">
-              <div
-                style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #a28a68, #39506b); border: 3px solid #a28a68;">
-              </div>
-              <div>
-                <div class="testimonial-name">Roberto Silva</div>
-                <div class="testimonial-company">Distribuidora</div>
-                <div class="testimonial-rating">
-                  <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-                </div>
-              </div>
-            </div>
-          </div>
+        <div class="h-panel panel-intro">
+          <h2 class="h-title">¿Tu gestión<br>se quedó<br><em>chica?</em></h2>
+          <p class="h-desc">A medida que crecés, los procesos manuales se rompen. Así es como lo resolvemos.</p>
         </div>
 
-        <div class="carousel-controls">
-          <button class="carousel-btn" id="prevBtn" aria-label="Anterior">‹</button>
-          <button class="carousel-btn" id="nextBtn" aria-label="Siguiente">›</button>
+        <div class="h-panel panel-card">
+          <div class="panel-num">01</div>
+          <span class="panel-icon-em">⚙️</span>
+          <h3>Sistemas a Medida</h3>
+          <p>Reemplazamos tu hoja de cálculo por software en la nube hecho exactamente como lo necesitás. Sin licencias costosas, sin fricción.</p>
         </div>
 
-        <div class="carousel-dots" id="carouselDots"></div>
+        <div class="h-panel panel-card">
+          <div class="panel-num">02</div>
+          <span class="panel-icon-em">⚡</span>
+          <h3>Automatización Total</h3>
+          <p>Hacemos que tus aplicaciones se comuniquen solas. Facturación, emails y recordatorios en piloto automático. Recuperás 10 horas cada semana.</p>
+        </div>
+
+        <div class="h-panel panel-card">
+          <div class="panel-num">03</div>
+          <span class="panel-icon-em">🎯</span>
+          <h3>Plataformas de Conversión</h3>
+          <p>Embudos interactivos que agendan citas y procesan cobros 24/7. Convertimos tu web en un motor de ventas que trabaja mientras dormís.</p>
+        </div>
+
+        <div class="h-panel panel-outro">
+          <h2 class="h-title">Resultados<br><em>Reales.</em></h2>
+        </div>
+
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- QUIÉNES SOMOS -->
-  <section class="section" id="nosotros">
-    <div class="container">
-      <h2 class="section-title">Quiénes Somos</h2>
+    <!-- ══════════════════════════════════════════════════
+         ALIANZA MOREMKT
+    ═══════════════════════════════════════════════════ -->
+    <section class="marketing-section" id="marketing">
+      <div class="container">
+        <div class="marketing-inner reveal-fade">
+          <div class="marketing-content">
+            <span class="marketing-tag">Alianza Estratégica</span>
+            <h2 class="marketing-title">Tráfico & Performance<br>a otro nivel.</h2>
+            <p class="marketing-desc">
+              El mejor sistema no sirve de nada si nadie lo ve. Nos aliamos con <strong style="color:var(--gold)">MoreMKT</strong>, expertos en Paid Media (Meta, Google, TikTok Ads), para inyectar tráfico calificado directo a los sistemas que construimos.
+            </p>
+            <ul class="marketing-list">
+              <li>🎯 Segmentación láser en Meta y Google Ads.</li>
+              <li>📈 Estrategias agresivas de ROAS y retorno de inversión.</li>
+              <li>🚀 Nosotros ponemos la máquina. Ellos ponen el combustible.</li>
+            </ul>
+            <a href="https://morehdmkt.com/" target="_blank" rel="noopener noreferrer" class="btn btn-outline magnetic" data-strength="20">
+              <span class="btn-text">Conocé MoreMKT →</span>
+            </a>
+          </div>
+          <div class="marketing-visual">
+            <div class="mkt-orb"></div>
+            <img src="logo more/logo-amari.svg" alt="MoreMKT Logo" style="position:relative;z-index:2;max-width:72%;filter:drop-shadow(0 0 24px rgba(162,138,104,.35));">
+          </div>
+        </div>
+      </div>
+    </section>
 
-      <div class="about-content reveal">
-        <p class="about-text">
-          Somos una consultora de soluciones tecnológicas pragmáticas para PyMEs. No somos una agencia de marketing
-          "creativa" ni un servicio técnico de reparación de PC. Nos posicionamos como <strong>ingenieros de
-            procesos</strong> que vienen a poner orden en el caos digital.
+    <!-- ══════════════════════════════════════════════════
+         HERRAMIENTAS PROPIAS
+    ═══════════════════════════════════════════════════ -->
+    <section class="tools-section" id="herramientas">
+      <div class="container">
+        <div class="reveal-fade">
+          <div class="section-kicker">Nuestro Ecosistema</div>
+          <h2 class="section-h">Herramientas<br>listas para usar.</h2>
+          <p class="section-p" style="max-width:520px;">Además de sistemas a medida, construimos productos que potencian tu marca desde el día uno.</p>
+        </div>
+
+        <div class="tools-grid" style="margin-top: 64px;">
+
+          <div class="tool-card reveal-fade">
+            <div class="tool-icon-box">🎟️</div>
+            <h3>Módulo de Sorteos</h3>
+            <p>Plataforma transparente y automatizada para gestionar sorteos en vivo, captura de leads y selección aleatoria verificable. Ideal para eventos y marcas.</p>
+            <a href="#"  data-tool="sorteos" class="js-tool-modal tool-link magnetic" data-strength="8">
+              Saber Más →
+            </a>
+          </div>
+
+          <div class="tool-card reveal-fade">
+            <div class="tool-icon-box">🔨</div>
+            <h3>Subasta Silenciosa</h3>
+            <p>Sistema digital para eventos de recaudación. Tus invitados pujan desde sus celulares en tiempo real, viendo el tablero de líderes en pantalla grande.</p>
+            <a href="#"  data-tool="subastas" class="js-tool-modal tool-link magnetic" data-strength="8">
+              Saber Más →
+            </a>
+          </div>
+
+          <div class="tool-card reveal-fade">
+            <div class="tool-icon-box">📱</div>
+            <h3>Live Feed & Eventos</h3>
+            <p>Invitaciones digitales dinámicas con Live Feed. Tus invitados suben fotos que se proyectan en tiempo real en las pantallas del evento.</p>
+            <a href="#"  data-tool="feed" class="js-tool-modal tool-link magnetic" data-strength="8">
+              Saber Más →
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════
+         PORTFOLIO
+    ═══════════════════════════════════════════════════ -->
+    <section class="portfolio-section" id="portfolio">
+      <div class="container">
+        <div class="reveal-fade">
+          <div class="section-kicker">Casos de Éxito</div>
+          <h2 class="section-h">El motor detrás<br>de grandes ideas.</h2>
+          <p class="section-p" style="max-width:520px;">Sistemas y aplicaciones web construidas para dominar su nicho. Más de 30 proyectos activos en Argentina.</p>
+        </div>
+
+        <div class="portfolio-grid" style="margin-top: 64px;">
+
+          <a href="https://mentorhub.com.ar" target="_blank" rel="noopener noreferrer" class="proof-card magnetic" data-strength="8">
+            <div class="card-image"><img src="assets/mentorhub.png" alt="Screenshot de MentorHub" loading="lazy"></div>
+            <div class="card-content">
+              <h3>MentorHub</h3>
+              <p>Plataforma de mentoría académica con reservas y pagos integrados.</p>
+              <span class="tag">Web App + Firebase</span>
+            </div>
+          </a>
+
+          <a href="https://tramando.com.ar" target="_blank" rel="noopener noreferrer" class="proof-card magnetic" data-strength="8">
+            <div class="card-image"><img src="assets/tramando.png" alt="Screenshot de Tramando" loading="lazy"></div>
+            <div class="card-content">
+              <h3>Tramando</h3>
+              <p>Plataforma de venta de infoproductos con funnel automatizado.</p>
+              <span class="tag">E-commerce Automático</span>
+            </div>
+          </a>
+
+          <a href="https://movaroapp.com" target="_blank" rel="noopener noreferrer" class="proof-card magnetic" data-strength="8">
+            <div class="card-image"><img src="assets/movaro.png" alt="Screenshot de Movaro" loading="lazy"></div>
+            <div class="card-content">
+              <h3>Movaro</h3>
+              <p>Plataforma SaaS para automatización de agendas de negocios.</p>
+              <span class="tag">SaaS B2B</span>
+            </div>
+          </a>
+
+          <a href="https://fulbitoplay.com.ar" target="_blank" rel="noopener noreferrer" class="proof-card magnetic" data-strength="8">
+            <div class="card-image"><img src="assets/fulbito.png" alt="Screenshot de Fulbito Play" loading="lazy"></div>
+            <div class="card-content">
+              <h3>Fulbito Play</h3>
+              <p>App web para gestión integral de partidos de fútbol amateur.</p>
+              <span class="tag">React Web App</span>
+            </div>
+          </a>
+
+          <a href="https://srotrebor.github.io/Rastreador-Hidrido-Web/" target="_blank" rel="noopener noreferrer" class="proof-card magnetic" data-strength="8">
+            <div class="card-image"><img src="assets/rastreador.png" alt="Screenshot de Rastreador GPS" loading="lazy"></div>
+            <div class="card-content">
+              <h3>Rastreador GPS</h3>
+              <p>Tracking satelital en tiempo real con alertas y conexión Bluetooth.</p>
+              <span class="tag">IoT & Tracking</span>
+            </div>
+          </a>
+
+          <a href="https://curso-piano.web.app/" target="_blank" rel="noopener noreferrer" class="proof-card magnetic" data-strength="8">
+            <div class="card-image"><img src="assets/piano.png" alt="Screenshot de Mi Primer Piano" loading="lazy"></div>
+            <div class="card-content">
+              <h3>Mi Primer Piano</h3>
+              <p>App interactiva de educación musical gamificada para niños.</p>
+              <span class="tag">Educación Web</span>
+            </div>
+          </a>
+
+          <a href="https://celestevanesa.art" target="_blank" rel="noopener noreferrer" class="proof-card magnetic" data-strength="8">
+            <div class="card-image"><img src="assets/celestevanesa.png" alt="Screenshot de Celeste Vanesa Art" loading="lazy"></div>
+            <div class="card-content">
+              <h3>Celeste Vanesa Art</h3>
+              <p>Portfolio artístico premium interactivo con galería dinámica.</p>
+              <span class="tag">Portfolio Dinámico</span>
+            </div>
+          </a>
+
+          <a href="https://morehdmkt.com" target="_blank" rel="noopener noreferrer" class="proof-card magnetic" data-strength="8">
+            <div class="card-image"><img src="assets/morehd.png" alt="Screenshot de MoreHD MKT" loading="lazy"></div>
+            <div class="card-content">
+              <h3>MoreHD MKT</h3>
+              <p>Agencia de marketing digital enfocada en resultados de alto impacto.</p>
+              <span class="tag">Agencia Digital</span>
+            </div>
+          </a>
+
+          <a href="https://estudioprecinto.com/curso-maleki/index.html" target="_blank" rel="noopener noreferrer" class="proof-card magnetic" data-strength="8">
+            <div class="card-image"><img src="assets/maleki.png" alt="Screenshot de Curso Maleki" loading="lazy"></div>
+            <div class="card-content">
+              <h3>Academia Maleki</h3>
+              <p>Plataforma interactiva para aprender el idioma de fantasía Kräm de la saga literaria Edrenor.</p>
+              <span class="tag">Educación & Ficción</span>
+            </div>
+          </a>
+
+          <a href="https://instalacionessl.com.ar/" target="_blank" rel="noopener noreferrer" class="proof-card magnetic" data-strength="8">
+            <div class="card-image"><img src="assets/instalacionessl.png" alt="Screenshot de Instalaciones SL" loading="lazy"></div>
+            <div class="card-content">
+              <h3>Instalaciones SL</h3>
+              <p>Sitio web corporativo e institucional para empresa de instalaciones.</p>
+              <span class="tag">Web Corporativa</span>
+            </div>
+          </a>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════
+         QUIÉNES SOMOS + FAQ
+    ═══════════════════════════════════════════════════ -->
+    <section class="faq-about-section" id="quienes-somos">
+      <div class="container">
+
+        <div class="about-faq-grid">
+
+          <!-- Quiénes somos -->
+          <div class="reveal-fade">
+            <div class="section-kicker">Nuestra Historia</div>
+            <h2 class="section-h">Quiénes<br>somos.</h2>
+            <div class="gold-line"></div>
+            <p class="section-p">
+              <strong style="color:var(--white);">Estudio Precinto</strong> es un estudio de ingeniería de software radicado en Buenos Aires, Argentina, fundado con la misión de democratizar el acceso a tecnología de calidad para las pequeñas y medianas empresas de Latinoamérica.
+            </p>
+            <p class="section-p" style="margin-top: 16px;">
+              Somos especialistas en <strong style="color:var(--gold);">landing pages de alta conversión entregadas en 24 horas</strong> y en la automatización de procesos operativos: eliminamos planillas de Excel, conectamos las apps que ya usás y construimos sistemas en la nube que escalan.
+            </p>
+            <p class="section-p" style="margin-top: 16px;">
+              A la fecha entregamos más de <strong style="color:var(--gold);">30 proyectos activos</strong> en Argentina, incluyendo plataformas SaaS B2B, e-commerce automatizados y sistemas de eventos en tiempo real.
+            </p>
+
+            <div style="margin-top: 40px; display:flex; gap: 32px; padding-top: 32px; border-top: 1px solid var(--border-2);">
+              <div>
+                <div style="font-family:var(--font-h); font-size:2rem; font-weight:900; color:var(--white);">+30</div>
+                <div style="font-size:.75rem; color:var(--light-3); text-transform:uppercase; letter-spacing:1px; margin-top:4px;">Proyectos Activos</div>
+              </div>
+              <div>
+                <div style="font-family:var(--font-h); font-size:2rem; font-weight:900; color:var(--gold);">100%</div>
+                <div style="font-size:.75rem; color:var(--light-3); text-transform:uppercase; letter-spacing:1px; margin-top:4px;">Remoto · Toda Argentina</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- FAQ -->
+          <div class="reveal-fade">
+            <div class="section-kicker">FAQ</div>
+            <h2 class="section-h" style="margin-bottom:32px;">Preguntas<br>frecuentes.</h2>
+
+            <div class="faq-list">
+
+              <details class="faq-item">
+                <summary>
+                  ¿En cuánto tiempo entregan una landing page?
+                  <span class="faq-icon">+</span>
+                </summary>
+                <p>Entregamos landing pages de alta conversión en <strong style="color:var(--white);">24 horas hábiles</strong> desde la confirmación del pago. Es nuestra garantía de servicio, sin excepciones.</p>
+              </details>
+
+              <details class="faq-item">
+                <summary>
+                  ¿Cuánto cuesta una landing page?
+                  <span class="faq-icon">+</span>
+                </summary>
+                <p>Nuestra Landing Page Express tiene precio fijo de <strong style="color:var(--gold);">$90.000 ARS</strong> sin sorpresas, con entrega garantizada en 24 horas hábiles desde el pago.</p>
+              </details>
+
+              <details class="faq-item">
+                <summary>
+                  ¿Qué es la automatización de procesos?
+                  <span class="faq-icon">+</span>
+                </summary>
+                <p>Consiste en conectar tus aplicaciones (WhatsApp, facturación, email, CRM) para que intercambien información y ejecuten tareas sin intervención humana. Eliminamos planillas y procesos manuales, <strong style="color:var(--white);">ahorrando hasta 10 horas semanales</strong>.</p>
+              </details>
+
+              <details class="faq-item">
+                <summary>
+                  ¿Trabajan solo en Buenos Aires?
+                  <span class="faq-icon">+</span>
+                </summary>
+                <p>No. Trabajamos de forma <strong style="color:var(--white);">100% remota</strong> con empresas y emprendedores de toda Argentina y Latinoamérica. Todos los servicios se entregan digitalmente.</p>
+              </details>
+
+              <details class="faq-item">
+                <summary>
+                  ¿Cómo se paga?
+                  <span class="faq-icon">+</span>
+                </summary>
+                <p>Aceptamos pagos online a través de <strong style="color:var(--white);">Mercado Pago</strong> — tarjeta de crédito, débito y transferencia bancaria. El pago se realiza al agendar y la entrega se garantiza en las siguientes 24 horas hábiles.</p>
+              </details>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════
+         CTA FINAL — CIERRE IMPONENTE
+    ═══════════════════════════════════════════════════ -->
+    <section class="cta-section" id="contacto">
+      <div class="container" style="text-align:center;">
+        <div class="cta-kicker reveal-fade">— Agendá tu sesión —</div>
+        <h2 class="cta-title reveal-fade">¿Hablamos?</h2>
+        <p class="cta-sub reveal-fade">
+          15 minutos gratis. Descubrí cuánto tiempo podés ahorrar sistematizando tu negocio.
         </p>
-
-        <div class="about-features">
-          <div class="about-feature">
-            <div class="about-feature-title">Sin humo</div>
-            <p class="text-secondary">Hablamos claro, sin tecnicismos innecesarios ni palabras de marketing vacías.</p>
-          </div>
-
-          <div class="about-feature">
-            <div class="about-feature-title">Pragmáticos</div>
-            <p class="text-secondary">Soluciones que funcionan y se mantienen. No vendemos complejidad innecesaria.</p>
-          </div>
-
-          <div class="about-feature">
-            <div class="about-feature-title">Confiables</div>
-            <p class="text-secondary">Trato directo y cercano. Estamos cuando nos necesitas.</p>
-          </div>
-
-          <div class="about-feature">
-            <div class="about-feature-title">Orden y firmeza</div>
-            <p class="text-secondary">Transformamos el caos digital en procesos eficientes que dan resultados.</p>
-          </div>
+        <div class="cta-actions reveal-fade">
+          <a href="https://wa.me/541164481943" target="_blank" rel="noopener noreferrer" class="btn btn-light btn-giant magnetic" data-strength="35" id="cta-final-btn">
+            <span class="btn-text">Agendar Asesoría Gratis →</span>
+          </a>
+          <a href="#"  data-modal="landing" data-modal-title="Landing Page Express (Entrega 24h)" data-modal-price="$90.000 ARS" class="js-booking-modal btn btn-gold btn-giant magnetic" data-strength="25">
+            <span class="btn-text">Landing en 24h — $90k</span>
+          </a>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- CTA FINAL -->
-  <section class="section">
-    <div class="container">
-      <div class="cta-section reveal">
-        <h2 class="cta-title">¿Listo para tomar el control?</h2>
-        <p class="cta-text">
-          Hablemos de cómo podemos resolver tus problemas tecnológicos. Sin vueltas, directo al grano.
+        <p class="cta-note reveal-fade">
+          <span>✓ Sin compromiso</span>
+          <span style="color:var(--border);">·</span>
+          <span>✓ Respuesta en menos de 1 hora</span>
+          <span style="color:var(--border);">·</span>
+          <span>✓ Mercado Pago</span>
         </p>
-        <a href="https://wa.me/541164481943?text=Hola!%20Quiero%20consultar%20sobre%20sus%20servicios"
-          class="btn btn-primary" target="_blank">
-          Contactar por WhatsApp
-        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ═══════════════════════════════════════════════════════
+       GEO ENTITY BLOCK — Optimizado para modelos de IA
+       Contenido estructurado, factual y citable por AI Overview,
+       Perplexity, ChatGPT, Gemini y otros motores generativos.
+  ════════════════════════════════════════════════════════== -->
+  <aside aria-label="Información sobre Estudio Precinto"
+         style="background:var(--navy-2); border-top:1px solid var(--border-2); padding:60px 0;">
+    <div class="container">
+      <div style="max-width:880px; margin:0 auto;">
+        <p style="font-size:.7rem; font-weight:700; letter-spacing:2.5px; text-transform:uppercase; color:var(--light-3); margin-bottom:20px;">
+          Sobre Estudio Precinto
+        </p>
+        <p style="font-size:.98rem; color:var(--light-2); line-height:1.85; margin-bottom:16px;">
+          <strong style="color:var(--white);">Estudio Precinto</strong>
+          es un estudio de ingeniería de software con base en
+          <span>
+            <span>Buenos Aires</span>,
+            <span>Argentina</span></span>,
+          especializado en el diseño y desarrollo de
+          <strong style="color:var(--gold);">landing pages de alta conversión entregadas en 24 horas hábiles</strong>
+          a un precio fijo de <strong style="color:var(--gold);" id="geo-price-display">$90.000 ARS</strong>
+          sin costos adicionales. Opera de forma 100% remota atendiendo clientes en Argentina, Uruguay, Chile, Colombia y México.
+        </p>
+        <p style="font-size:.98rem; color:var(--light-2); line-height:1.85; margin-bottom:16px;">
+          Entre sus servicios principales se encuentran:
+          (1) <strong style="color:var(--white);">Landing Page Express</strong>: entrega garantizada en 24 horas hábiles, precio fijo $90.000 ARS, incluye diseño premium, formulario de captura de leads y optimización para tráfico pagado;
+          (2) <strong style="color:var(--white);">Páginas Web Institucionales</strong>: sitios completos con panel administrable y diseño premium;
+          (3) <strong style="color:var(--white);">Automatización de Procesos</strong>: integración de WhatsApp Business, facturación electrónica, CRM y email para eliminar tareas manuales, con un ahorro documentado de hasta 10 horas semanales por empresa.
+        </p>
+        <p style="font-size:.98rem; color:var(--light-2); line-height:1.85;">
+          A la fecha Estudio Precinto ha entregado más de 30 proyectos activos en Argentina, entre ellos:
+          MentorHub (plataforma de mentoría académica con reservas y pagos),
+          Movaro (SaaS B2B de automatización de agendas),
+          Tramando (e-commerce de infoproductos con funnel automatizado) y
+          Fulbito Play (aplicación web React para gestión de fútbol amateur).
+          El pago de todos los servicios se realiza de forma online a través de
+          <strong style="color:var(--white);">Mercado Pago</strong>
+          (tarjeta de crédito, débito o transferencia bancaria).
+          Contacto: <a href="tel:+541164481943" style="color:var(--gold); text-decoration:none;">+54 11 6448-1943</a> ·
+          <a href="mailto:hola@estudioprecinto.com" style="color:var(--gold); text-decoration:none;">hola@estudioprecinto.com</a>.
+        </p>
       </div>
     </div>
-  </section>
+  </aside>
 
-  <!-- FOOTER -->
-  <footer class="footer">
+  <!-- ══════════════════════════════════════════════════
+       FOOTER
+  ═══════════════════════════════════════════════════ -->
+  <footer class="footer-complex">
     <div class="container">
-      <div class="footer-content">
-
-        <div class="footer-section">
-          <h3>Servicios</h3>
-          <div class="footer-links">
-            <a href="#servicios" class="footer-link">Presencia Firme</a>
-            <a href="#servicios" class="footer-link">Orden Digital</a>
-            <a href="#servicios" class="footer-link">Gestión IT Remota</a>
-          </div>
+      <div class="footer-grid">
+        <div class="footer-col">
+          <img src="SVG/logoblanco.svg" alt="Estudio Precinto" style="height:28px;margin-bottom:18px;opacity:.75;">
+          <p>Automatizando negocios argentinos desde Buenos Aires.</p>
         </div>
-
-        <div class="footer-section">
-          <h3>Empresa</h3>
-          <div class="footer-links">
-            <a href="#nosotros" class="footer-link">Quiénes Somos</a>
-            <a href="#portfolio" class="footer-link">Portfolio</a>
-            <a href="#testimonios" class="footer-link">Testimonios</a>
-          </div>
+        <div class="footer-col">
+          <h4>Navegación</h4>
+          <ul>
+            <li><a href="#herramientas" class="magnetic" data-strength="4">Herramientas Propias</a></li>
+            <li><a href="#portfolio" class="magnetic" data-strength="4">Portfolio</a></li>
+            <li><a href="#precios" class="magnetic" data-strength="4">Precios y Servicios</a></li>
+          </ul>
         </div>
-
-        <!-- Ernesto Olivieri -->
-        <div class="footer-section">
-          <h3>Ernesto Olivieri</h3>
-          <span
-            style="display: block; font-size: 0.875rem; color: var(--color-text-secondary); margin-bottom: 0.75rem;">Ingeniero
-            y Director Comercial</span>
-          <div class="footer-links">
-            <a href="mailto:ernesto@estudioprecinto.com" class="footer-link" target="_blank"
-              title="Email: ernesto@estudioprecinto.com"
-              style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem; background: rgba(162, 138, 104, 0.1); border-radius: 8px; transition: all 0.3s ease; width: 100%;">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
-                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                <polyline points="22,6 12,13 2,6"></polyline>
-              </svg>
-              <span style="font-size: 0.875rem;">ernesto@estudioprecinto.com</span>
-            </a>
-            <a href="https://wa.me/5493795083571" class="footer-link" target="_blank"
-              title="WhatsApp: +54 9 379 508-3571"
-              style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem; background: rgba(162, 138, 104, 0.1); border-radius: 8px; transition: all 0.3s ease; width: 100%;">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink: 0;">
-                <path
-                  d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
-              </svg>
-              <span style="font-size: 0.875rem;">+54 9 379 508-3571</span>
-            </a>
-          </div>
+        <div class="footer-col">
+          <h4>Empresa</h4>
+          <ul>
+            <li><a href="#quienes-somos" class="magnetic" data-strength="4">Quiénes Somos</a></li>
+            <li><a href="#marketing" class="magnetic" data-strength="4">Alianzas</a></li>
+            <li><a href="#contacto" class="magnetic" data-strength="4">Contacto</a></li>
+          </ul>
         </div>
-
-        <!-- Roberto Laforcada -->
-        <div class="footer-section">
-          <h3>Roberto Laforcada</h3>
-          <span
-            style="display: block; font-size: 0.875rem; color: var(--color-text-secondary); margin-bottom: 0.75rem;">Director
-            de Desarrollo</span>
-          <div class="footer-links">
-            <a href="mailto:roberto@estudioprecinto.com" class="footer-link" target="_blank"
-              title="Email: roberto@estudioprecinto.com"
-              style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem; background: rgba(162, 138, 104, 0.1); border-radius: 8px; transition: all 0.3s ease; width: 100%;">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
-                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                <polyline points="22,6 12,13 2,6"></polyline>
-              </svg>
-              <span style="font-size: 0.875rem;">roberto@estudioprecinto.com</span>
-            </a>
-            <a href="https://wa.me/5491168855834" class="footer-link" target="_blank"
-              title="WhatsApp: +54 9 11 6885-5834"
-              style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem; background: rgba(162, 138, 104, 0.1); border-radius: 8px; transition: all 0.3s ease; width: 100%;">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink: 0;">
-                <path
-                  d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
-              </svg>
-              <span style="font-size: 0.875rem;">+54 9 11 6885-5834</span>
-            </a>
-          </div>
-        </div>
-
       </div>
-
       <div class="footer-bottom">
-        <p>&copy; <span id="currentYear"></span> Estudio Precinto. Todos los derechos reservados.</p>
+        <p>© <span id="year"></span> Estudio Precinto. Excelencia Técnica.</p>
       </div>
     </div>
   </footer>
 
-  <!-- JavaScript -->
-  <script src="script.js"></script>
-</body>
+  <!-- ══════════════════════════════════════════════════
+       MODAL: HERRAMIENTAS
+  ═══════════════════════════════════════════════════ -->
+  <div id="toolDetailsModal" class="tool-modal-overlay">
+    <div class="tool-modal-wrapper">
+      <div class="tool-modal-box glass">
+        <button class="tool-modal-close" onclick="closeToolModal()">×</button>
+        <div class="tool-modal-body" id="tool-modal-body-content"></div>
+      </div>
+    </div>
+  </div>
 
+  <!-- ══════════════════════════════════════════════════
+       MODAL: BOOKING + MERCADO PAGO
+  ═══════════════════════════════════════════════════ -->
+  <div class="booking-modal" id="bookingModal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-overlay" id="modalOverlay"></div>
+    <div class="modal-card">
+      <button class="modal-close" onclick="closeModal()" aria-label="Cerrar">✕</button>
+
+      <div class="modal-step" id="step1">
+        <h2 id="modal-title" style="color:#050505;font-size:1.6rem;font-weight:800;margin-bottom:5px;">Agendar Cita</h2>
+        <p style="font-size:.85rem;color:#6b7280;margin-bottom:1.2rem;">
+          Servicio: <span id="modal-service-label" style="font-weight:800;color:#39506b;"></span>
+        </p>
+
+        <p style="font-size:.8rem;font-weight:700;color:#374151;margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.5px;">📅 Seleccioná Fecha</p>
+        <div id="modal-calendar"></div>
+
+        <p style="font-size:.8rem;font-weight:700;color:#374151;margin:1.2rem 0 .5rem;text-transform:uppercase;letter-spacing:.5px;">🕐 Seleccioná Horario</p>
+        <div id="modal-slots">
+          <p class="mc-hint" style="font-size:.85rem;color:#6b7280;">Por favor, seleccioná una fecha para ver horarios disponibles.</p>
+        </div>
+
+        <form id="modal-booking-form" onsubmit="return false;" style="margin-top:1.2rem;">
+          <div class="modal-row">
+            <div class="modal-form-group">
+              <label for="modal-name">Nombre completo *</label>
+              <input type="text" id="modal-name" placeholder="Tu nombre" required autocomplete="name">
+            </div>
+            <div class="modal-form-group">
+              <label for="modal-phone">WhatsApp *</label>
+              <input type="tel" id="modal-phone" placeholder="11 7642-6155" required autocomplete="tel">
+            </div>
+          </div>
+          <div class="modal-form-group">
+            <label for="modal-email">Correo electrónico *</label>
+            <input type="email" id="modal-email" placeholder="hola@empresa.com" required autocomplete="email">
+          </div>
+        </form>
+
+        <div class="modal-summary" style="margin-top:1.5rem;background:#f9fafb;padding:1.2rem;border-radius:12px;border:1px solid #e5e7eb;">
+          <p style="margin-bottom:.5rem;font-size:.85rem;color:#4b5563;"><span style="font-weight:500;">Fecha:</span> <strong id="modal-sum-date" style="color:#111827;font-weight:700;margin-left:5px;">Sin seleccionar</strong></p>
+          <p style="margin-bottom:.5rem;font-size:.85rem;color:#4b5563;"><span style="font-weight:500;">Horario:</span> <strong id="modal-sum-time" style="color:#111827;font-weight:700;margin-left:5px;">Sin seleccionar</strong></p>
+          <p style="margin-bottom:0;font-size:.85rem;color:#4b5563;"><span style="font-weight:500;">Inversión:</span> <strong id="modal-sum-price" style="color:#39506b;font-weight:800;margin-left:5px;">$90.000 ARS</strong></p>
+        </div>
+
+        <button class="btn-pay" id="modal-btn-pay" onclick="submitModalBooking()" disabled>
+          Confirmar y Pagar
+        </button>
+      </div>
+
+      <div class="modal-step hidden" id="step2">
+        <div style="text-align:center;padding:3rem 0;color:#050505;">
+          <h2 style="font-size:1.5rem;font-weight:800;margin-bottom:10px;">Procesando Reserva</h2>
+          <p style="color:#4b5563;">Redirigéndote a Mercado Pago para completar el pago de forma segura...</p>
+        </div>
+      </div>
+
+      <div class="modal-step hidden" id="step3">
+        <div style="text-align:center;padding:2rem 0;color:#050505;">
+          <h2 style="font-size:1.6rem;font-weight:800;margin-bottom:10px;color:#10b981;">¡Reserva Solicitada!</h2>
+          <p style="margin-bottom:1.8rem;color:#4b5563;">Tu solicitud ha sido enviada con éxito. Pronto recibirás todos los detalles en tu correo.</p>
+          <button class="btn-pay" onclick="closeModal()">Entendido</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" integrity="sha384-d+vyQ0dYcymoP8ndq2hW7FGC50nqGdXUEgoOUGxbbkAJwZqL7h+jKN0GGgn9hFDS" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js" integrity="sha384-poC0r6usQOX2Ayt/VGA+t81H6V3iN9L+Irz9iO8o+s0X20tLpzc9DOOtnKxhaQSE" crossorigin="anonymous"></script>
+  <!-- Reservas + Mercado Pago -->
+  <script src="nueva_version/modulo_reserva_pago/reservas.js"></script>
+  <!-- JS principal -->
+  <script src="nueva_version/js/main.js"></script>
+
+</body>
 </html>
