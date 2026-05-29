@@ -278,7 +278,7 @@ function openToolModal(toolKey) {
             </ul>
         </div>
         <div class="tool-modal-footer" style="display:flex; flex-direction:column; gap:12px; margin-top:40px;">
-            <a href="${whatsappUrl}" target="_blank" class="btn btn-primary magnetic" data-strength="20" style="width:100%; text-align:center;">
+            <a href="${whatsappUrl}" target="_blank" class="btn btn-gold magnetic" data-strength="20" style="width:100%; text-align:center;">
                 <span class="btn-text">📲 Consultar por WhatsApp</span>
             </a>
         </div>
