@@ -366,6 +366,7 @@ export default function LiveMonitor() {
           <div className="photo-display">
             <div className="polaroid-frame-modern">
               <div className="polaroid-photo-area">
+                <img src={currentPhoto.imageUrl} alt="" className="photo-bg-blur" />
                 <img src={currentPhoto.imageUrl} alt="Live Feed" className="photo-main" />
                 {eventConfig?.logoUrl && (
                   <img src={eventConfig.logoUrl} alt="Watermark" className="photo-watermark" />
@@ -436,8 +437,15 @@ export default function LiveMonitor() {
           from { opacity: 0; transform: translateY(50px) rotate(-5deg) scale(0.9); }
           to { opacity: 1; transform: translateY(0) rotate(-1deg) scale(1); }
         }
-        .polaroid-photo-area { position: relative; width: 100%; flex-grow: 1; overflow: hidden; background: #000; }
-        .photo-main { max-width: 100%; max-height: 70vh; display: block; object-fit: contain; }
+        .polaroid-photo-area { 
+          position: relative; width: 100%; flex-grow: 1; overflow: hidden; background: #000; 
+          display: flex; justify-content: center; align-items: center;
+        }
+        .photo-bg-blur {
+          position: absolute; top: -10%; left: -10%; width: 120%; height: 120%;
+          object-fit: cover; filter: blur(20px) brightness(0.4); z-index: 0; pointer-events: none;
+        }
+        .photo-main { position: relative; z-index: 1; max-width: 100%; max-height: 70vh; display: block; object-fit: contain; }
         .polaroid-photo-area img.photo-watermark {
           position: absolute; bottom: 20px; right: 20px;
           height: 35px !important; width: auto !important;
