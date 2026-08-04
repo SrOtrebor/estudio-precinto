@@ -48,9 +48,10 @@ export default function LiveMonitor() {
   useEffect(() => {
     if (!eventId) return;
     const configRef = ref(db, `livefeed/${eventId}/config`);
-    get(configRef).then((snap) => {
+    const unsub = onValue(configRef, (snap) => {
       if (snap.exists()) setEventConfig(snap.val());
     });
+    return () => unsub();
   }, [eventId]);
 
   // ── Escuchar fotos en tiempo real ─────────────────────────────────────────

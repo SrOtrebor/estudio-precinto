@@ -25,6 +25,11 @@ export default function ModerationPanel() {
   const [participants, setParticipants] = useState([]);
   const [adUploadFile, setAdUploadFile] = useState(null);
 
+  // States para config tiempos locales (para no re-renderizar todo el config a cada tecla)
+  const [localSlideInterval, setLocalSlideInterval] = useState(7);
+  const [localAdInterval, setLocalAdInterval] = useState(8);
+  const [localBannerInterval, setLocalBannerInterval] = useState(5);
+
   const handleLogin = async (e) => {
     e.preventDefault();
     const configRef = ref(db, `livefeed/${eventId}/config`);
@@ -44,7 +49,13 @@ export default function ModerationPanel() {
     if (!authed || !eventId) return;
     const configRef = ref(db, `livefeed/${eventId}/config`);
     const unsub = onValue(configRef, (snap) => {
-      if (snap.exists()) setEventConfig(snap.val());
+      if (snap.exists()) {
+        const conf = snap.val();
+        setEventConfig(conf);
+        if (conf.slideIntervalSeconds) setLocalSlideInterval(conf.slideIntervalSeconds);
+        if (conf.adIntervalSeconds) setLocalAdInterval(conf.adIntervalSeconds);
+        if (conf.bannerIntervalPhotos) setLocalBannerInterval(conf.bannerIntervalPhotos);
+      }
     });
     return () => unsub();
   }, [authed, eventId]);
@@ -236,6 +247,15 @@ export default function ModerationPanel() {
     }, 4000);
   };
 
+  const saveTimings = async () => {
+    await update(ref(db, `livefeed/${eventId}/config`), {
+      slideIntervalSeconds: Number(localSlideInterval),
+      adIntervalSeconds: Number(localAdInterval),
+      bannerIntervalPhotos: Number(localBannerInterval)
+    });
+    alert("¡Tiempos guardados con éxito!");
+  };
+
   const handleUploadAd = async () => {
     if (!adUploadFile) return;
     const adId = Date.now().toString();
@@ -402,6 +422,27 @@ export default function ModerationPanel() {
             </div>
 
             <div className="photo-card-premium" style={{ padding: '2rem' }}>
+              <h2 style={{ color: 'var(--accent)', marginBottom: '1rem' }}>Configuración de Tiempos ⏱️</h2>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem', marginBottom: '1.5rem' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>Segundos por Foto</label>
+                  <input type="number" min="3" max="60" value={localSlideInterval} onChange={e => setLocalSlideInterval(e.target.value)} style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', border: '1px solid #444', background: 'rgba(0,0,0,0.2)', color: '#fff' }} />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>Segundos por Publicidad (Carrusel)</label>
+                  <input type="number" min="3" max="60" value={localAdInterval} onChange={e => setLocalAdInterval(e.target.value)} style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', border: '1px solid #444', background: 'rgba(0,0,0,0.2)', color: '#fff' }} />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>Automático: 1 Ad cada X Fotos</label>
+                  <input type="number" min="1" max="100" value={localBannerInterval} onChange={e => setLocalBannerInterval(e.target.value)} style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', border: '1px solid #444', background: 'rgba(0,0,0,0.2)', color: '#fff' }} />
+                </div>
+              </div>
+              <button onClick={saveTimings} className="btn-approve" style={{ padding: '0.8rem 2rem', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}>
+                Guardar Tiempos
+              </button>
+            </div>
+
+            <div className="photo-card-premium" style={{ padding: '2rem' }}>
               <h2 style={{ color: 'var(--accent)', marginBottom: '1rem' }}>Sorteo & Participantes</h2>
               <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
                 <div style={{ flex: 1, background: 'rgba(255,255,255,0.05)', padding: '1rem', borderRadius: '8px' }}>
@@ -421,7 +462,7 @@ export default function ModerationPanel() {
               <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>
                 <input 
                   type="file" 
-                  accept="image/*" 
+                  accept="image/*,video/mp4,video/quicktime" 
                   onChange={(e) => setAdUploadFile(e.target.files[0])} 
                   style={{ flex: 1 }}
                 />
@@ -433,7 +474,11 @@ export default function ModerationPanel() {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem' }}>
                 {ads.map(ad => (
                   <div key={ad.id} style={{ position: 'relative', borderRadius: '8px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)' }}>
-                    <img src={ad.imageUrl} alt="Ad" style={{ width: '100%', height: '150px', objectFit: 'cover', display: 'block' }} />
+                    {ad.imageUrl?.toLowerCase().includes('.mp4') || ad.imageUrl?.toLowerCase().includes('.mov') || ad.imageUrl?.includes('video') ? (
+                      <video src={ad.imageUrl} autoPlay loop muted style={{ width: '100%', height: '150px', objectFit: 'cover', display: 'block' }} />
+                    ) : (
+                      <img src={ad.imageUrl} alt="Ad" style={{ width: '100%', height: '150px', objectFit: 'cover', display: 'block' }} />
+                    )}
                     <button 
                       onClick={() => handleDeleteAd(ad)}
                       style={{ position: 'absolute', top: '5px', right: '5px', background: 'red', color: 'white', border: 'none', borderRadius: '50%', width: '30px', height: '30px', cursor: 'pointer' }}>
