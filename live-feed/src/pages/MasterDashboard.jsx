@@ -549,7 +549,7 @@ function QRCodeModal({ event, onClose }) {
       width: 300,
       height: 300,
       data: getUrl(qrType),
-      image: event.logoUrl || "",
+      ...(event.logoUrl ? { image: event.logoUrl } : {}),
       dotsOptions: { color: qrOptions.dotsColor, type: qrOptions.dotsType },
       backgroundOptions: { color: qrOptions.bgColor },
       imageOptions: { crossOrigin: "anonymous", margin: 5 },
