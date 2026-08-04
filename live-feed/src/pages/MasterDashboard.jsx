@@ -531,7 +531,9 @@ export default function MasterDashboard() {
 function QRCodeModal({ event, onClose }) {
   const qrRef = useRef(null);
   const qrInstance = useRef(null);
-  const invitationUrl = `${window.location.origin}${window.location.pathname}#/invitacion/${event.id}`;
+  const [qrType, setQrType] = useState('invitacion'); // 'invitacion' o 'ingreso'
+  
+  const getUrl = (type) => `${window.location.origin}${window.location.pathname}#/${type}/${event.id}`;
   
   const [qrOptions, setQrOptions] = useState({
     dotsColor: event.accentColor || "#000000",
@@ -546,7 +548,7 @@ function QRCodeModal({ event, onClose }) {
     qrInstance.current = new window.QRCodeStyling({
       width: 300,
       height: 300,
-      data: invitationUrl,
+      data: getUrl(qrType),
       image: event.logoUrl || "",
       dotsOptions: { color: qrOptions.dotsColor, type: qrOptions.dotsType },
       backgroundOptions: { color: qrOptions.bgColor },
@@ -564,17 +566,18 @@ function QRCodeModal({ event, onClose }) {
   useEffect(() => {
     if (qrInstance.current) {
       qrInstance.current.update({
+        data: getUrl(qrType),
         dotsOptions: { color: qrOptions.dotsColor, type: qrOptions.dotsType },
         backgroundOptions: { color: qrOptions.bgColor },
         cornersSquareOptions: { type: qrOptions.cornersType, color: qrOptions.dotsColor }
       });
     }
-  }, [qrOptions]);
+  }, [qrOptions, qrType]);
 
   const download = (ext) => {
     const res = ext === 'png' ? 2048 : 1024;
     qrInstance.current.download({
-      name: `qr-${event.id}`,
+      name: `qr-${qrType}-${event.id}`,
       extension: ext,
       width: res,
       height: res
@@ -587,7 +590,7 @@ function QRCodeModal({ event, onClose }) {
         <div className="qr-preview-side">
           <div ref={qrRef}></div>
           <p style={{ color: '#666', fontSize: '0.8rem', marginTop: '1rem', textAlign: 'center' }}>
-            {invitationUrl}
+            {getUrl(qrType)}
           </p>
         </div>
 
@@ -595,6 +598,26 @@ function QRCodeModal({ event, onClose }) {
           <h2 style={{ color: 'var(--accent)', marginBottom: '0.5rem' }}>Generador QR Premium</h2>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '1rem' }}>Personalizá el código de acceso para los invitados.</p>
           
+          <div className="qr-input-group" style={{ marginBottom: '1rem' }}>
+            <label>Tipo de QR</label>
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <button 
+                className={qrType === 'invitacion' ? 'btn-primary' : 'btn-secondary'} 
+                onClick={() => setQrType('invitacion')}
+                style={{ flex: 1, padding: '0.5rem' }}
+              >
+                Invitación
+              </button>
+              <button 
+                className={qrType === 'ingreso' ? 'btn-primary' : 'btn-secondary'} 
+                onClick={() => setQrType('ingreso')}
+                style={{ flex: 1, padding: '0.5rem' }}
+              >
+                Ingreso (Check-in)
+              </button>
+            </div>
+          </div>
+
           <div className="qr-color-grid">
             <div className="qr-input-group">
               <label>Color de Puntos</label>
