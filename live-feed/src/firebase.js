@@ -1,5 +1,5 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
-import { getDatabase, ref, onValue, push, set, update, get, remove } from "firebase/database";
+import { getDatabase, ref, onValue, push, set, update, get, remove, runTransaction } from "firebase/database";
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 
 const firebaseConfig = {
@@ -25,7 +25,7 @@ const db = getDatabase(app);
 const storage = getStorage(app);
 
 // Realtime Database
-export { db, ref, onValue, push, set, update, get, remove };
+export { db, ref, onValue, push, set, update, get, remove, runTransaction };
 
 // Storage
 export { storage, storageRef, uploadBytes, getDownloadURL, deleteObject };
