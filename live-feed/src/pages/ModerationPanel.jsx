@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { db, ref, onValue, update, remove, get, set, storage, storageRef, deleteObject } from "../firebase";
+import { db, ref, onValue, update, remove, get, set, storage, storageRef, deleteObject, uploadBytes, getDownloadURL } from "../firebase";
 
 const ADMIN_KEY = "livefeed_admin_auth";
 
@@ -18,6 +18,12 @@ export default function ModerationPanel() {
   const [loadingAction, setLoadingAction] = useState(null);
   const [rsvps, setRsvps] = useState([]);
   const [wishlist, setWishlist] = useState([]);
+
+  // Nuevos estados para Sorteo y Pantalla
+  const [monitorState, setMonitorState] = useState({ mode: 'feed', drawStatus: 'waiting', winnerId: null });
+  const [ads, setAds] = useState([]);
+  const [participants, setParticipants] = useState([]);
+  const [adUploadFile, setAdUploadFile] = useState(null);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -77,6 +83,39 @@ export default function ModerationPanel() {
       if (!data) { setWishlist([]); return; }
       const list = Object.entries(data).map(([id, w]) => ({ id, ...w }));
       setWishlist(list);
+    });
+    return () => unsub();
+  }, [authed, eventId]);
+
+  useEffect(() => {
+    if (!authed || !eventId) return;
+    const monitorRef = ref(db, `livefeed/${eventId}/monitorState`);
+    const unsub = onValue(monitorRef, (snap) => {
+      if (snap.exists()) setMonitorState(snap.val());
+    });
+    return () => unsub();
+  }, [authed, eventId]);
+
+  useEffect(() => {
+    if (!authed || !eventId) return;
+    const adsRef = ref(db, `livefeed/${eventId}/ads`);
+    const unsub = onValue(adsRef, (snap) => {
+      const data = snap.val();
+      if (!data) { setAds([]); return; }
+      const list = Object.entries(data).map(([id, a]) => ({ id, ...a }));
+      setAds(list);
+    });
+    return () => unsub();
+  }, [authed, eventId]);
+
+  useEffect(() => {
+    if (!authed || !eventId) return;
+    const participantsRef = ref(db, `livefeed/${eventId}/participants`);
+    const unsub = onValue(participantsRef, (snap) => {
+      const data = snap.val();
+      if (!data) { setParticipants([]); return; }
+      const list = Object.entries(data).map(([id, p]) => ({ id, ...p }));
+      setParticipants(list);
     });
     return () => unsub();
   }, [authed, eventId]);
@@ -158,6 +197,74 @@ export default function ModerationPanel() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  };
+
+  const setMonitorMode = async (mode) => {
+    await update(ref(db, `livefeed/${eventId}/monitorState`), { mode });
+  };
+
+  const handleLaunchGiveaway = async () => {
+    const elegibles = participants.filter(p => !p.isWinner);
+    if (elegibles.length === 0) {
+      alert("No hay participantes elegibles para el sorteo.");
+      return;
+    }
+    const ganador = elegibles[Math.floor(Math.random() * elegibles.length)];
+    
+    // Contar premios anteriores
+    const premiosEntregados = participants.filter(p => p.isWinner).length;
+    const nuevoPremioNumero = premiosEntregados + 1;
+
+    // Actualizar estado del monitor a 'drawing'
+    await update(ref(db, `livefeed/${eventId}/monitorState`), { 
+      mode: 'sorteo', 
+      drawStatus: 'drawing',
+      winnerId: null 
+    });
+
+    // Esperar unos segundos de suspenso (animación ruleta) y luego setear ganador
+    setTimeout(async () => {
+      await update(ref(db, `livefeed/${eventId}/monitorState`), { 
+        drawStatus: 'finished',
+        winnerId: ganador.id 
+      });
+      // Marcar participante como ganador
+      await update(ref(db, `livefeed/${eventId}/participants/${ganador.id}`), {
+        isWinner: true,
+        prizeNumber: nuevoPremioNumero
+      });
+    }, 4000);
+  };
+
+  const handleUploadAd = async () => {
+    if (!adUploadFile) return;
+    const adId = Date.now().toString();
+    const sRef = storageRef(storage, `livefeed/${eventId}/ads/${adId}_${adUploadFile.name}`);
+    setLoadingAction("uploadAd");
+    try {
+      await uploadBytes(sRef, adUploadFile);
+      const url = await getDownloadURL(sRef);
+      await set(ref(db, `livefeed/${eventId}/ads/${adId}`), {
+        imageUrl: url,
+        storagePath: sRef.fullPath,
+        createdAt: Date.now()
+      });
+      setAdUploadFile(null);
+    } catch (e) {
+      console.error(e);
+      alert("Error al subir publicidad");
+    }
+    setLoadingAction(null);
+  };
+
+  const handleDeleteAd = async (ad) => {
+    if (!window.confirm("¿Borrar esta publicidad?")) return;
+    setLoadingAction(ad.id);
+    try {
+      if (ad.storagePath) await deleteObject(storageRef(storage, ad.storagePath)).catch(() => {});
+      await remove(ref(db, `livefeed/${eventId}/ads/${ad.id}`));
+    } catch (err) { console.error(err); }
+    setLoadingAction(null);
   };
 
   const filteredPhotos = photos.filter((p) => {
@@ -246,7 +353,8 @@ export default function ModerationPanel() {
           { id: 'pending', label: 'Pendientes', count: stats.pending, color: 'var(--warning)' },
           { id: 'approved', label: 'En Pantalla', count: stats.approved, color: 'var(--success)' },
           { id: 'rsvps', label: 'Asistencia', count: stats.rsvps },
-          { id: 'wishlist', label: 'Regalos', count: wishlist.filter(w => w.reservedBy).length }
+          { id: 'wishlist', label: 'Regalos', count: wishlist.filter(w => w.reservedBy).length },
+          { id: 'screen', label: 'Pantalla & Sorteo', count: '📺', color: 'var(--accent)' }
         ].map(s => (
           <button 
             key={s.id}
@@ -263,7 +371,81 @@ export default function ModerationPanel() {
       </div>
 
       <main className="mod-grid-premium">
-        {filter === 'rsvps' ? (
+        {filter === 'screen' ? (
+          <div style={{ gridColumn: '1 / -1', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+            <div className="photo-card-premium" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <h2 style={{ color: 'var(--accent)' }}>Control Maestro de Pantalla</h2>
+              <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                <button 
+                  onClick={() => setMonitorMode('feed')}
+                  className="btn-primary" 
+                  style={{ flex: 1, background: monitorState.mode === 'feed' ? 'var(--success)' : '#444' }}>
+                  📸 MODO FEED (FOTOS)
+                </button>
+                <button 
+                  onClick={() => setMonitorMode('ad')}
+                  className="btn-primary" 
+                  style={{ flex: 1, background: monitorState.mode === 'ad' ? 'var(--warning)' : '#444' }}>
+                  💸 MODO PUBLICIDAD (CARRUSEL)
+                </button>
+                <button 
+                  onClick={handleLaunchGiveaway}
+                  className="btn-primary" 
+                  style={{ flex: 1, background: monitorState.mode === 'sorteo' ? 'var(--primary)' : 'linear-gradient(45deg, #008e45, #00b0e5)' }}>
+                  🎰 LANZAR SORTEO
+                </button>
+              </div>
+              <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+                Estado actual: <strong>{monitorState.mode.toUpperCase()}</strong> 
+                {monitorState.mode === 'sorteo' && ` - Fase: ${monitorState.drawStatus}`}
+              </p>
+            </div>
+
+            <div className="photo-card-premium" style={{ padding: '2rem' }}>
+              <h2 style={{ color: 'var(--accent)', marginBottom: '1rem' }}>Sorteo & Participantes</h2>
+              <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
+                <div style={{ flex: 1, background: 'rgba(255,255,255,0.05)', padding: '1rem', borderRadius: '8px' }}>
+                  <h3>Total Participantes: {participants.length}</h3>
+                </div>
+                <div style={{ flex: 1, background: 'rgba(255,255,255,0.05)', padding: '1rem', borderRadius: '8px' }}>
+                  <h3>Elegibles: {participants.filter(p => !p.isWinner).length}</h3>
+                </div>
+                <div style={{ flex: 1, background: 'rgba(0,142,69,0.1)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--success)' }}>
+                  <h3 style={{ color: 'var(--success)' }}>Ganadores Anteriores: {participants.filter(p => p.isWinner).length}</h3>
+                </div>
+              </div>
+            </div>
+
+            <div className="photo-card-premium" style={{ padding: '2rem' }}>
+              <h2 style={{ color: 'var(--accent)', marginBottom: '1rem' }}>Publicidades (Ads)</h2>
+              <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>
+                <input 
+                  type="file" 
+                  accept="image/*" 
+                  onChange={(e) => setAdUploadFile(e.target.files[0])} 
+                  style={{ flex: 1 }}
+                />
+                <button onClick={handleUploadAd} disabled={!adUploadFile || loadingAction === "uploadAd"} className="btn-approve" style={{ padding: '0.8rem 2rem', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}>
+                  {loadingAction === "uploadAd" ? "Subiendo..." : "Subir Publicidad"}
+                </button>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem' }}>
+                {ads.map(ad => (
+                  <div key={ad.id} style={{ position: 'relative', borderRadius: '8px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)' }}>
+                    <img src={ad.imageUrl} alt="Ad" style={{ width: '100%', height: '150px', objectFit: 'cover', display: 'block' }} />
+                    <button 
+                      onClick={() => handleDeleteAd(ad)}
+                      style={{ position: 'absolute', top: '5px', right: '5px', background: 'red', color: 'white', border: 'none', borderRadius: '50%', width: '30px', height: '30px', cursor: 'pointer' }}>
+                      X
+                    </button>
+                  </div>
+                ))}
+                {ads.length === 0 && <p style={{ color: 'var(--text-muted)' }}>No hay publicidades cargadas.</p>}
+              </div>
+            </div>
+          </div>
+        ) : filter === 'rsvps' ? (
           <>
             <div style={{ gridColumn: '1 / -1', display: 'flex', justifyContent: 'flex-end', paddingBottom: '1rem' }}>
               <button onClick={exportToCSV} className="btn-approve" style={{ padding: '0.8rem 1.5rem', borderRadius: '12px', border: 'none', cursor: 'pointer', fontWeight: 'bold' }}>

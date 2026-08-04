@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useParams } from "react-router-dom";
-import { db, ref, onValue, get } from "../firebase";
+import { db, ref, onValue, get, update } from "../firebase";
+import confetti from "canvas-confetti";
 
 const BUFFER_SIZE = 20;
 const TRANSITION_DURATION = 1500; // ms
@@ -18,6 +19,15 @@ export default function LiveMonitor() {
   const [photoCounter, setPhotoCounter] = useState(0); 
   const [collageMode, setCollageMode] = useState(false);
   const [collagePhotos, setCollagePhotos] = useState([]);
+  const [monitorState, setMonitorState] = useState({ mode: 'feed', drawStatus: 'waiting', winnerId: null });
+  const [ads, setAds] = useState([]);
+  const [participants, setParticipants] = useState([]);
+  
+  // Sorteo states
+  const [shuffledId, setShuffledId] = useState('000');
+  const [shuffledName, setShuffledName] = useState('...');
+  const [winnerName, setWinnerName] = useState(null);
+
 
   const intervalRef = useRef(null);
   const photoBufferRef = useRef([]); // cache en memoria
@@ -65,6 +75,91 @@ export default function LiveMonitor() {
     return () => unsub();
   }, [eventId]);
 
+  // ── Escuchar monitorState ──────────────────────────────────────────────────
+  useEffect(() => {
+    if (!eventId) return;
+    const monitorStateRef = ref(db, `livefeed/${eventId}/monitorState`);
+    const unsub = onValue(monitorStateRef, (snap) => {
+      const data = snap.val();
+      if (data) setMonitorState(data);
+    });
+    return () => unsub();
+  }, [eventId]);
+
+  // ── Escuchar ads ───────────────────────────────────────────────────────────
+  useEffect(() => {
+    if (!eventId) return;
+    const adsRef = ref(db, `livefeed/${eventId}/ads`);
+    const unsub = onValue(adsRef, (snap) => {
+      const data = snap.val();
+      if (!data) {
+        setAds([]);
+        return;
+      }
+      const adsArray = Object.entries(data)
+        .map(([id, ad]) => ({ id, ...ad }))
+        .sort((a, b) => a.createdAt - b.createdAt);
+      setAds(adsArray);
+    });
+    return () => unsub();
+  }, [eventId]);
+
+  // ── Escuchar participants ──────────────────────────────────────────────────
+  useEffect(() => {
+    if (!eventId) return;
+    const pRef = ref(db, `livefeed/${eventId}/participants`);
+    const unsub = onValue(pRef, (snap) => {
+      const data = snap.val();
+      if (data) {
+        setParticipants(Object.entries(data).map(([id, val]) => ({ id, ...val })));
+      } else {
+        setParticipants([]);
+      }
+    });
+    return () => unsub();
+  }, [eventId]);
+
+  // ── Sorteo Animation ───────────────────────────────────────────────────────
+  useEffect(() => {
+    let interval;
+    if (monitorState.mode === 'sorteo' && monitorState.drawStatus === 'drawing' && participants.length > 0) {
+      const eligible = participants.filter(p => !p.isWinner);
+      interval = setInterval(() => {
+        const randomP = eligible[Math.floor(Math.random() * eligible.length)] || { raffleNumber: '???', name: '...' };
+        setShuffledId(randomP.raffleNumber.toString().padStart(3, '0'));
+        setShuffledName(randomP.name);
+      }, 70);
+    }
+    return () => clearInterval(interval);
+  }, [monitorState.mode, monitorState.drawStatus, participants]);
+
+  useEffect(() => {
+    if (monitorState.mode === 'sorteo' && monitorState.drawStatus === 'finished' && monitorState.winnerId && participants.length > 0) {
+      const winnerObj = participants.find(p => p.id === monitorState.winnerId);
+      if (winnerObj) {
+        setWinnerName(winnerObj.name);
+        setShuffledId(winnerObj.raffleNumber?.toString().padStart(3, '0') || '000');
+        setShuffledName(winnerObj.name);
+      }
+      
+      const duration = 15 * 1000;
+      const animationEnd = Date.now() + duration;
+      const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 1000 };
+      const randomInRange = (min, max) => Math.random() * (max - min) + min;
+
+      const confettiInterval = setInterval(function() {
+        const timeLeft = animationEnd - Date.now();
+        if (timeLeft <= 0) return clearInterval(confettiInterval);
+
+        const particleCount = 50 * (timeLeft / duration);
+        confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } });
+        confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } });
+      }, 250);
+
+      return () => clearInterval(confettiInterval);
+    }
+  }, [monitorState.mode, monitorState.drawStatus, monitorState.winnerId, participants]);
+
   // ── Función para avanzar slide ────────────────────────────────────────────
   const advanceSlide = useCallback(() => {
     const buf = photoBufferRef.current;
@@ -101,15 +196,41 @@ export default function LiveMonitor() {
     }, TRANSITION_DURATION);
   }, [eventConfig, photoCounter, collageMode]);
 
-  // ── Rotación automática ────────────────────────────────────────────────────
+  // ── Rotación automática de Fotos ───────────────────────────────────────────
   useEffect(() => {
-    if (isPaused || photos.length === 0) return;
+    if (isPaused || photos.length === 0 || monitorState.mode !== 'feed') return;
 
     const interval = (eventConfig?.slideIntervalSeconds || 7) * 1000;
     intervalRef.current = setInterval(advanceSlide, interval);
 
     return () => clearInterval(intervalRef.current);
-  }, [isPaused, photos.length, eventConfig, advanceSlide]);
+  }, [isPaused, photos.length, eventConfig, advanceSlide, monitorState.mode]);
+
+  // ── Rotación automática de Publicidades ────────────────────────────────────
+  const [currentAdIndex, setCurrentAdIndex] = useState(0);
+
+  useEffect(() => {
+    if (monitorState.mode === 'ad' && ads.length > 0) {
+      setCurrentAdIndex(0);
+      const interval = (eventConfig?.adIntervalSeconds || 8) * 1000; // 8 segundos por ad por defecto
+      let count = 0;
+      
+      const adInterval = setInterval(async () => {
+        count++;
+        if (count >= ads.length) {
+          // Fin del ciclo de publicidad, volver a feed
+          clearInterval(adInterval);
+          if (eventId) {
+            await update(ref(db, `livefeed/${eventId}/monitorState`), { mode: 'feed' });
+          }
+        } else {
+          setCurrentAdIndex(count);
+        }
+      }, interval);
+
+      return () => clearInterval(adInterval);
+    }
+  }, [monitorState.mode, ads, eventConfig, eventId]);
 
   // ── Pausa con barra espaciadora ────────────────────────────────────────────
   useEffect(() => {
@@ -177,7 +298,50 @@ export default function LiveMonitor() {
 
       {/* Main Content */}
       <div className={`monitor-main ${transitioning ? "fade-out" : "fade-in"}`}>
-        {collageMode ? (
+        {monitorState.mode === 'ad' && ads.length > 0 ? (
+          <div className="banner-display">
+             {ads[currentAdIndex]?.imageUrl?.toLowerCase().includes('.mp4') || 
+              ads[currentAdIndex]?.imageUrl?.toLowerCase().includes('.mov') ||
+              ads[currentAdIndex]?.imageUrl?.includes('video') ? (
+              <video src={ads[currentAdIndex].imageUrl} autoPlay loop muted className="banner-media" />
+            ) : (
+              <img src={ads[currentAdIndex]?.imageUrl} alt="Ad" className="banner-media" />
+            )}
+          </div>
+        ) : monitorState.mode === 'sorteo' ? (
+          <div className="sorteo-display" style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'radial-gradient(circle at center, #1b2735 0%, #090a0f 100%)', position: 'absolute', top: 0, left: 0, zIndex: 10 }}>
+            {monitorState.drawStatus === 'waiting' && (
+              <div style={{ textAlign: 'center' }}>
+                <h1 style={{ fontSize: '4rem', color: 'var(--accent)', marginBottom: '1rem' }}>Sorteo en breve</h1>
+                <p style={{ color: '#fff', fontSize: '1.5rem', opacity: 0.8 }}>¡Preparate!</p>
+              </div>
+            )}
+            
+            {monitorState.drawStatus === 'drawing' && (
+              <div className="ruleta-container" style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: '1.5rem', color: 'var(--accent)', letterSpacing: '4px', marginBottom: '1rem' }}>SORTEANDO...</div>
+                <div style={{ fontSize: '10rem', fontWeight: 900, color: '#fff', textShadow: '0 0 20px rgba(255,255,255,0.5)', fontFamily: 'monospace' }}>
+                  {shuffledId}
+                </div>
+                <div style={{ fontSize: '3rem', color: '#aaa', marginTop: '1rem' }}>
+                  {shuffledName}
+                </div>
+              </div>
+            )}
+
+            {monitorState.drawStatus === 'finished' && (
+              <div className="winner-container" style={{ textAlign: 'center', animation: 'popIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275)' }}>
+                <div style={{ fontSize: '2rem', color: 'var(--accent)', letterSpacing: '4px', marginBottom: '1rem' }}>¡TENEMOS GANADOR!</div>
+                <div style={{ fontSize: '12rem', fontWeight: 900, color: '#fff', textShadow: '0 0 50px rgba(255,255,255,0.8)', fontFamily: 'monospace', lineHeight: 1 }}>
+                  {shuffledId}
+                </div>
+                <div style={{ fontSize: '4.5rem', color: 'var(--accent)', marginTop: '1rem', fontWeight: 'bold' }}>
+                  {winnerName || shuffledName}
+                </div>
+              </div>
+            )}
+          </div>
+        ) : collageMode ? (
           <div className="collage-container">
             {collagePhotos.map((p, i) => (
               <div key={p.id} className={`collage-item item-${i}`}>

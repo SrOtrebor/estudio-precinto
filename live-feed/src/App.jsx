@@ -7,6 +7,7 @@ import Gallery from "./pages/Gallery";
 import MasterDashboard from "./pages/MasterDashboard";
 import Invitation from "./pages/Invitation";
 import AlbumPrint from "./pages/AlbumPrint";
+import Ingreso from "./pages/Ingreso";
 import "./App.css";
 
 function NotFound() {
@@ -66,6 +67,7 @@ function App() {
         <Route path="/moderar/:eventId" element={<ModerationPanel />} />
         <Route path="/galeria/:eventId" element={<Gallery />} />
         <Route path="/album/:eventId" element={<AlbumPrint />} />
+        <Route path="/ingreso/:eventId" element={<Ingreso />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
