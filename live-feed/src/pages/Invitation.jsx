@@ -13,6 +13,8 @@ export default function Invitation() {
   const [rsvpName, setRsvpName] = useState("");
   const [rsvpDni, setRsvpDni] = useState("");
   const [rsvpPhone, setRsvpPhone] = useState("");
+  const [rsvpEmail, setRsvpEmail] = useState("");
+  const [rsvpEmprendimiento, setRsvpEmprendimiento] = useState("");
   const [hasRsvped, setHasRsvped] = useState(false);
   const [isAttending, setIsAttending] = useState(null);
   const [rsvpLoading, setRsvpLoading] = useState(false);
@@ -55,8 +57,8 @@ export default function Invitation() {
 
   // ── Manejar RSVP ──────────────────────────────────────────────────────────
   const handleRSVP = async (attendingStatus) => {
-    if (!rsvpName.trim() || !rsvpPhone.trim() || !rsvpDni.trim()) {
-      alert("Por favor, completá tu nombre, DNI y teléfono.");
+    if (!rsvpName.trim() || !rsvpPhone.trim() || !rsvpDni.trim() || !rsvpEmail.trim()) {
+      alert("Por favor, completá todos los campos obligatorios.");
       return;
     }
 
@@ -68,6 +70,8 @@ export default function Invitation() {
         name: rsvpName,
         dni: rsvpDni,
         phone: rsvpPhone,
+        email: rsvpEmail,
+        emprendimiento: rsvpEmprendimiento,
         attending: attendingStatus,
         timestamp: Date.now()
       });
@@ -269,6 +273,23 @@ export default function Invitation() {
                 value={rsvpPhone}
                 onChange={e => setRsvpPhone(e.target.value)}
                 required
+                style={{ marginTop: '0.5rem' }}
+              />
+              <input 
+                type="email" 
+                className="rsvp-input-pill" 
+                placeholder="Tu Correo Electrónico" 
+                value={rsvpEmail}
+                onChange={e => setRsvpEmail(e.target.value)}
+                required
+                style={{ marginTop: '0.5rem' }}
+              />
+              <input 
+                type="text" 
+                className="rsvp-input-pill" 
+                placeholder="Tu Emprendimiento / Marca (Opcional)" 
+                value={rsvpEmprendimiento}
+                onChange={e => setRsvpEmprendimiento(e.target.value)}
                 style={{ marginTop: '0.5rem' }}
               />
               <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
