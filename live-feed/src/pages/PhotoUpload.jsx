@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { db, ref, onValue, get, push, set, storage, storageRef, uploadBytes, getDownloadURL } from "../firebase";
 import CameraCapture from "../components/CameraCapture";
+import confetti from "canvas-confetti";
 
 export default function PhotoUpload() {
   const { eventId } = useParams();
@@ -20,6 +21,10 @@ export default function PhotoUpload() {
   const [uploadSuccess, setUploadSuccess] = useState(false);
   const [uploadError, setUploadError] = useState(null);
   const [photoCount, setPhotoCount] = useState(0);
+
+  // Sorteo Notificaciones
+  const [monitorState, setMonitorState] = useState(null);
+  const [isWinner, setIsWinner] = useState(false);
 
   // ── Cargar configuración del evento ──────────────────────────────────────
   useEffect(() => {
@@ -45,6 +50,45 @@ export default function PhotoUpload() {
 
     return () => unsub();
   }, [eventId]);
+
+  // ── Escuchar Sorteo (Monitor State) ──────────────────────────────────────
+  useEffect(() => {
+    if (!eventId) return;
+    const mRef = ref(db, `livefeed/${eventId}/monitorState`);
+    const unsub = onValue(mRef, async (snap) => {
+      const data = snap.val();
+      if (data) {
+        setMonitorState(data);
+        if (data.mode === 'sorteo' && data.drawStatus === 'finished' && data.winnerId && guestName) {
+          // Fetch winner details
+          const participantSnap = await get(ref(db, `livefeed/${eventId}/participants/${data.winnerId}`));
+          if (participantSnap.exists()) {
+            const winner = participantSnap.val();
+            // Match by name
+            if (winner.name.trim().toLowerCase() === guestName.trim().toLowerCase()) {
+              setIsWinner(true);
+              // Trigger confetti
+              const duration = 15 * 1000;
+              const animationEnd = Date.now() + duration;
+              const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 10000 };
+              const randomInRange = (min, max) => Math.random() * (max - min) + min;
+
+              const confettiInterval = setInterval(function() {
+                const timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) return clearInterval(confettiInterval);
+                const particleCount = 50 * (timeLeft / duration);
+                confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } });
+                confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } });
+              }, 250);
+            }
+          }
+        } else if (data.mode !== 'sorteo' || data.drawStatus !== 'finished') {
+          setIsWinner(false);
+        }
+      }
+    });
+    return () => unsub();
+  }, [eventId, guestName]);
 
   const handleConfirmName = (e) => {
     e.preventDefault();
@@ -226,6 +270,15 @@ export default function PhotoUpload() {
       {uploadError && (
         <div style={{ position: 'fixed', top: '5rem', left: '1rem', right: '1rem', background: 'var(--danger)', color: '#fff', padding: '1rem', borderRadius: '12px', textAlign: 'center', zIndex: 1000 }}>
           {uploadError}
+        </div>
+      )}
+
+      {isWinner && (
+        <div className="winner-popup fade-in" style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.95)', zIndex: 9999, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: 'white', textAlign: 'center', padding: '2rem' }}>
+          <h1 style={{ fontSize: '3.5rem', color: 'var(--accent)', marginBottom: '1rem', animation: 'pulse 1s infinite' }}>¡GANASTE!</h1>
+          <p style={{ fontSize: '1.8rem', fontWeight: 'bold' }}>Felicitaciones {guestName}</p>
+          <p style={{ fontSize: '1.2rem', marginTop: '1rem', color: '#ccc' }}>Tu nombre acaba de salir sorteado en la pantalla gigante.</p>
+          <button className="btn-premium" style={{ marginTop: '3rem' }} onClick={() => setIsWinner(false)}>¡Qué genial!</button>
         </div>
       )}
     </div>

@@ -11,6 +11,7 @@ export default function Invitation() {
 
   // RSVP state
   const [rsvpName, setRsvpName] = useState("");
+  const [rsvpDni, setRsvpDni] = useState("");
   const [rsvpPhone, setRsvpPhone] = useState("");
   const [hasRsvped, setHasRsvped] = useState(false);
   const [isAttending, setIsAttending] = useState(null);
@@ -54,8 +55,8 @@ export default function Invitation() {
 
   // ── Manejar RSVP ──────────────────────────────────────────────────────────
   const handleRSVP = async (attendingStatus) => {
-    if (!rsvpName.trim() || !rsvpPhone.trim()) {
-      alert("Por favor, completá tu nombre y teléfono.");
+    if (!rsvpName.trim() || !rsvpPhone.trim() || !rsvpDni.trim()) {
+      alert("Por favor, completá tu nombre, DNI y teléfono.");
       return;
     }
 
@@ -65,6 +66,7 @@ export default function Invitation() {
     try {
       await set(push(rsvpRef), {
         name: rsvpName,
+        dni: rsvpDni,
         phone: rsvpPhone,
         attending: attendingStatus,
         timestamp: Date.now()
@@ -252,12 +254,22 @@ export default function Invitation() {
                 required
               />
               <input 
+                type="number" 
+                className="rsvp-input-pill" 
+                placeholder="Tu número de DNI (sin puntos)" 
+                value={rsvpDni}
+                onChange={e => setRsvpDni(e.target.value)}
+                required
+                style={{ marginTop: '0.5rem' }}
+              />
+              <input 
                 type="tel" 
                 className="rsvp-input-pill" 
                 placeholder="Tu WhatsApp / Teléfono" 
                 value={rsvpPhone}
                 onChange={e => setRsvpPhone(e.target.value)}
                 required
+                style={{ marginTop: '0.5rem' }}
               />
               <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
                 <button type="button" className="btn-pill" onClick={() => handleRSVP(false)} disabled={rsvpLoading} style={{ background: 'transparent', border: '1px solid var(--text-muted)', color: 'var(--text-muted)' }}>
