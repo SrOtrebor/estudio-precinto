@@ -390,7 +390,16 @@ export default function MasterDashboard() {
         <div className="lightbox" onClick={closeModal}>
           <div className="mod-login-card" onClick={e => e.stopPropagation()} style={{ maxWidth: '500px', textAlign: 'left', maxHeight: '90vh', overflowY: 'auto' }}>
             <h2 style={{ marginBottom: '1.5rem', color: 'var(--accent)' }}>{editingEvent ? 'Editar Evento' : 'Crear Nuevo Evento'}</h2>
-            <form onSubmit={handleCreateOrUpdateEvent} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <form 
+              onSubmit={handleCreateOrUpdateEvent} 
+              onKeyDown={e => {
+                // Si presiona Enter en cualquier campo salvo textarea, o si presiona Enter en textarea (que debe insertar salto), no hacer submit
+                if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
+                  e.preventDefault();
+                }
+              }}
+              style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
+            >
               {!editingEvent && (
                 <div>
                   <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>ID del Evento (URL, ej: xv-vale)</label>
@@ -404,11 +413,6 @@ export default function MasterDashboard() {
                   style={{ width: '100%', minHeight: '60px', resize: 'vertical' }} 
                   value={newEvent.name} 
                   onChange={e => setNewEvent({...newEvent, name: e.target.value})} 
-                  onKeyDown={e => {
-                    if (e.key === 'Enter') {
-                      e.stopPropagation();
-                    }
-                  }}
                   placeholder={"Ejemplo:\nAfter\nLa Troncal"}
                   required 
                 />
