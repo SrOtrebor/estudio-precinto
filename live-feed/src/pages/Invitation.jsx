@@ -215,33 +215,66 @@ export default function Invitation() {
       }}>
         
         {/* Hero Section */}
-      <section className="invitation-hero">
-        <div 
-          className="invitation-hero-bg" 
-          style={{ backgroundImage: `url(${eventConfig.heroUrl || 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&q=80&w=1200'})` }}
-        />
-        <div className="invitation-hero-overlay" style={{
-           background: eventConfig?.theme === 'light' ? `linear-gradient(to bottom, rgba(255,255,255,0.2), rgba(255,255,255,0.9))` : `linear-gradient(to bottom, rgba(10,10,15,0.2), rgba(10,10,15,0.9))`
-        }} />
-        
-        {/* SVG Wave */}
-        <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', overflow: 'hidden', lineHeight: 0 }}>
-          <svg viewBox="0 0 1200 120" preserveAspectRatio="none" style={{ display: 'block', width: '100%', height: '80px', transform: 'rotate(180deg)' }}>
-            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" 
-                  fill={eventConfig?.theme === 'light' ? '#f4f4f6' : '#0a0a0f'}></path>
-          </svg>
-        </div>
+      {eventConfig?.tier === 'latroncal' ? (
+        <section className="invitation-hero" style={{ height: 'auto', minHeight: 'auto' }}>
+          <img 
+            src="invitacion-la-troncal.jpeg" 
+            alt="After Lucky Night - La Troncal & Trilenium Casino" 
+            style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '0 0 20px 20px', boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }} 
+          />
+          <div style={{ padding: '1.5rem 1rem 0.5rem 1rem', textAlign: 'center' }}>
+            <div style={{ background: 'rgba(217, 30, 54, 0.15)', border: '1px solid #d91e36', color: '#ff4d6d', padding: '0.6rem 1.2rem', borderRadius: '50px', display: 'inline-block', fontWeight: 'bold', fontSize: '0.9rem', marginBottom: '1rem' }}>
+              🔴⚫ Dress Code: RED & BLACK
+            </div>
+            
+            <div style={{ background: 'rgba(255,255,255,0.04)', borderRadius: '16px', padding: '1rem', border: '1px solid rgba(255,255,255,0.1)', fontSize: '0.88rem', lineHeight: '1.5', color: '#ddd' }}>
+              🎟️ <strong>INVITACIÓN EXCLUSIVA SIN COSTO</strong>, CON INSCRIPCIÓN PREVIA.<br />
+              <span style={{ fontSize: '0.8rem', opacity: 0.8 }}>Cupos limitados - Si venís acompañado/a, recordá registrar también a la persona que viene con vos.</span>
+            </div>
 
-        <div className="invitation-header-content">
-          <span className="invitation-subtitle">Estás invitado</span>
-          <h1 className="invitation-title" style={{ whiteSpace: 'pre-line' }}>
-            {eventConfig.eventName}
-          </h1>
-          <div className="invitation-date-pill">
-            📅 {new Date(eventConfig.date).toLocaleDateString("es-AR", { weekday: 'long', day: 'numeric', month: 'long' })}
+            <div style={{ marginTop: '1.2rem', padding: '1rem', background: 'rgba(0,142,69,0.1)', border: '1px solid #008e45', borderRadius: '16px', textAlign: 'left' }}>
+              <div style={{ fontWeight: 'bold', color: '#2ec4b6', marginBottom: '0.4rem', fontSize: '0.95rem' }}>🚗 ESTACIONAMIENTO GRATIS</div>
+              <p style={{ fontSize: '0.82rem', color: '#ccc', margin: 0, lineHeight: 1.4 }}>
+                Dejá el auto en el estacionamiento desde el cual una combi te acercará hasta el Casino. Al ingresar, dirigite al evento en el salón privado.
+              </p>
+              <button 
+                onClick={() => window.open('https://maps.app.goo.gl/XBNJroTdPiQRK7n5A?g_st=aw', '_blank')}
+                style={{ width: '100%', marginTop: '0.8rem', padding: '0.6rem', background: '#008e45', color: '#fff', border: 'none', borderRadius: '50px', fontWeight: 'bold', fontSize: '0.85rem', cursor: 'pointer' }}
+              >
+                📍 Abrir Ubicación del Estacionamiento en Google Maps
+              </button>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      ) : (
+        <section className="invitation-hero">
+          <div 
+            className="invitation-hero-bg" 
+            style={{ backgroundImage: `url(${eventConfig.heroUrl || 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&q=80&w=1200'})` }}
+          />
+          <div className="invitation-hero-overlay" style={{
+             background: eventConfig?.theme === 'light' ? `linear-gradient(to bottom, rgba(255,255,255,0.2), rgba(255,255,255,0.9))` : `linear-gradient(to bottom, rgba(10,10,15,0.2), rgba(10,10,15,0.9))`
+          }} />
+          
+          {/* SVG Wave */}
+          <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', overflow: 'hidden', lineHeight: 0 }}>
+            <svg viewBox="0 0 1200 120" preserveAspectRatio="none" style={{ display: 'block', width: '100%', height: '80px', transform: 'rotate(180deg)' }}>
+              <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" 
+                    fill={eventConfig?.theme === 'light' ? '#f4f4f6' : '#0a0a0f'}></path>
+            </svg>
+          </div>
+
+          <div className="invitation-header-content">
+            <span className="invitation-subtitle">Estás invitado</span>
+            <h1 className="invitation-title" style={{ whiteSpace: 'pre-line' }}>
+              {eventConfig.eventName}
+            </h1>
+            <div className="invitation-date-pill">
+              📅 {new Date(eventConfig.date).toLocaleDateString("es-AR", { weekday: 'long', day: 'numeric', month: 'long' })}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Countdown */}
       {new Date(eventConfig.date).getTime() > Date.now() && (
