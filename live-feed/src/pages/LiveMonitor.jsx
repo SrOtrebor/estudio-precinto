@@ -305,6 +305,13 @@ export default function LiveMonitor() {
         />
       )}
 
+      {/* Marco Superior del Monitor con Logo del Evento */}
+      {eventConfig?.logoUrl && (
+        <div className="monitor-top-header" style={{ position: 'absolute', top: '25px', left: '35px', zIndex: 100, display: 'flex', alignItems: 'center', gap: '15px' }}>
+          <img src={eventConfig.logoUrl} alt={eventConfig?.eventName} style={{ height: '55px', objectFit: 'contain', filter: 'drop-shadow(0 4px 10px rgba(0,0,0,0.6))' }} />
+        </div>
+      )}
+
       {/* Main Content */}
       <div className={`monitor-main ${transitioning ? "fade-out" : "fade-in"}`}>
         {monitorState.mode === 'ad' && ads.length > 0 ? (
@@ -386,7 +393,11 @@ export default function LiveMonitor() {
                   <div className="polaroid-name">{currentPhoto.authorName}</div>
                 </div>
                 <div className="polaroid-info-right">
-                  <span className="polaroid-event-name-highlight">{eventConfig?.eventName}</span>
+                  {eventConfig?.logoUrl ? (
+                    <img src={eventConfig.logoUrl} alt={eventConfig?.eventName} style={{ height: '40px', objectFit: 'contain' }} />
+                  ) : (
+                    <span className="polaroid-event-name-highlight">{eventConfig?.eventName}</span>
+                  )}
                 </div>
               </div>
             </div>
