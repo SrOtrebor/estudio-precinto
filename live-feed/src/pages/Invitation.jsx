@@ -299,7 +299,13 @@ export default function Invitation() {
             <div style={{ textAlign: 'center', padding: '1rem' }}>
               <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>{isAttending ? '✨' : '🥺'}</div>
               <p style={{ color: 'var(--accent)', fontWeight: '800', fontSize: '1.2rem', marginBottom: 0 }}>
-                {isAttending ? '¡Confirmado! Te esperamos.' : 'Qué lástima, te vamos a extrañar.'}
+                {isAttending ? (
+                  <>
+                    ¡Confirmado!<br />
+                    Te esperamos<br />
+                    el 27 de agosto 19:30 hs
+                  </>
+                ) : 'Qué lástima, te vamos a extrañar.'}
               </p>
             </div>
           ) : !showForm ? (
@@ -503,7 +509,7 @@ export default function Invitation() {
               )}
               {isEventActive && isAttending && !isCheckedIn && (
                 <p style={{ fontSize: '0.85rem', color: '#ffbd59', fontWeight: '600', marginBottom: '0.8rem' }}>
-                  🚪 Escaneá el QR de la puerta con tu DNI para activar la cámara.
+                  🚪 Escaneá el QR al ingreso del evento con tu teléfono para activar tu cámara en vivo.
                 </p>
               )}
 
