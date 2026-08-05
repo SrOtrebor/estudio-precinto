@@ -139,12 +139,20 @@ export default function Ingreso() {
       email: data.email || "",
       emprendimiento: data.emprendimiento || "",
       raffleNumber: assignedNumber,
+      checkedIn: true,
       isWinner: false,
       timestamp: Date.now()
     };
     
     await set(participantRef, participantData);
+    // Guardar en la clave genérica por DNI para que el check-in se reconozca al instante
+    await set(ref(db, `livefeed/${eventId}/participants/${data.dni}`), participantData);
     
+    // Guardar localmente para que el celular recuerde que ya hizo check-in
+    localStorage.setItem(`livefeed_guest_name_${eventId}`, data.name);
+    localStorage.setItem(`livefeed_guest_dni_${eventId}`, data.dni);
+    localStorage.setItem(`livefeed_guest_attending_${eventId}`, "true");
+
     // Ensure rsvp attending is true if it was checked in
     if (!data.attending) {
       await update(ref(db, `livefeed/${eventId}/rsvps/${id}`), { attending: true });
