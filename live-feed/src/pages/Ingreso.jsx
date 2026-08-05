@@ -108,11 +108,13 @@ export default function Ingreso() {
   };
 
   const enrollParticipant = async (id, data) => {
-    const participantRef = ref(db, `livefeed/${eventId}/participants/${id}`);
+    // Usar el DNI directamente como ID único del participante
+    const participantDniKey = data.dni;
+    const participantRef = ref(db, `livefeed/${eventId}/participants/${participantDniKey}`);
     const snap = await get(participantRef);
     
     if (snap.exists()) {
-      // Already a participant
+      // Ya es un participante registrado
       setRaffleNumber(snap.val().raffleNumber);
       setStep("success");
       return;
@@ -133,6 +135,7 @@ export default function Ingreso() {
 
     // Save participant
     const participantData = {
+      id: participantDniKey,
       name: data.name,
       dni: data.dni,
       phone: data.phone || "",
@@ -145,8 +148,6 @@ export default function Ingreso() {
     };
     
     await set(participantRef, participantData);
-    // Guardar en la clave genérica por DNI para que el check-in se reconozca al instante
-    await set(ref(db, `livefeed/${eventId}/participants/${data.dni}`), participantData);
     
     // Guardar localmente para que el celular recuerde que ya hizo check-in
     localStorage.setItem(`livefeed_guest_name_${eventId}`, data.name);

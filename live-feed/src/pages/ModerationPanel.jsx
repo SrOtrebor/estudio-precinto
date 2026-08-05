@@ -162,15 +162,15 @@ export default function ModerationPanel() {
     const newVal = !(eventConfig.cameraEnabled !== false);
     await update(ref(db, `livefeed/${eventId}/config`), { cameraEnabled: newVal });
   };
-
   const exportToCSV = () => {
-    // Combinar RSVPs y Participantes de Check-in
+    // Combinar RSVPs y Participantes de Check-in agrupados de forma estricta por DNI
     const allGuestsMap = new Map();
 
     rsvps.forEach(r => {
       if (r.dni) {
-        allGuestsMap.set(r.dni, {
-          dni: r.dni,
+        const cleanDni = String(r.dni).trim();
+        allGuestsMap.set(cleanDni, {
+          dni: cleanDni,
           name: r.name,
           phone: r.phone || 'N/A',
           email: r.email || 'N/A',
@@ -185,10 +185,10 @@ export default function ModerationPanel() {
     });
 
     participants.forEach(p => {
-      const dni = p.id || p.dni;
-      const existing = allGuestsMap.get(dni) || {};
-      allGuestsMap.set(dni, {
-        dni: dni,
+      const cleanDni = String(p.dni || p.id).trim();
+      const existing = allGuestsMap.get(cleanDni) || {};
+      allGuestsMap.set(cleanDni, {
+        dni: cleanDni,
         name: p.name || existing.name || 'Sin nombre',
         phone: p.phone || existing.phone || 'N/A',
         email: p.email || existing.email || 'N/A',
@@ -196,7 +196,7 @@ export default function ModerationPanel() {
         attendingRSVP: existing.attendingRSVP || "Sí",
         checkedIn: p.checkedIn ? "Sí" : "Sí (Presencial)",
         raffleNumber: p.raffleNumber || "-",
-        isWinner: p.isWinner ? "🏆 GANADOR" : "No",
+        isWinner: p.isWinner ? "GANADOR" : "No",
         prizeOrder: p.prizeNumber ? `Premio #${p.prizeNumber}` : "-"
       });
     });
@@ -209,12 +209,13 @@ export default function ModerationPanel() {
     }
     
     const headers = ["DNI", "Nombre", "Teléfono", "Email", "Marca / Emprendimiento", "RSVP Asistirá", "Check-in Puerta", "N° Sorteo", "Ganador", "Orden Premio"];
+    // Formatear DNI como texto seguro para Excel usando \t (tabulador interno) sin provocar error de fórmula (#¿NOMBRE?)
     const rows = guestsList.map(g => [
-      `"${g.dni}"`,
-      `"${g.name}"`,
-      `"${g.phone}"`,
-      `"${g.email}"`,
-      `"${g.marca}"`,
+      `"\t${g.dni}"`,
+      `"${g.name.replace(/"/g, '""')}"`,
+      `"\t${g.phone}"`,
+      `"${g.email.replace(/"/g, '""')}"`,
+      `"${g.marca.replace(/"/g, '""')}"`,
       `"${g.attendingRSVP}"`,
       `"${g.checkedIn}"`,
       `"${g.raffleNumber}"`,
@@ -222,13 +223,12 @@ export default function ModerationPanel() {
       `"${g.prizeOrder}"`
     ]);
     
-    // Agregar BOM UTF-8 (\uFEFF) para apertura perfecta en Excel
     const csvContent = "\uFEFF" + [headers.join(";"), ...rows.map(e => e.join(";"))].join("\n");
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.setAttribute("href", url);
-    link.setAttribute("download", `Reporte_Asistentes_Ganadores_${eventId}.csv`);
+    link.setAttribute("download", `Reporte_EstudioPrecinto_${eventId}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -262,15 +262,30 @@ export default function ModerationPanel() {
   };
 
   const handleLaunchGiveaway = async () => {
-    const elegibles = participants.filter(p => !p.isWinner);
+    // Filtrar participantes únicos por DNI para evitar duplicados en el sorteo
+    const uniqueParticipantsMap = new Map();
+    participants.forEach(p => {
+      const dniKey = String(p.dni || p.id).trim();
+      if (!uniqueParticipantsMap.has(dniKey)) {
+        uniqueParticipantsMap.set(dniKey, p);
+      } else {
+        // Si una de las instancias ya ganó, conservar el estado de ganador
+        const existing = uniqueParticipantsMap.get(dniKey);
+        if (p.isWinner) uniqueParticipantsMap.set(dniKey, p);
+      }
+    });
+
+    const uniqueParticipants = Array.from(uniqueParticipantsMap.values());
+    const elegibles = uniqueParticipants.filter(p => !p.isWinner);
+
     if (elegibles.length === 0) {
-      alert("No hay participantes elegibles para el sorteo.");
+      alert("No hay participantes elegibles para el sorteo (todos ya ganaron o no hay inscriptos).");
       return;
     }
     const ganador = elegibles[Math.floor(Math.random() * elegibles.length)];
     
     // Contar premios anteriores
-    const premiosEntregados = participants.filter(p => p.isWinner).length;
+    const premiosEntregados = uniqueParticipants.filter(p => p.isWinner).length;
     const nuevoPremioNumero = premiosEntregados + 1;
 
     // Actualizar estado del monitor a 'drawing'
@@ -286,11 +301,19 @@ export default function ModerationPanel() {
         drawStatus: 'finished',
         winnerId: ganador.id 
       });
-      // Marcar participante como ganador
-      await update(ref(db, `livefeed/${eventId}/participants/${ganador.id}`), {
-        isWinner: true,
-        prizeNumber: nuevoPremioNumero
+
+      // Marcar participante como ganador en todas sus referencias si existiera duplicado previo
+      const dniGanador = String(ganador.dni || ganador.id).trim();
+      const updates = {};
+      participants.forEach(p => {
+        const pDni = String(p.dni || p.id).trim();
+        if (pDni === dniGanador) {
+          updates[`livefeed/${eventId}/participants/${p.id}/isWinner`] = true;
+          updates[`livefeed/${eventId}/participants/${p.id}/prizeNumber`] = nuevoPremioNumero;
+        }
       });
+
+      await update(ref(db), updates);
     }, 4000);
   };
 
