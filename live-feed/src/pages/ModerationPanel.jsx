@@ -24,6 +24,7 @@ export default function ModerationPanel() {
   const [ads, setAds] = useState([]);
   const [participants, setParticipants] = useState([]);
   const [adUploadFile, setAdUploadFile] = useState(null);
+  const [showSorteoModal, setShowSorteoModal] = useState(false);
 
   // States para config tiempos locales (para no re-renderizar todo el config a cada tecla)
   const [localSlideInterval, setLocalSlideInterval] = useState(7);
@@ -467,10 +468,17 @@ export default function ModerationPanel() {
                   💸 MODO PUBLICIDAD (CARRUSEL)
                 </button>
                 <button 
-                  onClick={handleLaunchGiveaway}
+                  onClick={() => {
+                    const elegibles = participants.filter(p => !p.isWinner);
+                    if (elegibles.length === 0) {
+                      alert("No hay participantes elegibles para el sorteo.");
+                      return;
+                    }
+                    setShowSorteoModal(true);
+                  }}
                   className="btn-primary" 
                   style={{ flex: 1, background: monitorState.mode === 'sorteo' ? 'var(--primary)' : 'linear-gradient(45deg, #008e45, #00b0e5)' }}>
-                  🎰 LANZAR SORTEO
+                  🎰 MODO SORTEO (CONFIGURAR / LANZAR)
                 </button>
               </div>
               <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
@@ -621,6 +629,60 @@ export default function ModerationPanel() {
           ))
         )}
       </main>
+
+      {/* Modal Dedicado de Sorteo */}
+      {showSorteoModal && (
+        <div className="lightbox" onClick={() => setShowSorteoModal(false)}>
+          <div className="mod-login-card" onClick={e => e.stopPropagation()} style={{ maxWidth: '500px', textAlign: 'center' }}>
+            <h2 style={{ color: 'var(--accent)', fontSize: '2rem', marginBottom: '0.5rem' }}>🎰 Panel de Sorteo</h2>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
+              Este control activará la ruleta de sorteo en la pantalla gigante del salón.
+            </p>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', background: 'rgba(255,255,255,0.04)', padding: '1.5rem', borderRadius: '15px', marginBottom: '1.5rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '0.5rem' }}>
+                <span>👥 Participantes Registrados:</span>
+                <strong>{participants.length}</strong>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '0.5rem' }}>
+                <span>🎯 Elegibles para este sorteo:</span>
+                <strong style={{ color: 'var(--accent)' }}>{participants.filter(p => !p.isWinner).length}</strong>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span>🏆 Ganadores Anteriores:</span>
+                <strong style={{ color: 'var(--success)' }}>{participants.filter(p => p.isWinner).length}</strong>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+              <button 
+                className="btn-primary" 
+                style={{ 
+                  background: 'linear-gradient(45deg, #008e45, #00b0e5)', 
+                  padding: '1rem', 
+                  fontSize: '1.1rem', 
+                  fontWeight: 'bold',
+                  boxShadow: '0 5px 20px rgba(0,176,229,0.3)' 
+                }}
+                onClick={() => {
+                  setShowSorteoModal(false);
+                  handleLaunchGiveaway();
+                }}
+              >
+                🚀 ¡DISPARAR SORTEO EN PANTALLA!
+              </button>
+              
+              <button 
+                className="mod-btn" 
+                onClick={() => setShowSorteoModal(false)}
+                style={{ background: 'transparent', border: '1px solid #444', color: '#aaa', padding: '0.7rem' }}
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
