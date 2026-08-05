@@ -253,8 +253,8 @@ export default function Ingreso() {
               <div className="raffle-number">{raffleNumber}</div>
             </div>
             
-            <button onClick={() => navigate(`/foto/${eventId}`)} className="btn-primary" style={{ marginTop: '2rem' }}>
-              📷 Subir fotos
+            <button onClick={() => navigate(`/invitacion/${eventId}`)} className="btn-primary" style={{ marginTop: '2rem' }}>
+              🎟️ Ver Invitación y Cámara
             </button>
             <p style={{ marginTop: '1rem', fontSize: '0.8rem', color: '#666' }}>
               Guarda este número. Si ganás, lo anunciaremos en la pantalla gigante.

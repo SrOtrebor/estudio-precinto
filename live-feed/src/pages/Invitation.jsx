@@ -111,6 +111,14 @@ export default function Invitation() {
       localStorage.setItem(`livefeed_guest_name_${eventId}`, rsvpName);
       localStorage.setItem(`livefeed_guest_dni_${eventId}`, rsvpDni);
       localStorage.setItem(`livefeed_guest_attending_${eventId}`, attendingStatus ? "true" : "false");
+      
+      // Scroll suave hacia el botón de la cámara para que vea inmediatamente el estado del candado
+      setTimeout(() => {
+        const cameraSection = document.getElementById("camera-section");
+        if (cameraSection) {
+          cameraSection.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 300);
     } catch (err) {
       console.error(err);
       alert("Hubo un error al confirmar. Intentá de nuevo.");
@@ -400,11 +408,16 @@ export default function Invitation() {
 
         {/* Photo Section (AHORA AL FINAL Y CON CANDADO) */}
         {(() => {
-          const isToday = eventConfig?.date ? new Date().toDateString() === new Date(eventConfig.date).toDateString() : false;
-          const canAccessCamera = cameraEnabled && isAttending && isCheckedIn && isToday;
+          const now = new Date();
+          const eventDateObj = eventConfig?.date ? new Date(eventConfig.date) : null;
+          // Validar que sea el mismo día y que ya sea la hora del evento (o posterior)
+          const isToday = eventDateObj ? now.toDateString() === eventDateObj.toDateString() : false;
+          const isTimeReached = eventDateObj ? now.getTime() >= eventDateObj.getTime() : false;
+          const isEventActive = isToday && isTimeReached;
+          const canAccessCamera = cameraEnabled && isAttending && isCheckedIn && isEventActive;
 
           return (
-            <div className="invitation-card invitation-card--accent" style={{ marginTop: '1.5rem', marginBottom: '1.5rem' }}>
+            <div id="camera-section" className="invitation-card invitation-card--accent" style={{ marginTop: '1.5rem', marginBottom: '1.5rem' }}>
               <div className="card-badge">{canAccessCamera ? "¡CÁMARA LISTA!" : "CÁMARA BLOQUEADA"}</div>
               <h2 style={{ fontSize: '1.8rem', fontWeight: '800' }}>📸 Live Feed</h2>
               <p>
@@ -412,22 +425,22 @@ export default function Invitation() {
                 en tiempo real para que todos las vean en las pantallas del salón.
               </p>
               
-              {!isToday && (
+              {!isEventActive && (
                 <p style={{ fontSize: '0.85rem', color: '#ffbd59', fontWeight: '600', marginBottom: '0.8rem' }}>
-                  ⏳ La cámara se habilitará el día del evento.
+                  ⏳ La cámara se habilitará el día y hora del evento ({eventDateObj ? eventDateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' hs' : ''}).
                 </p>
               )}
-              {isToday && !hasRsvped && (
+              {isEventActive && !hasRsvped && (
                 <p style={{ fontSize: '0.85rem', color: '#ffbd59', fontWeight: '600', marginBottom: '0.8rem' }}>
                   📝 Confirmá tu asistencia arriba para activar la cámara.
                 </p>
               )}
-              {isToday && hasRsvped && !isAttending && (
+              {isEventActive && hasRsvped && !isAttending && (
                 <p style={{ fontSize: '0.85rem', color: '#ff6b6b', fontWeight: '600', marginBottom: '0.8rem' }}>
                   ❌ Confirmaste que no asistirás al evento.
                 </p>
               )}
-              {isToday && isAttending && !isCheckedIn && (
+              {isEventActive && isAttending && !isCheckedIn && (
                 <p style={{ fontSize: '0.85rem', color: '#ffbd59', fontWeight: '600', marginBottom: '0.8rem' }}>
                   🚪 Escaneá el QR de la puerta con tu DNI para activar la cámara.
                 </p>
