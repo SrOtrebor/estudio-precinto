@@ -162,7 +162,8 @@ export default function ModerationPanel() {
     const newVal = !(eventConfig.cameraEnabled !== false);
     await update(ref(db, `livefeed/${eventId}/config`), { cameraEnabled: newVal });
   };
-  const exportToCSV = () => {
+
+  const exportToExcel = async () => {
     // Combinar RSVPs y Participantes de Check-in agrupados de forma estricta por DNI
     const allGuestsMap = new Map();
 
@@ -196,7 +197,7 @@ export default function ModerationPanel() {
         attendingRSVP: existing.attendingRSVP || "Sí",
         checkedIn: p.checkedIn ? "Sí" : "Sí (Presencial)",
         raffleNumber: p.raffleNumber || "-",
-        isWinner: p.isWinner ? "GANADOR" : "No",
+        isWinner: p.isWinner ? "🏆 GANADOR" : "No",
         prizeOrder: p.prizeNumber ? `Premio #${p.prizeNumber}` : "-"
       });
     });
@@ -208,27 +209,111 @@ export default function ModerationPanel() {
       return;
     }
     
-    const headers = ["DNI", "Nombre", "Teléfono", "Email", "Marca / Emprendimiento", "RSVP Asistirá", "Check-in Puerta", "N° Sorteo", "Ganador", "Orden Premio"];
-    // Formatear DNI como texto seguro para Excel usando \t (tabulador interno) sin provocar error de fórmula (#¿NOMBRE?)
-    const rows = guestsList.map(g => [
-      `"\t${g.dni}"`,
-      `"${g.name.replace(/"/g, '""')}"`,
-      `"\t${g.phone}"`,
-      `"${g.email.replace(/"/g, '""')}"`,
-      `"${g.marca.replace(/"/g, '""')}"`,
-      `"${g.attendingRSVP}"`,
-      `"${g.checkedIn}"`,
-      `"${g.raffleNumber}"`,
-      `"${g.isWinner}"`,
-      `"${g.prizeOrder}"`
-    ]);
-    
-    const csvContent = "\uFEFF" + [headers.join(";"), ...rows.map(e => e.join(";"))].join("\n");
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    // Crear libro de trabajo con ExcelJS
+    const workbook = new ExcelJS.Workbook();
+    workbook.creator = "Estudio Precinto";
+    workbook.created = new Date();
+
+    const worksheet = workbook.addWorksheet("Asistentes y Sorteo", {
+      views: [{ showGridLines: true }]
+    });
+
+    // ── Banner Superior de Marca ──────────────────────────────────────────────
+    worksheet.mergeCells("A1:J2");
+    const titleCell = worksheet.getCell("A1");
+    titleCell.value = `ESTUDIO PRECINTO — REPORTE DE EVENTO: ${eventConfig?.eventName || eventId}`;
+    titleCell.font = { name: "Arial", size: 14, bold: true, color: { argb: "FFFFFF" } };
+    titleCell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "111116" } };
+    titleCell.alignment = { vertical: "middle", horizontal: "center" };
+
+    // ── Encabezados de Columna ────────────────────────────────────────────────
+    const headers = ["DNI", "Nombre y Apellido", "Teléfono / WhatsApp", "Correo Electrónico", "Marca / Emprendimiento", "RSVP", "Check-in", "N° Sorteo", "Estado Sorteo", "Premio"];
+    const headerRow = worksheet.addRow(headers);
+    headerRow.height = 26;
+
+    headerRow.eachCell((cell) => {
+      cell.font = { name: "Arial", size: 11, bold: true, color: { argb: "000000" } };
+      cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "A28A68" } }; // Color acento dorado Precinto
+      cell.alignment = { vertical: "middle", horizontal: "center" };
+      cell.border = {
+        top: { style: "medium", color: { argb: "66563F" } },
+        left: { style: "thin", color: { argb: "CCCCCC" } },
+        bottom: { style: "medium", color: { argb: "66563F" } },
+        right: { style: "thin", color: { argb: "CCCCCC" } }
+      };
+    });
+
+    // ── Agregar Filas de Datos ─────────────────────────────────────────────────
+    guestsList.forEach((g, idx) => {
+      const isWinner = g.isWinner.includes("GANADOR");
+      const row = worksheet.addRow([
+        g.dni,
+        g.name,
+        g.phone,
+        g.email,
+        g.marca,
+        g.attendingRSVP,
+        g.checkedIn,
+        g.raffleNumber,
+        g.isWinner,
+        g.prizeOrder
+      ]);
+      row.height = 22;
+
+      // Coloreado alternado o destacado si es ganador
+      const isEven = idx % 2 === 0;
+      const rowBgColor = isWinner 
+        ? "FFF4D4" // Dorado suave para ganadores
+        : (isEven ? "F9F9FB" : "FFFFFF");
+
+      row.eachCell((cell, colIndex) => {
+        cell.font = { name: "Arial", size: 10, bold: isWinner };
+        cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: rowBgColor } };
+        cell.border = {
+          bottom: { style: "thin", color: { argb: "E5E5E8" } },
+          left: { style: "thin", color: { argb: "E5E5E8" } },
+          right: { style: "thin", color: { argb: "E5E5E8" } }
+        };
+
+        // Formatos específicos por columna
+        if (colIndex === 1 || colIndex === 3) {
+          // DNI y Phone como texto estricto
+          cell.numFmt = "@";
+          cell.alignment = { vertical: "middle", horizontal: "left" };
+        } else if (colIndex === 6 || colIndex === 7 || colIndex === 8) {
+          // Centrado para RSVPs y N° de Sorteo
+          cell.alignment = { vertical: "middle", horizontal: "center" };
+        } else if (colIndex === 9 || colIndex === 10) {
+          // Ganador y Premio destacado
+          cell.alignment = { vertical: "middle", horizontal: "center" };
+          if (isWinner) {
+            cell.font = { name: "Arial", size: 10, bold: true, color: { argb: "B37D14" } };
+          }
+        } else {
+          cell.alignment = { vertical: "middle", horizontal: "left" };
+        }
+      });
+    });
+
+    // ── Auto-ajustar anchos de columnas ─────────────────────────────────────
+    worksheet.columns.forEach((col, i) => {
+      let maxLen = headers[i] ? headers[i].length : 12;
+      col.eachCell({ includeEmpty: true }, (cell) => {
+        const val = cell.value ? cell.value.toString() : "";
+        if (val.length > maxLen && cell.address !== "A1") {
+          maxLen = Math.min(val.length, 40);
+        }
+      });
+      col.width = maxLen + 5;
+    });
+
+    // Generar archivo ejecutable para descarga
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
-    link.setAttribute("href", url);
-    link.setAttribute("download", `Reporte_EstudioPrecinto_${eventId}.csv`);
+    link.href = url;
+    link.download = `Reporte_EstudioPrecinto_${eventId}.xlsx`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -582,8 +667,8 @@ export default function ModerationPanel() {
         ) : filter === 'rsvps' ? (
           <>
             <div style={{ gridColumn: '1 / -1', display: 'flex', justifyContent: 'flex-end', paddingBottom: '1rem' }}>
-              <button onClick={exportToCSV} className="btn-approve" style={{ padding: '0.8rem 1.5rem', borderRadius: '12px', border: 'none', cursor: 'pointer', fontWeight: 'bold' }}>
-                📥 Exportar Excel (CSV)
+              <button onClick={exportToExcel} className="btn-approve" style={{ padding: '0.8rem 1.5rem', borderRadius: '12px', border: 'none', cursor: 'pointer', fontWeight: 'bold', background: 'var(--accent)', color: '#000' }}>
+                📊 Exportar Reporte Excel (.xlsx)
               </button>
             </div>
             {rsvps.map(r => (
