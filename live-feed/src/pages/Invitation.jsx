@@ -374,7 +374,7 @@ export default function Invitation() {
         )}
 
         {/* Wishlist Section */}
-        {(eventConfig?.tier === 'premium' || eventConfig?.tier === 'corporativo') && wishlist.length > 0 && (
+        {(eventConfig?.tier === 'premium' || eventConfig?.tier === 'corporativo' || eventConfig?.tier === 'latroncal') && wishlist.length > 0 && (
           <div className="invitation-card">
             <h2 style={{ fontSize: '1.5rem', fontWeight: '700' }}>Lista de Regalos</h2>
             <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>Elegí un regalo de la lista y marcalo para que no se repita. (Asegurate de confirmar asistencia primero).</p>

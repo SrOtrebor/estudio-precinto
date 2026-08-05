@@ -182,7 +182,7 @@ export default function LiveMonitor() {
         }
         
         // Lógica de banners corporativos cada N fotos
-        else if (eventConfig?.tier === "corporativo" && eventConfig?.bannerUrls?.length > 0) {
+        else if ((eventConfig?.tier === "corporativo" || eventConfig?.tier === "latroncal") && eventConfig?.bannerUrls?.length > 0) {
           const bannerEvery = eventConfig.bannerIntervalPhotos || 5;
           if (newCount % bannerEvery === 0) {
             setShowBanner(true);

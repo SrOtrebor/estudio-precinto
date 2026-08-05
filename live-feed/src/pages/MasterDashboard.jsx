@@ -357,8 +357,8 @@ export default function MasterDashboard() {
                       fontWeight: '700', 
                       padding: '0.2rem 0.6rem', 
                       borderRadius: '10px',
-                      background: ev.tier === 'corporativo' ? 'var(--accent)' : (ev.tier === 'premium' ? '#c4a97a' : 'var(--bg-glass)'),
-                      color: ev.tier === 'corporativo' ? '#000' : '#fff'
+                      background: ev.tier === 'latroncal' ? '#008e45' : (ev.tier === 'corporativo' ? 'var(--accent)' : (ev.tier === 'premium' ? '#c4a97a' : 'var(--bg-glass)')),
+                      color: (ev.tier === 'corporativo' || ev.tier === 'latroncal') ? '#fff' : '#fff'
                     }}>
                       {ev.tier.toUpperCase()}
                     </span>
@@ -431,6 +431,7 @@ export default function MasterDashboard() {
                   <option value="base">Pack Base</option>
                   <option value="premium">Pack Premium</option>
                   <option value="corporativo">Pack Corporativo</option>
+                  <option value="latroncal">🌿 Pack La Troncal (Exclusivo)</option>
                 </select>
               </div>
               <div>
