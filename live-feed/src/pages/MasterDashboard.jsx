@@ -378,6 +378,7 @@ export default function MasterDashboard() {
                 <button className="mod-btn" style={{ padding: '0.7rem' }} onClick={() => openEdit(ev)}>⚙️ Editar Config</button>
                 <button className="mod-btn" style={{ padding: '0.7rem', background: 'var(--accent)', color: '#000' }} onClick={() => { setQrEvent(ev); setShowQRModal(true); }}>📱 Generar QR</button>
                 <button className="mod-btn" style={{ padding: '0.7rem' }} onClick={() => window.open(`${window.location.pathname}#/moderar/${ev.id}`, '_blank')}>🛠️ Moderación</button>
+                <button className="mod-btn" style={{ padding: '0.7rem', background: 'rgba(255,255,255,0.1)', border: '1px solid var(--accent)' }} onClick={() => window.open(`${window.location.pathname}#/galeria/${ev.id}`, '_blank')}>🖼️ Galería</button>
               </div>
             </div>
           ))

@@ -207,19 +207,27 @@ export default function LiveMonitor() {
     return () => clearInterval(intervalRef.current);
   }, [isPaused, photos.length, eventConfig, advanceSlide, monitorState.mode]);
 
-  // ── Rotación automática de Publicidades ────────────────────────────────────
+  // ── Rotación automática de Publicidades (TANDA COMPLETA) ──────────────────
   const [currentAdIndex, setCurrentAdIndex] = useState(0);
 
   useEffect(() => {
-    if (monitorState.mode === 'ad' && ads.length > 0) {
+    if (monitorState.mode === 'ad') {
+      if (!ads || ads.length === 0) {
+        // Si no hay publicidades cargadas, volver inmediatamente a feed
+        if (eventId) {
+          update(ref(db, `livefeed/${eventId}/monitorState`), { mode: 'feed' });
+        }
+        return;
+      }
+
       setCurrentAdIndex(0);
-      const interval = (eventConfig?.adIntervalSeconds || 8) * 1000; // 8 segundos por ad por defecto
+      const interval = (eventConfig?.adIntervalSeconds || 8) * 1000;
       let count = 0;
       
       const adInterval = setInterval(async () => {
         count++;
         if (count >= ads.length) {
-          // Fin del ciclo de publicidad, volver a feed
+          // Completada toda la tanda publicitaria, volver a feed
           clearInterval(adInterval);
           if (eventId) {
             await update(ref(db, `livefeed/${eventId}/monitorState`), { mode: 'feed' });

@@ -18,6 +18,7 @@ export default function Invitation() {
   const [hasRsvped, setHasRsvped] = useState(false);
   const [isAttending, setIsAttending] = useState(null);
   const [rsvpLoading, setRsvpLoading] = useState(false);
+  const [isCheckedIn, setIsCheckedIn] = useState(false);
   
   // Wishlist state
   const [wishlist, setWishlist] = useState([]);
@@ -25,10 +26,40 @@ export default function Invitation() {
   // Camera Status
   const [cameraEnabled, setCameraEnabled] = useState(true);
 
+  // ── Verificar si el DNI local ya hizo check-in ──────────────────────────────
+  useEffect(() => {
+    if (!eventId) return;
+    const storedDni = localStorage.getItem(`livefeed_guest_dni_${eventId}`) || rsvpDni;
+    if (!storedDni) return;
+
+    const participantRef = ref(db, `livefeed/${eventId}/participants/${storedDni}`);
+    const unsubPart = onValue(participantRef, (snap) => {
+      if (snap.exists()) {
+        const val = snap.val();
+        setIsCheckedIn(val.checkedIn === true || !!val.raffleNumber);
+      } else {
+        setIsCheckedIn(false);
+      }
+    });
+
+    return () => unsubPart();
+  }, [eventId, rsvpDni, hasRsvped]);
+
   // ── Cargar Config y Escuchar Estado Cámara ────────────────────────────────
   useEffect(() => {
     if (!eventId) return;
     
+    // Cargar datos previos de localStorage si existen
+    const savedName = localStorage.getItem(`livefeed_guest_name_${eventId}`);
+    const savedDni = localStorage.getItem(`livefeed_guest_dni_${eventId}`);
+    const savedAttending = localStorage.getItem(`livefeed_guest_attending_${eventId}`);
+    if (savedName && savedDni) {
+      setRsvpName(savedName);
+      setRsvpDni(savedDni);
+      setHasRsvped(true);
+      if (savedAttending !== null) setIsAttending(savedAttending === "true");
+    }
+
     const configRef = ref(db, `livefeed/${eventId}/config`);
     const unsub = onValue(configRef, (snap) => {
       if (snap.exists()) {
@@ -78,6 +109,8 @@ export default function Invitation() {
       setHasRsvped(true);
       setIsAttending(attendingStatus);
       localStorage.setItem(`livefeed_guest_name_${eventId}`, rsvpName);
+      localStorage.setItem(`livefeed_guest_dni_${eventId}`, rsvpDni);
+      localStorage.setItem(`livefeed_guest_attending_${eventId}`, attendingStatus ? "true" : "false");
     } catch (err) {
       console.error(err);
       alert("Hubo un error al confirmar. Intentá de nuevo.");
@@ -215,29 +248,8 @@ export default function Invitation() {
       {/* Main Content */}
       <main className="invitation-main">
         
-        {/* Photo Section */}
-        <div className="invitation-card invitation-card--accent">
-          <div className="card-badge">NUEVA FUNCIÓN</div>
-          <h2 style={{ fontSize: '1.8rem', fontWeight: '800' }}>📸 Live Feed</h2>
-          <p>
-            ¡Queremos ver el evento a través de tus ojos! Sacá fotos y compartilas 
-            en tiempo real para que todos las vean en las pantallas del salón.
-          </p>
-          <button 
-            className="btn-pill btn-pill-accent"
-            onClick={() => cameraEnabled && navigate(`/foto/${eventId}`)}
-            disabled={!cameraEnabled}
-          >
-            {cameraEnabled ? (
-              <><span>📷</span> Abrir Cámara del Evento</>
-            ) : (
-              <><span>⏸️</span> Subida pausada</>
-            )}
-          </button>
-        </div>
-
-        {/* RSVP Section */}
-        <div className="invitation-card">
+        {/* RSVP Section (AHORA ARRIBA) */}
+        <div className="invitation-card" style={{ marginBottom: '1.5rem' }}>
           <h2 style={{ fontSize: '1.5rem', fontWeight: '700' }}>Confirmar Asistencia</h2>
           {hasRsvped ? (
             <div style={{ textAlign: 'center', padding: '1rem' }}>
@@ -252,7 +264,7 @@ export default function Invitation() {
               <input 
                 type="text" 
                 className="rsvp-input-pill" 
-                placeholder="Tu nombre y apellido" 
+                placeholder="Tu nombre y apellido *" 
                 value={rsvpName}
                 onChange={e => setRsvpName(e.target.value)}
                 required
@@ -260,7 +272,7 @@ export default function Invitation() {
               <input 
                 type="number" 
                 className="rsvp-input-pill" 
-                placeholder="Tu número de DNI (sin puntos)" 
+                placeholder="Tu número de DNI (sin puntos) *" 
                 value={rsvpDni}
                 onChange={e => setRsvpDni(e.target.value)}
                 required
@@ -269,7 +281,7 @@ export default function Invitation() {
               <input 
                 type="tel" 
                 className="rsvp-input-pill" 
-                placeholder="Tu WhatsApp / Teléfono" 
+                placeholder="Tu WhatsApp / Teléfono *" 
                 value={rsvpPhone}
                 onChange={e => setRsvpPhone(e.target.value)}
                 required
@@ -278,7 +290,7 @@ export default function Invitation() {
               <input 
                 type="email" 
                 className="rsvp-input-pill" 
-                placeholder="Tu Correo Electrónico" 
+                placeholder="Tu Correo Electrónico *" 
                 value={rsvpEmail}
                 onChange={e => setRsvpEmail(e.target.value)}
                 required
@@ -287,7 +299,7 @@ export default function Invitation() {
               <input 
                 type="text" 
                 className="rsvp-input-pill" 
-                placeholder="Tu Emprendimiento / Marca (Opcional)" 
+                placeholder="Tu Marca / Nombre comercial (Opcional)" 
                 value={rsvpEmprendimiento}
                 onChange={e => setRsvpEmprendimiento(e.target.value)}
                 style={{ marginTop: '0.5rem' }}
@@ -383,6 +395,57 @@ export default function Invitation() {
             </div>
           </div>
         )}
+
+        {/* Photo Section (AHORA AL FINAL Y CON CANDADO) */}
+        {(() => {
+          const isToday = eventConfig?.date ? new Date().toDateString() === new Date(eventConfig.date).toDateString() : false;
+          const canAccessCamera = cameraEnabled && isAttending && isCheckedIn && isToday;
+
+          return (
+            <div className="invitation-card invitation-card--accent" style={{ marginTop: '1.5rem', marginBottom: '1.5rem' }}>
+              <div className="card-badge">{canAccessCamera ? "¡CÁMARA LISTA!" : "CÁMARA BLOQUEADA"}</div>
+              <h2 style={{ fontSize: '1.8rem', fontWeight: '800' }}>📸 Live Feed</h2>
+              <p>
+                ¡Queremos ver el evento a través de tus ojos! Sacá fotos y compartilas 
+                en tiempo real para que todos las vean en las pantallas del salón.
+              </p>
+              
+              {!isToday && (
+                <p style={{ fontSize: '0.85rem', color: '#ffbd59', fontWeight: '600', marginBottom: '0.8rem' }}>
+                  ⏳ La cámara se habilitará el día del evento.
+                </p>
+              )}
+              {isToday && !hasRsvped && (
+                <p style={{ fontSize: '0.85rem', color: '#ffbd59', fontWeight: '600', marginBottom: '0.8rem' }}>
+                  📝 Confirmá tu asistencia arriba para activar la cámara.
+                </p>
+              )}
+              {isToday && hasRsvped && !isAttending && (
+                <p style={{ fontSize: '0.85rem', color: '#ff6b6b', fontWeight: '600', marginBottom: '0.8rem' }}>
+                  ❌ Confirmaste que no asistirás al evento.
+                </p>
+              )}
+              {isToday && isAttending && !isCheckedIn && (
+                <p style={{ fontSize: '0.85rem', color: '#ffbd59', fontWeight: '600', marginBottom: '0.8rem' }}>
+                  🚪 Escaneá el QR de la puerta con tu DNI para activar la cámara.
+                </p>
+              )}
+
+              <button 
+                className="btn-pill btn-pill-accent"
+                onClick={() => canAccessCamera && navigate(`/foto/${eventId}`)}
+                disabled={!canAccessCamera}
+                style={{ opacity: canAccessCamera ? 1 : 0.6, cursor: canAccessCamera ? 'pointer' : 'not-allowed' }}
+              >
+                {canAccessCamera ? (
+                  <><span>📷</span> Abrir Cámara del Evento</>
+                ) : (
+                  <><span>🔒</span> Cámara Bloqueada</>
+                )}
+              </button>
+            </div>
+          );
+        })()}
 
         <div style={{ textAlign: 'center', opacity: 0.4, fontSize: '0.8rem', padding: '1rem', paddingBottom: '3rem' }}>
           Realizado por <a href="https://estudioprecinto.com" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', fontWeight: 'bold' }}>Estudio Precinto</a>

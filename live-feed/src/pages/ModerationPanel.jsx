@@ -163,25 +163,71 @@ export default function ModerationPanel() {
   };
 
   const exportToCSV = () => {
-    if (rsvps.length === 0) {
-      alert("No hay confirmaciones para exportar.");
+    // Combinar RSVPs y Participantes de Check-in
+    const allGuestsMap = new Map();
+
+    rsvps.forEach(r => {
+      if (r.dni) {
+        allGuestsMap.set(r.dni, {
+          dni: r.dni,
+          name: r.name,
+          phone: r.phone || 'N/A',
+          email: r.email || 'N/A',
+          marca: r.emprendimiento || 'N/A',
+          attendingRSVP: r.attending ? "Sí" : "No",
+          checkedIn: "No",
+          raffleNumber: "-",
+          isWinner: "No",
+          prizeOrder: "-"
+        });
+      }
+    });
+
+    participants.forEach(p => {
+      const dni = p.id || p.dni;
+      const existing = allGuestsMap.get(dni) || {};
+      allGuestsMap.set(dni, {
+        dni: dni,
+        name: p.name || existing.name || 'Sin nombre',
+        phone: p.phone || existing.phone || 'N/A',
+        email: p.email || existing.email || 'N/A',
+        marca: p.emprendimiento || existing.marca || 'N/A',
+        attendingRSVP: existing.attendingRSVP || "Sí",
+        checkedIn: p.checkedIn ? "Sí" : "Sí (Presencial)",
+        raffleNumber: p.raffleNumber || "-",
+        isWinner: p.isWinner ? "🏆 GANADOR" : "No",
+        prizeOrder: p.prizeNumber ? `Premio #${p.prizeNumber}` : "-"
+      });
+    });
+
+    const guestsList = Array.from(allGuestsMap.values());
+
+    if (guestsList.length === 0) {
+      alert("No hay registros de asistentes o confirmaciones para exportar.");
       return;
     }
     
-    const headers = ["Nombre", "Teléfono", "Asiste", "Fecha"];
-    const rows = rsvps.map(r => [
-      `"${r.name}"`,
-      `"${r.phone || 'N/A'}"`,
-      r.attending ? "Sí" : "No",
-      `"${new Date(r.timestamp).toLocaleString()}"`
+    const headers = ["DNI", "Nombre", "Teléfono", "Email", "Marca / Emprendimiento", "RSVP Asistirá", "Check-in Puerta", "N° Sorteo", "Ganador", "Orden Premio"];
+    const rows = guestsList.map(g => [
+      `"${g.dni}"`,
+      `"${g.name}"`,
+      `"${g.phone}"`,
+      `"${g.email}"`,
+      `"${g.marca}"`,
+      `"${g.attendingRSVP}"`,
+      `"${g.checkedIn}"`,
+      `"${g.raffleNumber}"`,
+      `"${g.isWinner}"`,
+      `"${g.prizeOrder}"`
     ]);
     
-    const csvContent = [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
+    // Agregar BOM UTF-8 (\uFEFF) para apertura perfecta en Excel
+    const csvContent = "\uFEFF" + [headers.join(";"), ...rows.map(e => e.join(";"))].join("\n");
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.setAttribute("href", url);
-    link.setAttribute("download", `rsvps_${eventId}.csv`);
+    link.setAttribute("download", `Reporte_Asistentes_Ganadores_${eventId}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -361,6 +407,18 @@ export default function ModerationPanel() {
               📖 Álbum PDF
             </button>
           )}
+
+          <button 
+            className="mod-btn" 
+            style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid var(--accent)', color: '#fff' }} 
+            onClick={() => {
+              const url = `${window.location.origin}${window.location.pathname}#/galeria/${eventId}`;
+              navigator.clipboard.writeText(url);
+              alert("¡Link de Galería Post-Evento copiado al portapapeles!\n" + url);
+            }}
+          >
+            🖼️ Link Galería
+          </button>
 
           <button className="mod-btn" style={{ background: 'transparent', border: '1px solid #444' }} onClick={() => { sessionStorage.removeItem(ADMIN_KEY); setAuthed(false); }}>Cerrar</button>
         </div>
