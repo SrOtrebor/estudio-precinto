@@ -17,6 +17,7 @@ export default function Invitation() {
   const [rsvpEmprendimiento, setRsvpEmprendimiento] = useState("");
   const [hasRsvped, setHasRsvped] = useState(false);
   const [isAttending, setIsAttending] = useState(null);
+  const [showForm, setShowForm] = useState(false); // Desplegar formulario solo al tocar asistiré
   const [rsvpLoading, setRsvpLoading] = useState(false);
   const [isCheckedIn, setIsCheckedIn] = useState(false);
   
@@ -229,7 +230,7 @@ export default function Invitation() {
             
             <div style={{ background: 'rgba(255,255,255,0.04)', borderRadius: '16px', padding: '1rem', border: '1px solid rgba(255,255,255,0.1)', fontSize: '0.88rem', lineHeight: '1.5', color: '#ddd' }}>
               🎟️ <strong>INVITACIÓN EXCLUSIVA SIN COSTO</strong>, CON INSCRIPCIÓN PREVIA.<br />
-              <span style={{ fontSize: '0.8rem', opacity: 0.8 }}>Cupos limitados - Si venís acompañado/a, recordá registrar también a la persona que viene con vos.</span>
+              <span style={{ fontSize: '0.8rem', opacity: 0.8 }}>Cupos limitados - Si venís acompañado/a, recordá registrar también a las personas que vienen con vos.</span>
             </div>
 
             <div style={{ marginTop: '1.2rem', padding: '1rem', background: 'rgba(0,142,69,0.1)', border: '1px solid #008e45', borderRadius: '16px', textAlign: 'left' }}>
@@ -291,7 +292,7 @@ export default function Invitation() {
       {/* Main Content */}
       <main className="invitation-main">
         
-        {/* RSVP Section (AHORA ARRIBA) */}
+        {/* RSVP Section (DESPLEGABLE AL TOCAR ASISTIRÉ) */}
         <div className="invitation-card" style={{ marginBottom: '1.5rem' }}>
           <h2 style={{ fontSize: '1.5rem', fontWeight: '700' }}>Confirmar Asistencia</h2>
           {hasRsvped ? (
@@ -301,9 +302,35 @@ export default function Invitation() {
                 {isAttending ? '¡Confirmado! Te esperamos.' : 'Qué lástima, te vamos a extrañar.'}
               </p>
             </div>
+          ) : !showForm ? (
+            <div style={{ textAlign: 'center', padding: '0.5rem 0' }}>
+              <p style={{ color: 'var(--text-muted)', marginBottom: '1.2rem' }}>¿Vas a poder acompañarnos?</p>
+              <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+                <button 
+                  type="button" 
+                  className="btn-pill" 
+                  onClick={() => {
+                    setHasRsvped(true);
+                    setIsAttending(false);
+                    localStorage.setItem(`livefeed_guest_attending_${eventId}`, "false");
+                  }} 
+                  style={{ background: 'transparent', border: '1px solid var(--text-muted)', color: 'var(--text-muted)', flex: 1 }}
+                >
+                  No podré ir
+                </button>
+                <button 
+                  type="button" 
+                  className="btn-pill btn-pill-accent" 
+                  onClick={() => setShowForm(true)}
+                  style={{ flex: 1 }}
+                >
+                  Sí, asistiré ✨
+                </button>
+              </div>
+            </div>
           ) : (
-            <div>
-              <p style={{ color: 'var(--text-muted)' }}>Por favor, confirmanos si vas a poder acompañarnos.</p>
+            <div className="fade-in">
+              <p style={{ color: 'var(--accent)', fontWeight: '600', marginBottom: '1rem' }}>📝 Ingresá tus datos para completar la confirmación:</p>
               <input 
                 type="text" 
                 className="rsvp-input-pill" 
@@ -311,6 +338,7 @@ export default function Invitation() {
                 value={rsvpName}
                 onChange={e => setRsvpName(e.target.value)}
                 required
+                autoFocus
               />
               <input 
                 type="number" 
@@ -348,11 +376,11 @@ export default function Invitation() {
                 style={{ marginTop: '0.5rem' }}
               />
               <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-                <button type="button" className="btn-pill" onClick={() => handleRSVP(false)} disabled={rsvpLoading} style={{ background: 'transparent', border: '1px solid var(--text-muted)', color: 'var(--text-muted)' }}>
-                  {rsvpLoading ? '...' : 'No podré ir'}
+                <button type="button" className="btn-pill" onClick={() => setShowForm(false)} disabled={rsvpLoading} style={{ background: 'transparent', border: '1px solid var(--text-muted)', color: 'var(--text-muted)' }}>
+                  Volver
                 </button>
                 <button type="button" className="btn-pill btn-pill-accent" onClick={() => handleRSVP(true)} disabled={rsvpLoading}>
-                  {rsvpLoading ? 'Procesando...' : 'Sí, asistiré'}
+                  {rsvpLoading ? 'Guardando...' : 'Confirmar Asistencia'}
                 </button>
               </div>
             </div>
