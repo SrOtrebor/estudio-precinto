@@ -305,12 +305,13 @@ export default function LiveMonitor() {
         />
       )}
 
-      {/* Marco Superior del Monitor con Logo del Evento */}
-      {eventConfig?.logoUrl && (
-        <div className="monitor-top-header" style={{ position: 'absolute', top: '25px', left: '35px', zIndex: 100, display: 'flex', alignItems: 'center', gap: '15px' }}>
+      {/* Marco Superior del Monitor con Logos del Evento y Trilenium */}
+      <div className="monitor-top-header" style={{ position: 'absolute', top: '25px', left: '35px', zIndex: 100, display: 'flex', alignItems: 'center', gap: '20px' }}>
+        {eventConfig?.logoUrl && (
           <img src={eventConfig.logoUrl} alt={eventConfig?.eventName} style={{ height: '55px', objectFit: 'contain', filter: 'drop-shadow(0 4px 10px rgba(0,0,0,0.6))' }} />
-        </div>
-      )}
+        )}
+        <img src="trilenium-logo.png" alt="Trilenium Casino" style={{ height: '50px', objectFit: 'contain', filter: 'drop-shadow(0 4px 10px rgba(0,0,0,0.6))' }} />
+      </div>
 
       {/* Main Content */}
       <div className={`monitor-main ${transitioning ? "fade-out" : "fade-in"}`}>
@@ -383,9 +384,6 @@ export default function LiveMonitor() {
               <div className="polaroid-photo-area">
                 <img src={currentPhoto.imageUrl} alt="" className="photo-bg-blur" />
                 <img src={currentPhoto.imageUrl} alt="Live Feed" className="photo-main" />
-                {eventConfig?.logoUrl && (
-                  <img src={eventConfig.logoUrl} alt="Watermark" className="photo-watermark" />
-                )}
               </div>
               <div className="polaroid-info-area">
                 <div className="polaroid-info-left">
@@ -394,7 +392,7 @@ export default function LiveMonitor() {
                 </div>
                 <div className="polaroid-info-right">
                   {eventConfig?.logoUrl ? (
-                    <img src={eventConfig.logoUrl} alt={eventConfig?.eventName} style={{ height: '40px', objectFit: 'contain' }} />
+                    <img src={eventConfig.logoUrl} alt={eventConfig?.eventName} style={{ height: '45px', objectFit: 'contain' }} />
                   ) : (
                     <span className="polaroid-event-name-highlight">{eventConfig?.eventName}</span>
                   )}
@@ -406,7 +404,8 @@ export default function LiveMonitor() {
       </div>
 
       {/* Branding Footer */}
-      <div className="monitor-footer">
+      <div className="monitor-footer" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+        <img src="trilenium-logo.png" alt="Trilenium" style={{ height: '35px', opacity: 0.8 }} />
         <div className="monitor-footer-brand">
           <span className="tech-by">TECNOLOGÍA DE</span>
           <span className="studio-name">ESTUDIO PRECINTO</span>
