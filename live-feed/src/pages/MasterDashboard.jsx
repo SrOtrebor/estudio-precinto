@@ -404,6 +404,11 @@ export default function MasterDashboard() {
                   style={{ width: '100%', minHeight: '60px', resize: 'vertical' }} 
                   value={newEvent.name} 
                   onChange={e => setNewEvent({...newEvent, name: e.target.value})} 
+                  onKeyDown={e => {
+                    if (e.key === 'Enter') {
+                      e.stopPropagation();
+                    }
+                  }}
                   placeholder={"Ejemplo:\nAfter\nLa Troncal"}
                   required 
                 />
@@ -514,9 +519,9 @@ export default function MasterDashboard() {
               )}
 
               <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-                <button type="button" className="mod-btn" onClick={() => setShowCreateModal(false)} style={{ flex: 1, padding: '0.8rem' }}>Cancelar</button>
+                <button type="button" className="mod-btn" onClick={closeModal} style={{ flex: 1, padding: '0.8rem' }}>Cancelar</button>
                 <button type="submit" className="btn-primary" style={{ flex: 1, padding: '0.8rem' }} disabled={loading}>
-                  {loading ? 'Subiendo...' : 'Crear Evento'}
+                  {loading ? 'Subiendo...' : (editingEvent ? 'Guardar Cambios' : 'Crear Evento')}
                 </button>
               </div>
             </form>
