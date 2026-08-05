@@ -142,7 +142,7 @@ export default function Gallery() {
         </div>
       </header>
 
-      {/* Grid masonry */}
+      {/* Grid masonry con estilo Polaroid */}
       {filtered.length === 0 ? (
         <div className="gallery-empty">
           <p>
@@ -150,26 +150,49 @@ export default function Gallery() {
           </p>
         </div>
       ) : (
-        <div className="gallery-grid">
+        <div className="gallery-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '2rem', padding: '2rem' }}>
           {filtered.map((photo, idx) => (
             <div
               key={photo.id}
-              className="gallery-item"
+              className="gallery-item-polaroid"
               onClick={() => setLightbox(photo)}
-              style={{ animationDelay: `${(idx % 20) * 40}ms` }}
+              style={{ 
+                background: '#fff', 
+                padding: '12px 12px 25px 12px', 
+                borderRadius: '4px',
+                boxShadow: '0 15px 35px rgba(0,0,0,0.3)',
+                cursor: 'pointer',
+                transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                display: 'flex',
+                flexDirection: 'column',
+                animationDelay: `${(idx % 20) * 40}ms`
+              }}
             >
-              <img src={photo.imageUrl} alt={`Foto de ${photo.authorName}`} className="gallery-img" />
-              <div className="gallery-item-overlay">
-                <span>{photo.authorName}</span>
+              <div style={{ position: 'relative', width: '100%', height: '260px', background: '#000', borderRadius: '2px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <img src={photo.imageUrl} alt="" style={{ position: 'absolute', width: '100%', height: '100%', objectFit: 'cover', filter: 'blur(10px) brightness(0.5)', zIndex: 0 }} />
+                <img src={photo.imageUrl} alt={`Foto de ${photo.authorName}`} style={{ relative: 'relative', zIndex: 1, maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
+                {eventConfig?.logoUrl && (
+                  <img src={eventConfig.logoUrl} alt="Watermark" style={{ position: 'absolute', bottom: '10px', right: '10px', height: '24px', opacity: 0.5, zIndex: 2 }} />
+                )}
+              </div>
+              
+              <div style={{ marginTop: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', padding: '0 4px' }}>
+                <div>
+                  <div style={{ fontSize: '0.65rem', color: '#888', fontWeight: '700', letterSpacing: '1px' }}>ENVIADO POR</div>
+                  <div style={{ fontSize: '1.2rem', color: '#111', fontWeight: '900', fontFamily: 'serif', lineHeight: 1.1 }}>{photo.authorName}</div>
+                </div>
+                <div style={{ fontSize: '0.85rem', fontWeight: '900', color: accentColor, textTransform: 'uppercase' }}>
+                  {eventConfig?.eventName}
+                </div>
               </div>
             </div>
           ))}
         </div>
       )}
 
-      {/* Lightbox */}
+      {/* Lightbox con diseño Polaroid Gigante */}
       {lightbox && (
-        <div className="lightbox" onClick={() => setLightbox(null)}>
+        <div className="lightbox" onClick={() => setLightbox(null)} style={{ background: 'rgba(0,0,0,0.92)' }}>
           <button className="lightbox-close" onClick={() => setLightbox(null)}>✕</button>
           <button
             className="lightbox-nav lightbox-nav--prev"
@@ -181,18 +204,45 @@ export default function Gallery() {
           >
             ‹
           </button>
-          <div className="lightbox-content" onClick={(e) => e.stopPropagation()}>
-            <img src={lightbox.imageUrl} alt={lightbox.authorName} className="lightbox-img" />
-            <div className="lightbox-caption">
-              <strong>{lightbox.authorName}</strong>
-              <span>
-                {new Date(lightbox.uploadedAt).toLocaleDateString("es-AR", {
-                  day: "2-digit", month: "long", year: "numeric",
-                  hour: "2-digit", minute: "2-digit"
-                })}
-              </span>
+          
+          <div className="lightbox-content" onClick={(e) => e.stopPropagation()} style={{ background: 'transparent', boxShadow: 'none' }}>
+            <div className="polaroid-frame-modern" style={{ background: '#fff', padding: '15px 15px 40px 15px', borderRadius: '4px', boxShadow: '0 30px 70px rgba(0,0,0,0.8)', maxWidth: '90vw', maxHeight: '85vh', display: 'flex', flexDirection: 'column' }}>
+              <div className="polaroid-photo-area" style={{ position: 'relative', width: '100%', height: '60vh', background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                <img src={lightbox.imageUrl} alt="" style={{ position: 'absolute', width: '100%', height: '100%', objectFit: 'cover', filter: 'blur(20px) brightness(0.4)' }} />
+                <img src={lightbox.imageUrl} alt={lightbox.authorName} style={{ position: 'relative', zIndex: 1, maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
+                {eventConfig?.logoUrl && (
+                  <img src={eventConfig.logoUrl} alt="Watermark" style={{ position: 'absolute', bottom: '15px', right: '15px', height: '35px', opacity: 0.4, zIndex: 2 }} />
+                )}
+              </div>
+              
+              <div style={{ marginTop: '15px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', padding: '0 8px' }}>
+                <div>
+                  <div style={{ fontSize: '0.7rem', color: '#999', fontWeight: '700', letterSpacing: '2px' }}>ENVIADO POR</div>
+                  <div style={{ fontSize: '1.8rem', color: '#111', fontWeight: '900', fontFamily: 'serif' }}>{lightbox.authorName}</div>
+                  <div style={{ fontSize: '0.75rem', color: '#666', marginTop: '2px' }}>
+                    📅 {new Date(lightbox.uploadedAt).toLocaleDateString("es-AR", { day: "2-digit", month: "long", hour: "2-digit", minute: "2-digit" })}
+                  </div>
+                </div>
+                
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px' }}>
+                  <span style={{ fontSize: '1.2rem', fontWeight: '900', color: accentColor, textTransform: 'uppercase' }}>
+                    {eventConfig?.eventName}
+                  </span>
+                  
+                  <a 
+                    href={lightbox.imageUrl} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    download
+                    style={{ background: accentColor, color: '#000', padding: '0.4rem 1.2rem', borderRadius: '50px', fontWeight: 'bold', fontSize: '0.85rem', textDecoration: 'none' }}
+                  >
+                    ⬇️ Descargar Foto
+                  </a>
+                </div>
+              </div>
             </div>
           </div>
+
           <button
             className="lightbox-nav lightbox-nav--next"
             onClick={(e) => {
