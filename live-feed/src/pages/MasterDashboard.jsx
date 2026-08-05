@@ -398,8 +398,15 @@ export default function MasterDashboard() {
                 </div>
               )}
               <div>
-                <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Nombre Público (ej: Los XV de Vale)</label>
-                <input type="text" className="mod-login-input" style={{ width: '100%' }} value={newEvent.name} onChange={e => setNewEvent({...newEvent, name: e.target.value})} required />
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Nombre Público (Podés usar Enter para varias líneas)</label>
+                <textarea 
+                  className="mod-login-input" 
+                  style={{ width: '100%', minHeight: '60px', resize: 'vertical' }} 
+                  value={newEvent.name} 
+                  onChange={e => setNewEvent({...newEvent, name: e.target.value})} 
+                  placeholder={"Ejemplo:\nAfter\nLa Troncal"}
+                  required 
+                />
               </div>
               <div style={{ background: 'rgba(var(--accent-rgb), 0.1)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--accent)' }}>
                 <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', fontWeight: 'bold' }}>🔑 Contraseña de Moderación</label>

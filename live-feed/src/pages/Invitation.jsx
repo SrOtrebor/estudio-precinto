@@ -226,7 +226,9 @@ export default function Invitation() {
 
         <div className="invitation-header-content">
           <span className="invitation-subtitle">Estás invitado</span>
-          <h1 className="invitation-title">{eventConfig.eventName}</h1>
+          <h1 className="invitation-title" style={{ whiteSpace: 'pre-line' }}>
+            {eventConfig.eventName}
+          </h1>
           <div className="invitation-date-pill">
             📅 {new Date(eventConfig.date).toLocaleDateString("es-AR", { weekday: 'long', day: 'numeric', month: 'long' })}
           </div>
