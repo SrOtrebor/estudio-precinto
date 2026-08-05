@@ -307,18 +307,15 @@ export default function LiveMonitor() {
 
       {/* Marco Superior del Monitor con Logos del Evento y Trilenium */}
       <div className="monitor-top-header" style={{ position: 'absolute', top: '25px', left: '35px', zIndex: 100, display: 'flex', alignItems: 'center', gap: '20px' }}>
-        {eventConfig?.logoUrl && (
-          <img 
-            src={eventConfig.logoUrl} 
-            alt={eventConfig?.eventName} 
-            style={{ 
-              height: '55px', 
-              objectFit: 'contain', 
-              mixBlendMode: 'screen', // Vuelve transparente el recuadro negro sobre fondo oscuro
-              filter: 'drop-shadow(0 4px 10px rgba(0,0,0,0.6))' 
-            }} 
-          />
-        )}
+        <img 
+          src={eventConfig?.logoUrl || "logo-troncal.png"} 
+          alt={eventConfig?.eventName || "La Troncal"} 
+          style={{ 
+            height: '55px', 
+            objectFit: 'contain', 
+            filter: 'drop-shadow(0 4px 10px rgba(0,0,0,0.6))' 
+          }} 
+        />
         <img src="trilenium-logo.png" alt="Trilenium Casino" style={{ height: '50px', objectFit: 'contain', filter: 'drop-shadow(0 4px 10px rgba(0,0,0,0.6))' }} />
       </div>
 
@@ -400,19 +397,14 @@ export default function LiveMonitor() {
                   <div className="polaroid-name">{currentPhoto.authorName}</div>
                 </div>
                 <div className="polaroid-info-right">
-                  {eventConfig?.logoUrl ? (
-                    <img 
-                      src={eventConfig.logoUrl} 
-                      alt={eventConfig?.eventName} 
-                      style={{ 
-                        height: '45px', 
-                        objectFit: 'contain',
-                        mixBlendMode: 'multiply' // Fusiona el fondo negro con el papel blanco de la Polaroid
-                      }} 
-                    />
-                  ) : (
-                    <span className="polaroid-event-name-highlight">{eventConfig?.eventName}</span>
-                  )}
+                  <img 
+                    src="logo-troncal.png" 
+                    alt={eventConfig?.eventName || "La Troncal"} 
+                    style={{ 
+                      height: '45px', 
+                      objectFit: 'contain'
+                    }} 
+                  />
                 </div>
               </div>
             </div>
