@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Glosario — Academia Maleki</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .glossary-wrap {
+      padding-top: 80px;
+      max-width: 900px;
+      margin: 0 auto;
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+      padding-bottom: 4rem
+    }
+
+    .search-box {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1rem 1.5rem;
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--glow-deep);
+    }
+
+    .search-input {
+      background: transparent;
+      border: none;
+      color: var(--text);
+      font-size: 1.1rem;
+      width: 100%;
+      outline: none;
+    }
+
+    .search-input::placeholder {
+      color: var(--text-dim)
+    }
+
+    .vocab-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem
+    }
+
+    .vocab-card {
+      background: rgba(18, 16, 42, 0.6);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      transition: var(--transition);
+    }
+
+    .vocab-card:hover {
+      border-color: var(--gold-dim);
+      transform: translateY(-2px);
+      box-shadow: var(--glow-gold)
+    }
+
+    .mk-word-lg {
+      font-family: 'Cinzel', serif;
+      color: var(--gold);
+      font-size: 1.25rem;
+      margin-bottom: 0.25rem
+    }
+
+    .es-word {
+      color: var(--text);
+      font-size: 0.9rem;
+      font-weight: 500
+    }
+
+    .ipa-word {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-style: italic;
+      margin-top: 0.4rem
+    }
+
+    .notes-word {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      margin-top: 0.5rem;
+      line-height: 1.4
+    }
+
+    .no-results {
+      text-align: center;
+      padding: 4rem;
+      color: var(--text-dim)
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bg-stars"></div>
+  <nav class="nav">
+    <a href="index.html" class="nav-logo">Academia <span>Maleki</span></a>
+    <ul class="nav-links">
+      <li><a href="dashboard.html">Mi Camino</a></li>
+      <li><a href="lesson.html">Lecciones</a></li>
+      <li><a href="glossary.html" class="active">Glosario</a></li>
+    </ul>
+    <div class="nav-user" id="nav-user">
+      <div id="nav-avatar" class="nav-avatar"
+        style="background:linear-gradient(135deg,#7c4d9e,#3d6b9e);display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;color:var(--gold);font-size:1rem;width:36px;height:36px;border-radius:50%;border:2px solid var(--gold)">
+        ?</div>
+    </div>
+  </nav>
+
+  <div class="glossary-wrap page">
+    <div class="mb-3">
+      <h1 class="font-cinzel text-gold">Glosario Sagrado</h1>
+      <p class="text-muted">Busca entre las 1,743 palabras del idioma Maleki.</p>
+    </div>
+
+    <div class="search-box">
+      <span style="font-size:1.2rem;opacity:0.5">🔍</span>
+      <input type="text" id="search" class="search-input" placeholder="Buscar en español o maleki..." autofocus>
+    </div>
+
+    <div id="vocab-container" class="vocab-grid"></div>
+    <div id="no-results" class="no-results" style="display:none">No se encontraron palabras que coincidan con tu
+      búsqueda.</div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/maleki-data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    let allVocab = [];
+
+    function renderVocab(list) {
+      const container = document.getElementById('vocab-container');
+      const noRes = document.getElementById('no-results');
+      container.innerHTML = '';
+
+      if (list.length === 0) {
+        noRes.style.display = 'block';
+        return;
+      }
+      noRes.style.display = 'none';
+
+      list.forEach(v => {
+        const card = document.createElement('div');
+        card.className = 'vocab-card';
+        card.innerHTML = `
+      <div class="mk-word-lg">${v.mk}</div>
+      <div class="es-word">${v.es}</div>
+      ${v.ipa ? `<div class="ipa-word">[${v.ipa}]</div>` : ''}
+      ${v.notes ? `<div class="notes-word">${v.notes}</div>` : ''}
+    `;
+        container.appendChild(card);
+      });
+    }
+
+    document.getElementById('search').addEventListener('input', (e) => {
+      const q = e.target.value.toLowerCase().trim();
+      if (!q) {
+        renderVocab(allVocab.slice(0, 50));
+        return;
+      }
+      const filtered = allVocab.filter(v =>
+        v.mk.toLowerCase().includes(q) ||
+        v.es.toLowerCase().includes(q)
+      );
+      renderVocab(filtered.slice(0, 100)); // Limit to 100 results for performance
+    });
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      await window.MalekiAuth.requireAuth();
+      const user = await window.MalekiAuth.getCurrentUser();
+      if (user) {
+        const i = (user.displayName || user.email || 'M').slice(0, 1).toUpperCase();
+        document.getElementById('nav-avatar').textContent = i;
+      }
+
+      // VOCAB comes from maleki-data.js
+      allVocab = VOCAB;
+      renderVocab(allVocab.slice(0, 50));
+    });
+  </script>
+</body>
+
+</html>
