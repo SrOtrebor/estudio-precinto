@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { db, ref, onValue, update, remove, get, set, storage, storageRef, deleteObject, uploadBytes, getDownloadURL } from "../firebase";
-import * as ExcelJS from "exceljs";
+
 
 const ADMIN_KEY = "livefeed_admin_auth";
 
@@ -210,6 +210,18 @@ export default function ModerationPanel() {
       return;
     }
     
+    // Cargar ExcelJS desde CDN de forma dinámica (no bundleado)
+    if (!window.ExcelJS) {
+      await new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js';
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+      });
+    }
+    const ExcelJS = window.ExcelJS;
+
     // Crear libro de trabajo con ExcelJS
     const workbook = new ExcelJS.Workbook();
     workbook.creator = "Estudio Precinto";
