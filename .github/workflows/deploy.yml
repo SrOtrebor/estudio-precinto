@@ -90,9 +90,17 @@ jobs:
           mkdir -p dist_final/subasta-silenciosa
           cp -r subasta-silenciosa/dist/* dist_final/subasta-silenciosa/
 
-          [ -d curso-maleki ]  && cp -r curso-maleki  dist_final/ || true
-          [ -d sitio-prueba ]  && cp -r sitio-prueba  dist_final/ || true
-          [ -d nueva_version ] && cp -r nueva_version dist_final/ || true
+          # Copiamos con rsync para EXCLUIR node_modules y archivos pesados innecesarios
+          [ -d curso-maleki ] && rsync -a --exclude='node_modules' --exclude='.git' curso-maleki/ dist_final/curso-maleki/ || true
+          [ -d sitio-prueba ] && rsync -a --exclude='node_modules' --exclude='.git' sitio-prueba/ dist_final/sitio-prueba/ || true
+          [ -d nueva_version ] && rsync -a \
+            --exclude='node_modules' \
+            --exclude='.git' \
+            --exclude='*.log' \
+            nueva_version/ dist_final/nueva_version/ || true
+
+          echo "📦 Tamaño dist_final:"
+          du -sh dist_final/
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
