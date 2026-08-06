@@ -11,11 +11,12 @@ permissions:
 
 jobs:
   build_and_deploy:
+    timeout-minutes: 20
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -25,63 +26,72 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Build Sorteo App
-        working-directory: ./sorteo
-        env:
-          VITE_ADMIN_PASSWORD: ${{ secrets.VITE_ADMIN_PASSWORD }}
-        run: |
-          npm ci
-          npm run build
+      # ── Caché de dependencias ──────────────────────────────────────────────
+      - name: Cache node_modules (sorteo)
+        uses: actions/cache@v4
+        with:
+          path: sorteo/node_modules
+          key: sorteo-${{ hashFiles('sorteo/package-lock.json') }}
 
-      - name: Build Live Feed App
-        working-directory: ./live-feed
+      - name: Cache node_modules (live-feed)
+        uses: actions/cache@v4
+        with:
+          path: live-feed/node_modules
+          key: live-feed-${{ hashFiles('live-feed/package-lock.json') }}
+
+      - name: Cache node_modules (subasta-silenciosa)
+        uses: actions/cache@v4
+        with:
+          path: subasta-silenciosa/node_modules
+          key: subasta-${{ hashFiles('subasta-silenciosa/package-lock.json') }}
+
+      # ── Instalar dependencias en paralelo ──────────────────────────────────
+      - name: Install all dependencies (paralelo)
+        run: |
+          (cd sorteo && npm ci --prefer-offline) &
+          (cd live-feed && npm ci --prefer-offline) &
+          (cd subasta-silenciosa && npm ci --prefer-offline) &
+          wait
+          echo "✅ Todas las dependencias instaladas"
+
+      # ── Build en paralelo ──────────────────────────────────────────────────
+      - name: Build all apps (paralelo)
         env:
+          VITE_ADMIN_PASSWORD:  ${{ secrets.VITE_ADMIN_PASSWORD }}
           VITE_MASTER_PASSWORD: ${{ secrets.VITE_MASTER_PASSWORD }}
         run: |
-          npm ci
-          npm run build
+          (cd sorteo && VITE_ADMIN_PASSWORD=$VITE_ADMIN_PASSWORD npm run build) &
+          (cd live-feed && VITE_MASTER_PASSWORD=$VITE_MASTER_PASSWORD npm run build) &
+          (cd subasta-silenciosa && npm run build) &
+          wait
+          echo "✅ Todos los builds completados"
 
-      - name: Build Subasta App
-        working-directory: ./subasta-silenciosa
-        run: |
-          npm ci
-          npm run build
-
+      # ── Estructura final ───────────────────────────────────────────────────
       - name: Create Final Build Structure
         run: |
           mkdir dist_final
-          # Copiamos archivos de la raíz (Sitio principal)
+
           cp index.html dist_final/
-          cp index.css dist_final/
-          cp script.js dist_final/
-          cp CNAME dist_final/
-          
-          # Copiamos carpetas de recursos si existen
+          cp index.css  dist_final/
+          cp script.js  dist_final/
+          cp CNAME      dist_final/
+
           [ -d assets ] && cp -r assets dist_final/ || true
-          [ -d SVG ] && cp -r SVG dist_final/ || true
-          # Copiamos archivos SEO de la raíz
-          [ -f robots.txt ] && cp robots.txt dist_final/ || true
+          [ -d SVG ]    && cp -r SVG    dist_final/ || true
+          [ -f robots.txt ]  && cp robots.txt  dist_final/ || true
           [ -f sitemap.xml ] && cp sitemap.xml dist_final/ || true
-          
-          # Copiamos el build de la app de sorteos a la subcarpeta /sorteo
+
           mkdir -p dist_final/sorteo
           cp -r sorteo/dist/* dist_final/sorteo/
-          
-          # Copiamos el build de Live Feed a la subcarpeta /live-feed
+
           mkdir -p dist_final/live-feed
           cp -r live-feed/dist/* dist_final/live-feed/
 
-          # Copiamos el build de Subasta a la subcarpeta /subasta-silenciosa
           mkdir -p dist_final/subasta-silenciosa
           cp -r subasta-silenciosa/dist/* dist_final/subasta-silenciosa/
 
-          # Copiamos curso-maleki
-          [ -d curso-maleki ] && cp -r curso-maleki dist_final/ || true
-
-          # Copiamos sitio-prueba
-          [ -d sitio-prueba ] && cp -r sitio-prueba dist_final/ || true
-
-          # Copiamos nueva_version
+          [ -d curso-maleki ]  && cp -r curso-maleki  dist_final/ || true
+          [ -d sitio-prueba ]  && cp -r sitio-prueba  dist_final/ || true
           [ -d nueva_version ] && cp -r nueva_version dist_final/ || true
 
       - name: Setup Pages
@@ -90,7 +100,6 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Subimos la carpeta unificada
           path: './dist_final'
 
       - name: Deploy to GitHub Pages
