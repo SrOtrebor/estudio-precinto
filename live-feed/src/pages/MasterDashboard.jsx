@@ -427,7 +427,14 @@ export default function MasterDashboard() {
               </div>
               <div>
                 <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Pack</label>
-                <select className="mod-login-input" style={{ width: '100%' }} value={newEvent.tier} onChange={e => setNewEvent({...newEvent, tier: e.target.value})}>
+                <select className="mod-login-input" style={{ width: '100%' }} value={newEvent.tier} onChange={e => {
+                    const newTier = e.target.value;
+                    setNewEvent(prev => ({
+                      ...prev,
+                      tier: newTier,
+                      name: newTier === 'latroncal' ? 'After Lucky Night La Troncal' : prev.name
+                    }));
+                  }}>
                   <option value="base">Pack Base</option>
                   <option value="premium">Pack Premium</option>
                   <option value="corporativo">Pack Corporativo</option>
