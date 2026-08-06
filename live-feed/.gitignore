@@ -24,3 +24,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Archivos pesados / assets locales (no incluir en deploy)
+*.af
+clau.jpg
