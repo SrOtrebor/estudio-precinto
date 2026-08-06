@@ -5,16 +5,11 @@ on:
     branches: [ "main" ]
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
 jobs:
   build_and_deploy:
     timeout-minutes: 20
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
 
     steps:
@@ -90,7 +85,6 @@ jobs:
           mkdir -p dist_final/subasta-silenciosa
           cp -r subasta-silenciosa/dist/* dist_final/subasta-silenciosa/
 
-          # Copiamos con rsync para EXCLUIR node_modules y archivos pesados innecesarios
           [ -d curso-maleki ] && rsync -a --exclude='node_modules' --exclude='.git' curso-maleki/ dist_final/curso-maleki/ || true
           [ -d sitio-prueba ] && rsync -a --exclude='node_modules' --exclude='.git' sitio-prueba/ dist_final/sitio-prueba/ || true
           [ -d nueva_version ] && rsync -a \
@@ -102,16 +96,10 @@ jobs:
           echo "📦 Tamaño dist_final:"
           du -sh dist_final/
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+      # ── Deploy a rama gh-pages ─────────────────────────────────────────────
+      - name: Deploy to gh-pages branch
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          path: './dist_final'
-
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
-        with:
-          timeout: 900000
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist_final
+          force_orphan: true
