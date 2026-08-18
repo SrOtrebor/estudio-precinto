@@ -267,7 +267,7 @@ export default function LiveMonitor() {
   const currentPhoto = photos[currentIndex];
   const accentColor = eventConfig?.accentColor || "#a28a68";
 
-  if (photos.length === 0) {
+  if (photos.length === 0 && monitorState.mode === 'feed') {
     return (
       <div className="monitor-screen monitor-screen--empty" style={{ "--accent": accentColor }}>
         <div className="monitor-waiting">
