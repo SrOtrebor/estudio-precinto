@@ -159,6 +159,10 @@ export default function ModerationPanel() {
     await update(ref(db, `livefeed/${eventId}/config`), { autoApprove: !eventConfig.autoApprove });
   };
 
+  const setMonitorMode = async (mode) => {
+    await update(ref(db, `livefeed/${eventId}/monitorState`), { mode });
+  };
+
   const toggleCamera = async () => {
     const newVal = !(eventConfig.cameraEnabled !== false);
     await update(ref(db, `livefeed/${eventId}/config`), { cameraEnabled: newVal });
