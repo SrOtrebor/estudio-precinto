@@ -168,6 +168,7 @@ export default function LiveMonitor() {
 
     setTransitioning(true);
     setTimeout(() => {
+      let triggeredAd = false;
       setCurrentIndex((prev) => {
         const next = (prev + 1) % buf.length;
         const newCount = photoCounter + 1;
@@ -180,7 +181,13 @@ export default function LiveMonitor() {
           setCollageMode(true);
           setTimeout(() => setCollageMode(false), 12000); 
         }
-        
+        // Lógica de publicidades (ads)
+        else if (ads && ads.length > 0) {
+          const adEvery = eventConfig?.bannerIntervalPhotos || 10;
+          if (newCount % adEvery === 0) {
+            triggeredAd = true;
+          }
+        }
         // Lógica de banners corporativos cada N fotos
         else if ((eventConfig?.tier === "corporativo" || eventConfig?.tier === "latroncal") && eventConfig?.bannerUrls?.length > 0) {
           const bannerEvery = eventConfig.bannerIntervalPhotos || 5;
@@ -194,8 +201,12 @@ export default function LiveMonitor() {
         return next;
       });
       setTransitioning(false);
+
+      if (triggeredAd && eventId) {
+        update(ref(db, `livefeed/${eventId}/monitorState`), { mode: 'ad' });
+      }
     }, TRANSITION_DURATION);
-  }, [eventConfig, photoCounter, collageMode]);
+  }, [eventConfig, photoCounter, collageMode, ads, eventId]);
 
   // ── Rotación automática de Fotos ───────────────────────────────────────────
   useEffect(() => {

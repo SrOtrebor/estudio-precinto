@@ -307,6 +307,8 @@ export default function ModerationPanel() {
         }
       });
     });
+    // ── Habilitar Filtros de Búsqueda ───────────────────────────────────────
+    worksheet.autoFilter = 'A3:J' + worksheet.rowCount;
 
     // ── Auto-ajustar anchos de columnas ─────────────────────────────────────
     worksheet.columns.forEach((col, i) => {
@@ -554,7 +556,8 @@ export default function ModerationPanel() {
           { id: 'approved', label: 'En Pantalla', count: stats.approved, color: 'var(--success)' },
           { id: 'rsvps', label: 'Asistencia', count: stats.rsvps },
           { id: 'wishlist', label: 'Regalos', count: wishlist.filter(w => w.reservedBy).length },
-          { id: 'screen', label: 'Pantalla & Sorteo', count: '📺', color: 'var(--accent)' }
+          { id: 'screen', label: 'Pantalla & Sorteo', count: '📺', color: 'var(--accent)' },
+          { id: 'winners', label: 'Ganadores', count: participants.filter(p => p.isWinner).length, color: '#B37D14' }
         ].map(s => (
           <button 
             key={s.id}
@@ -677,6 +680,35 @@ export default function ModerationPanel() {
               </div>
             </div>
           </div>
+        ) : filter === 'winners' ? (
+          <>
+            <div style={{ gridColumn: '1 / -1', display: 'flex', justifyContent: 'space-between', paddingBottom: '1rem' }}>
+              <h2 style={{ color: '#B37D14' }}>🏆 Ganadores del Sorteo</h2>
+              <button onClick={exportToExcel} className="btn-approve" style={{ padding: '0.8rem 1.5rem', borderRadius: '12px', border: 'none', cursor: 'pointer', fontWeight: 'bold', background: 'var(--accent)', color: '#000' }}>
+                📊 Exportar Excel
+              </button>
+            </div>
+            {participants.filter(p => p.isWinner).map(p => (
+              <div key={p.id} className="photo-card-premium" style={{ padding: '1.5rem', border: '1px solid #B37D14', background: 'rgba(179, 125, 20, 0.1)' }}>
+                <span className="photo-author" style={{ color: '#B37D14', fontSize: '1.2rem' }}>{p.name}</span>
+                <span className="photo-time" style={{ display: 'block', margin: '0.5rem 0' }}>📱 {p.phone || 'N/A'}</span>
+                <span className="photo-time" style={{ display: 'block', margin: '0.5rem 0' }}>🎟️ Ticket: {p.raffleNumber}</span>
+                <div style={{ 
+                  marginTop: '1rem', 
+                  fontSize: '0.9rem', 
+                  fontWeight: '700',
+                  color: '#fff' 
+                }}>
+                  {p.isWinner}
+                </div>
+              </div>
+            ))}
+            {participants.filter(p => p.isWinner).length === 0 && (
+              <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>
+                Todavía no hay ganadores en este evento.
+              </div>
+            )}
+          </>
         ) : filter === 'rsvps' ? (
           <>
             <div style={{ gridColumn: '1 / -1', display: 'flex', justifyContent: 'flex-end', paddingBottom: '1rem' }}>
