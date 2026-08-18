@@ -7,10 +7,10 @@ El objetivo es fusionar la capacidad de los sorteos y la proyección de publicid
 ### Fase 1: Resguardo (Completado ✅)
 - [x] Crear copias de seguridad de las carpetas originales.
 
-### Fase 2: Control de Pantalla y Publicidad (En progreso)
+### Fase 2: Control de Pantalla y Publicidad (Completado ✅)
 - [x] Ampliar el estado de Firebase: `events/{eventId}/monitorState` (modos: feed, sorteo, ad).
 - [x] Actualizar `ModerationPanel.jsx` con controles de pantalla, gestión de publicidad y lanzar sorteo.
-- [ ] Implementar el bucle automático de publicidades en el monitor y regreso al feed.
+- [x] Implementar el bucle automático de publicidades en el monitor y regreso al feed.
 
 ### Fase 3: Registro Presencial con DNI (Check-in)
 - [ ] Crear nueva vista o modal para el ingreso presencial (ej. `/ingreso/:eventId`).
