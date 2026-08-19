@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Mi Camino — Academia Maleki</title>
+  <meta name="description" content="Panel de progreso del estudiante en la Academia de Idioma Maleki.">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .dash-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      min-height: 100vh;
+      padding-top: 72px
+    }
+
+    .sidebar {
+      background: rgba(18, 16, 42, 0.9);
+      border-right: 1px solid var(--border);
+      padding: 2rem 1.5rem;
+      position: fixed;
+      top: 72px;
+      left: 0;
+      bottom: 0;
+      width: 280px;
+      overflow-y: auto;
+    }
+
+    .main-content {
+      grid-column: 2;
+      padding: 2.5rem;
+      max-width: 900px
+    }
+
+    .user-profile {
+      text-align: center;
+      margin-bottom: 2rem
+    }
+
+    .user-avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      border: 3px solid var(--gold);
+      margin: 0 auto 0.75rem;
+      background: linear-gradient(135deg, var(--violet), var(--blue));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cinzel', serif;
+      font-size: 1.8rem;
+      color: var(--gold);
+      box-shadow: var(--glow-gold);
+    }
+
+    .user-name {
+      font-family: 'Cinzel', serif;
+      font-size: 1rem;
+      color: var(--gold);
+      margin-bottom: 0.2rem
+    }
+
+    .user-level-badge {
+      font-size: 0.75rem;
+      color: var(--text-muted)
+    }
+
+    .sidebar-nav {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem
+    }
+
+    .sidebar-nav a {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.7rem 1rem;
+      border-radius: var(--radius);
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.875rem;
+      transition: var(--transition);
+    }
+
+    .sidebar-nav a:hover,
+    .sidebar-nav a.active {
+      background: rgba(201, 168, 76, 0.08);
+      color: var(--gold);
+    }
+
+    .sidebar-nav a.active {
+      border-left: 3px solid var(--gold);
+      padding-left: 0.75rem
+    }
+
+    .sidebar-nav .nav-icon {
+      font-size: 1rem;
+      width: 20px;
+      text-align: center
+    }
+
+    .sidebar-section {
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin: 1.5rem 0 0.5rem;
+      padding-left: 1rem
+    }
+
+    .level-path {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      margin-bottom: 3rem
+    }
+
+    .level-block {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      transition: var(--transition);
+    }
+
+    .level-block.unlocked {
+      border-color: rgba(201, 168, 76, 0.3)
+    }
+
+    .level-block.active-level {
+      border-color: var(--gold);
+      box-shadow: var(--glow-gold)
+    }
+
+    .level-block.locked {
+      opacity: 0.5
+    }
+
+    .level-header {
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background: rgba(255, 255, 255, 0.02);
+      cursor: pointer;
+    }
+
+    .level-header:hover {
+      background: rgba(255, 255, 255, 0.04)
+    }
+
+    .level-icon-big {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+
+    .level-icon-1 {
+      background: rgba(201, 168, 76, 0.15);
+      border: 2px solid rgba(201, 168, 76, 0.4)
+    }
+
+    .level-icon-2 {
+      background: rgba(124, 77, 158, 0.15);
+      border: 2px solid rgba(124, 77, 158, 0.4)
+    }
+
+    .level-icon-3 {
+      background: rgba(61, 107, 158, 0.15);
+      border: 2px solid rgba(61, 107, 158, 0.4)
+    }
+
+    .level-meta {
+      flex: 1
+    }
+
+    .level-name {
+      font-family: 'Cinzel', serif;
+      font-size: 1rem;
+      color: var(--gold);
+      margin-bottom: 0.2rem
+    }
+
+    .level-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted)
+    }
+
+    .level-progress-wrap {
+      margin-top: 0.4rem
+    }
+
+    .level-pct {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 0.3rem
+    }
+
+    .level-body {
+      padding: 1.25rem 1.5rem;
+      border-top: 1px solid var(--border);
+      display: none;
+    }
+
+    .level-body.open {
+      display: block
+    }
+
+    .units-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem
+    }
+
+    .unit-card {
+      padding: 1rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      background: rgba(255, 255, 255, 0.02);
+      transition: var(--transition);
+      text-decoration: none;
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .unit-card:hover:not(.locked) {
+      background: rgba(201, 168, 76, 0.05);
+      border-color: var(--gold-dim)
+    }
+
+    .unit-card.locked {
+      opacity: 0.4;
+      cursor: not-allowed
+    }
+
+    .unit-card.done {
+      border-color: var(--teal);
+      background: rgba(45, 122, 110, 0.05)
+    }
+
+    .unit-num {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cinzel', serif;
+      font-size: 0.8rem;
+      flex-shrink: 0;
+      background: rgba(201, 168, 76, 0.1);
+      border: 1px solid rgba(201, 168, 76, 0.3);
+      color: var(--gold);
+    }
+
+    .unit-num.done-num {
+      background: rgba(45, 122, 110, 0.2);
+      border-color: var(--teal);
+      color: #5bc4b4
+    }
+
+    .unit-num.locked-num {
+      background: rgba(80, 72, 64, 0.2);
+      border-color: var(--border);
+      color: var(--text-dim)
+    }
+
+    .unit-info {
+      flex: 1
+    }
+
+    .unit-title {
+      font-size: 0.875rem;
+      font-weight: 500;
+      margin-bottom: 0.2rem
+    }
+
+    .unit-subtitle {
+      font-size: 0.75rem;
+      color: var(--text-muted)
+    }
+
+    .unit-status {
+      font-size: 0.7rem;
+      margin-top: 0.3rem
+    }
+
+    .exam-btn {
+      margin-top: 1rem;
+      padding: 0.85rem 1.5rem;
+      width: 100%;
+      font-size: 0.9rem;
+    }
+
+    @media(max-width:900px) {
+      .dash-layout {
+        grid-template-columns: 1fr
+      }
+
+      .sidebar {
+        display: none
+      }
+
+      .main-content {
+        grid-column: 1;
+        padding: 1.5rem
+      }
+
+      .units-grid {
+        grid-template-columns: 1fr
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bg-stars"></div>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <a href="index.html" class="nav-logo">Academia <span>Maleki</span></a>
+    <ul class="nav-links">
+      <li><a href="dashboard.html" class="active">Mi Camino</a></li>
+      <li><a href="lesson.html">Lecciones</a></li>
+      <li><a href="glossary.html">Glosario</a></li>
+    </ul>
+    <div class="nav-user" id="nav-user">
+      <div id="nav-discord-role" class="discord-role" style="display:none">
+        <span>🎮</span><span id="discord-role-name"></span>
+      </div>
+      <div id="nav-avatar" class="nav-avatar"
+        style="background:linear-gradient(135deg,#7c4d9e,#3d6b9e);display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;color:var(--gold);font-size:1rem;width:36px;height:36px;border-radius:50%;border:2px solid var(--gold)">
+        ?</div>
+      <button onclick="MalekiAuth.logout()" class="btn btn-ghost btn-sm">Salir</button>
+    </div>
+  </nav>
+
+  <div class="dash-layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="user-profile">
+        <div class="user-avatar" id="sidebar-avatar">?</div>
+        <div class="user-name" id="sidebar-name">Cargando...</div>
+        <div class="user-level-badge" id="sidebar-level"></div>
+      </div>
+      <div class="divider"></div>
+      <div class="sidebar-section">Navegación</div>
+      <ul class="sidebar-nav">
+        <li><a href="dashboard.html" class="active"><span class="nav-icon">🗺️</span> Mi Camino</a></li>
+        <li><a href="lesson.html"><span class="nav-icon">📖</span> Lecciones</a></li>
+        <li><a href="exam.html"><span class="nav-icon">⚔️</span> Exámenes</a></li>
+      </ul>
+      <div class="sidebar-section">Perfil</div>
+      <div class="krama-card mt-2" id="krama-card">
+        <div class="krama-label">Carta Krámica</div>
+        <div class="krama-value" id="krama-cord">— Calculando —</div>
+        <div class="krama-label mt-2">Acorde del Alma</div>
+        <div class="krama-value" id="krama-soul">—</div>
+      </div>
+      <div class="discord-panel mt-3" id="discord-panel">
+        <span class="discord-icon">🎮</span>
+        <div>
+          <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.3rem">Discord</div>
+          <div id="discord-status-text" style="font-size:0.875rem">No conectado</div>
+          <button onclick="MalekiDiscord.startOAuth()" id="btn-connect-discord"
+            class="btn btn-discord btn-sm mt-2">Conectar Discord</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main-content">
+      <div class="mb-3">
+        <div style="font-size:0.8rem;color:var(--text-muted);letter-spacing:0.1em;text-transform:uppercase">Tu camino
+        </div>
+        <h1 class="font-cinzel text-gold" style="font-size:1.75rem;margin-top:0.25rem">Sendero del Aprendiz</h1>
+      </div>
+
+      <!-- STATS -->
+      <div class="stats-grid mb-4" id="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value" id="stat-units">0</div>
+          <div class="stat-label">Unidades completadas</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stat-level">1</div>
+          <div class="stat-label">Nivel actual</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stat-xp">0%</div>
+          <div class="stat-label">Progreso total</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stat-exams">0</div>
+          <div class="stat-label">Exámenes aprobados</div>
+        </div>
+      </div>
+
+      <!-- LEVEL PATH -->
+      <div class="level-path" id="level-path">
+        <!-- Generated by JS -->
+      </div>
+    </main>
+  </div>
+
+  <div id="toast" class="toast">
+    <span class="toast-icon" id="toast-icon">✓</span>
+    <span id="toast-msg"></span>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/maleki-data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    const LEVELS = [
+      {
+        id: 1, icon: '🜁', iconClass: 'level-icon-1',
+        name: 'Iniciado del Kräm',
+        desc: 'Fonética, pronunciación, pronombres y artículos',
+        units: [
+          { id: '1-1', title: 'Alfabeto y Fonética', subtitle: '36 letras, consonantes aspiradas', lessonId: 'phonetics' },
+          { id: '1-2', title: 'Vocales y Diacríticos', subtitle: 'ä ë ï ö ü — sonidos únicos', lessonId: 'vowels' },
+          { id: '1-3', title: 'Pronombres', subtitle: 'Äe, Äs, Ël, Ëk, Erk', lessonId: 'pronouns' },
+          { id: '1-4', title: 'Artículos', subtitle: 'dha, dhaq, dhaka, dhaqk', lessonId: 'articles' },
+        ],
+        examId: 'exam-1', discordRole: 'Iniciado'
+      },
+      {
+        id: 2, icon: '🜂', iconClass: 'level-icon-2',
+        name: 'Erudito de las Cuerdas',
+        desc: 'Sufijos, conjugación verbal y sintaxis',
+        units: [
+          { id: '2-1', title: 'Sufijos de Sustantivos', subtitle: '-ian, -are, -kior, -det, -qora', lessonId: 'noun-suffixes' },
+          { id: '2-2', title: 'Sufijos de Adjetivos', subtitle: '-suen, -wos, -fer, -kuen', lessonId: 'adj-suffixes' },
+          { id: '2-3', title: 'Conjugación Verbal', subtitle: 'Presente, pasado y futuro', lessonId: 'conjugation' },
+          { id: '2-4', title: 'Sintaxis y Negación', subtitle: 'SVO, mäi-, verbos reflexivos', lessonId: 'syntax' },
+        ],
+        examId: 'exam-2', discordRole: 'Erudito'
+      },
+      {
+        id: 3, icon: '🜃', iconClass: 'level-icon-3',
+        name: 'Maestro Maleki',
+        desc: 'Vocabulario avanzado y traducción libre',
+        units: [
+          { id: '3-1', title: 'Vocabulario A–M', subtitle: '+800 palabras del diccionario', lessonId: 'vocab-am' },
+          { id: '3-2', title: 'Vocabulario N–Z', subtitle: '+800 palabras del diccionario', lessonId: 'vocab-nz' },
+          { id: '3-3', title: 'Frases y Oraciones', subtitle: 'Construcción libre', lessonId: 'phrases' },
+        ],
+        examId: 'exam-3', discordRole: 'Maestro Maleki'
+      }
+    ];
+
+    function buildLevelPath(progress) {
+      const container = document.getElementById('level-path');
+      container.innerHTML = '';
+      let unlockedCount = 0, examCount = 0;
+      LEVELS.forEach((lvl, i) => {
+        const userLevel = progress.level || 1;
+        const isLocked = lvl.id > userLevel;
+        const isActive = lvl.id === userLevel;
+        const isCompleted = progress.completedLevels && progress.completedLevels.includes(lvl.id);
+        const completedUnits = progress.completedUnits || [];
+        const doneUnits = lvl.units.filter(u => completedUnits.includes(u.id)).length;
+        const pct = Math.round(doneUnits / lvl.units.length * 100);
+        if (isCompleted) examCount++;
+        const block = document.createElement('div');
+        block.className = 'level-block' + (isLocked ? ' locked' : isActive ? ' active-level' : ' unlocked');
+        block.innerHTML = `
+      <div class="level-header" onclick="toggleLevel(${i})">
+        <div class="level-icon-big ${lvl.iconClass}">${isLocked ? '🔒' : isCompleted ? '✅' : lvl.icon}</div>
+        <div class="level-meta">
+          <div class="level-name">${lvl.name}</div>
+          <div class="level-desc">${lvl.desc}</div>
+          <div class="level-progress-wrap">
+            <div class="level-pct">${pct}% completado</div>
+            <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+          </div>
+        </div>
+        <span style="color:var(--text-dim);font-size:1.2rem;transition:transform 0.3s" id="arrow-${i}">▼</span>
+      </div>
+      <div class="level-body" id="body-${i}">
+        <div class="units-grid">
+          ${lvl.units.map(u => {
+          const done = completedUnits.includes(u.id);
+          const locked = isLocked;
+          return `<div class="unit-card${done ? ' done' : locked ? ' locked' : ''}" onclick="${locked ? '' : 'goLesson(\'' + u.lessonId + '\',\'' + u.id + '\')'}">
+              <div class="unit-num${done ? ' done-num' : locked ? ' locked-num' : ''}">${done ? '✓' : locked ? '🔒' : u.id}</div>
+              <div class="unit-info">
+                <div class="unit-title">${u.title}</div>
+                <div class="unit-subtitle">${u.subtitle}</div>
+                <div class="unit-status">${done ? '<span style="color:#5bc4b4">✓ Completado</span>' : locked ? '<span style="color:var(--text-dim)">Bloqueado</span>' : '<span style="color:var(--amber)">▶ Comenzar</span>'}</div>
+              </div>
+            </div>`;
+        }).join('')}
+        </div>
+        ${!isLocked ? `<button onclick="goExam(${lvl.id})" class="btn ${isActive && doneUnits === lvl.units.length ? 'btn-primary' : 'btn-secondary'} exam-btn" ${isActive && doneUnits < lvl.units.length ? 'disabled' : ''}>
+          ${isCompleted ? '📜 Ver resultados' : '⚔️ Examen de Nivel ' + lvl.id}
+          ${isActive && doneUnits < lvl.units.length ? '<span style="font-size:0.75rem;opacity:0.7"> (completa las unidades primero)</span>' : ''}
+        </button>`: ''}
+      </div>`;
+        container.appendChild(block);
+        if (isActive) setTimeout(() => toggleLevel(i), 100);
+      });
+      document.getElementById('stat-units').textContent = progress.completedUnits ? progress.completedUnits.length : 0;
+      document.getElementById('stat-level').textContent = progress.level || 1;
+      document.getElementById('stat-xp').textContent = Math.round(((progress.completedUnits ? progress.completedUnits.length : 0) / (LEVELS.reduce((a, l) => a + l.units.length, 0))) * 100) + '%';
+      document.getElementById('stat-exams').textContent = examCount;
+    }
+    function toggleLevel(i) {
+      const body = document.getElementById('body-' + i);
+      const arrow = document.getElementById('arrow-' + i);
+      body.classList.toggle('open');
+      arrow.style.transform = body.classList.contains('open') ? 'rotate(180deg)' : '';
+    }
+    function goLesson(lessonId, unitId) {
+      sessionStorage.setItem('currentLesson', lessonId);
+      sessionStorage.setItem('currentUnit', unitId);
+      window.location.href = 'lesson.html';
+    }
+    function goExam(level) {
+      sessionStorage.setItem('examLevel', level);
+      window.location.href = 'exam.html';
+    }
+    function updateKrama(birthDate) {
+      if (!birthDate) return;
+      const d = new Date(birthDate);
+      const start = new Date(d.getFullYear(), 0, 0);
+      const diff = d - start;
+      const oneDay = 1000 * 60 * 60 * 24;
+      const dayOfYear = Math.floor(diff / oneDay);
+      
+      let cord = "Dovahr", icon = "🔴", cls = "cord-dovahr", note = "Do";
+
+      if (dayOfYear >= 1 && dayOfYear <= 52) { cord="Miraësi"; icon="🌿"; cls="cord-miraesi"; note="Mi"; }
+      else if (dayOfYear <= 104) { cord="Solvir"; icon="🔥"; cls="cord-solvir"; note="Sol"; }
+      else if (dayOfYear <= 156) { cord="Falther"; icon="⛰️"; cls="cord-falther"; note="Fa"; }
+      else if (dayOfYear <= 208) { cord="Dovahr"; icon="🔴"; cls="cord-dovahr"; note="Do"; }
+      else if (dayOfYear <= 260) { cord="Lathar"; icon="🌊"; cls="cord-lathar"; note="La"; }
+      else if (dayOfYear <= 312) { cord="Rëian"; icon="🛤️"; cls="cord-reian"; note="Re"; }
+      else { cord="Sivrah"; icon="🌑"; cls="cord-sivrah"; note="Si"; }
+
+      const cordEl = document.getElementById('krama-cord');
+      cordEl.textContent = `${icon} Cuerda de ${cord}`;
+      cordEl.className = 'krama-value ' + cls;
+
+      const soulEl = document.getElementById('krama-soul');
+      soulEl.textContent = `Acorde en ${note} Mayor`;
+      soulEl.className = 'krama-value ' + cls;
+    }
+    document.addEventListener('DOMContentLoaded', async () => {
+      const user = await window.MalekiAuth.requireAuth();
+      if (!user) return;
+      const initials = (user.displayName || user.email || 'M').slice(0, 1).toUpperCase();
+      document.getElementById('sidebar-avatar').textContent = initials;
+      document.getElementById('nav-avatar').textContent = initials;
+      document.getElementById('sidebar-name').textContent = user.displayName || user.email;
+      const progress = await window.MalekiDB.getProgress(user.uid);
+      const lvlNames = ['', 'Iniciado del Kräm', 'Erudito de las Cuerdas', 'Maestro Maleki'];
+      document.getElementById('sidebar-level').textContent = lvlNames[progress.level || 1];
+      buildLevelPath(progress);
+      if (progress.birthDate) updateKrama(progress.birthDate);
+      if (user.discordId) {
+        document.getElementById('btn-connect-discord').style.display = 'none';
+        document.getElementById('discord-status-text').textContent = '@' + user.discordUsername;
+        if (progress.discordRole) {
+          const rEl = document.getElementById('nav-discord-role');
+          rEl.style.display = 'flex';
+          document.getElementById('discord-role-name').textContent = progress.discordRole;
+        }
+      }
+    });
+  </script>
+</body>
+
+</html>

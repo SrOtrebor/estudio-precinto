@@ -1,0 +1,20 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Reglas para la colección "settings" (Precios y Agenda)
+    match /settings/{document=**} {
+      // Cualquier persona puede leer los precios y horarios
+      allow read: if true;
+      // Solo el administrador autorizado puede modificar precios y horarios
+      allow write: if request.auth != null && request.auth.token.email == "info@estudioprecinto.com";
+    }
+
+    // Reglas para la colección "bookings" (Reservas)
+    match /bookings/{document=**} {
+      // Bloquear lectura directa desde frontend cliente (solo a través de backend)
+      allow read: if false;
+      allow write: if false; // Solo el backend en Node.js puede escribir las reservas
+    }
+  }
+}
