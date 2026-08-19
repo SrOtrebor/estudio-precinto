@@ -257,6 +257,10 @@ export default function LiveMonitor() {
   if (photos.length === 0 && monitorState.mode === 'feed') {
     return (
       <div className="monitor-screen monitor-screen--empty" style={{ "--accent": accentColor }}>
+        {/* DEBUG BOX */}
+        <div style={{ position: 'fixed', top: 10, left: 10, background: 'red', color: 'white', padding: '10px', zIndex: 9999, fontSize: '14px', fontWeight: 'bold' }}>
+          DEBUG v4: MODE = {monitorState.mode} | ADS = {ads.length} | PHOTOS = {photos.length}
+        </div>
         <div className="monitor-waiting">
           {eventConfig?.logoUrl && (
             <img src={eventConfig.logoUrl} alt={eventConfig?.eventName} className="monitor-event-logo" />
@@ -319,6 +323,10 @@ export default function LiveMonitor() {
 
       {/* Main Content */}
       <div className={`monitor-main ${transitioning ? "fade-out" : "fade-in"}`}>
+        {/* DEBUG BOX MAIN */}
+        <div style={{ position: 'fixed', top: 10, left: 10, background: 'blue', color: 'white', padding: '10px', zIndex: 9999, fontSize: '14px', fontWeight: 'bold' }}>
+          DEBUG MAIN v4: MODE = {monitorState.mode} | ADS = {ads.length}
+        </div>
         {monitorState.mode === 'ad' && ads.length > 0 ? (
           <div className="banner-display">
              {ads[currentAdIndex]?.imageUrl?.toLowerCase().includes('.mp4') || 
