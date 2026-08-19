@@ -228,20 +228,11 @@ export default function LiveMonitor() {
       }
 
       setCurrentAdIndex(0);
-      const interval = (eventConfig?.adIntervalSeconds || 8) * 1000;
-      let count = 0;
-      
-      const adInterval = setInterval(async () => {
-        count++;
-        if (count >= ads.length) {
-          // Completada toda la tanda publicitaria, volver a feed
-          clearInterval(adInterval);
-          if (eventId) {
-            await update(ref(db, `livefeed/${eventId}/monitorState`), { mode: 'feed' });
-          }
-        } else {
-          setCurrentAdIndex(count);
-        }
+      const userInterval = Number(eventConfig?.adIntervalSeconds);
+      const intervalSeconds = (userInterval && userInterval > 0) ? userInterval : 8;
+      const interval = Math.max(intervalSeconds, 3) * 1000;
+      const adInterval = setInterval(() => {
+        setCurrentAdIndex((prev) => (prev + 1) % ads.length);
       }, interval);
 
       return () => clearInterval(adInterval);
