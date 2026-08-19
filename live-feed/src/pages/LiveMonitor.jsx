@@ -224,11 +224,7 @@ export default function LiveMonitor() {
   useEffect(() => {
     if (monitorState.mode === 'ad') {
       if (!ads || ads.length === 0) {
-        // Si no hay publicidades cargadas, volver inmediatamente a feed
-        if (eventId) {
-          update(ref(db, `livefeed/${eventId}/monitorState`), { mode: 'feed' });
-        }
-        return;
+        return; // Esperar a que carguen los ads
       }
 
       setCurrentAdIndex(0);
