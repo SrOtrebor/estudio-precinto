@@ -221,23 +221,41 @@ export default function LiveMonitor() {
   // ── Rotación automática de Publicidades (TANDA COMPLETA) ──────────────────
   const [currentAdIndex, setCurrentAdIndex] = useState(0);
 
-  useEffect(() => {
-    if (monitorState.mode === 'ad') {
-      if (!ads || ads.length === 0) {
-        return; // Esperar a que carguen los ads
-      }
+  const nextAd = useCallback(() => {
+    if (!ads || ads.length <= 1) return;
+    setCurrentAdIndex((prev) => (prev + 1) % ads.length);
+  }, [ads]);
 
-      setCurrentAdIndex(0);
+  useEffect(() => {
+    if (monitorState.mode !== 'ad' || !ads || ads.length === 0) return;
+
+    const currentAd = ads[currentAdIndex];
+    if (!currentAd) return;
+
+    const isVideo = currentAd.imageUrl?.toLowerCase().includes('.mp4') || 
+                    currentAd.imageUrl?.toLowerCase().includes('.mov') ||
+                    currentAd.imageUrl?.includes('video');
+
+    // Si es un video y hay más de un anuncio, dejamos que el evento onEnded de la etiqueta <video> cambie de slide.
+    // (Si solo hay 1 anuncio, el video simplemente va a loopear gracias al atributo loop).
+    if (isVideo && ads.length > 1) {
+      return; 
+    }
+
+    // Si es imagen (o si es video pero es el único, aunque el timeout no haría daño), 
+    // esperamos el tiempo configurado para pasar al siguiente (o si hay uno solo no hacemos timeout).
+    if (ads.length > 1) {
       const userInterval = Number(eventConfig?.adIntervalSeconds);
       const intervalSeconds = (userInterval && userInterval > 0) ? userInterval : 8;
       const interval = Math.max(intervalSeconds, 3) * 1000;
-      const adInterval = setInterval(() => {
-        setCurrentAdIndex((prev) => (prev + 1) % ads.length);
+
+      const timeoutId = setTimeout(() => {
+        nextAd();
       }, interval);
 
-      return () => clearInterval(adInterval);
+      return () => clearTimeout(timeoutId);
     }
-  }, [monitorState.mode, ads, eventConfig, eventId]);
+  }, [monitorState.mode, ads, currentAdIndex, eventConfig, nextAd]);
 
   // ── Pausa con barra espaciadora ────────────────────────────────────────────
   useEffect(() => {
@@ -324,7 +342,16 @@ export default function LiveMonitor() {
              {ads[currentAdIndex]?.imageUrl?.toLowerCase().includes('.mp4') || 
               ads[currentAdIndex]?.imageUrl?.toLowerCase().includes('.mov') ||
               ads[currentAdIndex]?.imageUrl?.includes('video') ? (
-              <video src={ads[currentAdIndex].imageUrl} autoPlay loop muted className="banner-media" />
+              <video 
+                src={ads[currentAdIndex].imageUrl} 
+                autoPlay 
+                loop={ads.length === 1} 
+                muted 
+                className="banner-media" 
+                onEnded={() => {
+                  if (ads.length > 1) nextAd();
+                }}
+              />
             ) : (
               <img src={ads[currentAdIndex]?.imageUrl} alt="Ad" className="banner-media" />
             )}
