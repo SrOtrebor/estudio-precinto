@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Examen — Academia Maleki</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .exam-wrap {
+      padding-top: 80px;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 80px 1.5rem 4rem
+    }
+
+    .exam-hud {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem
+    }
+
+    .exam-counter {
+      font-family: 'Cinzel', serif;
+      font-size: 0.85rem;
+      color: var(--gold)
+    }
+
+    .exam-score-live {
+      font-size: 0.85rem;
+      color: var(--text-muted)
+    }
+
+    .question-card {
+      background: var(--glass);
+      border: 1px solid var(--border-bright);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+      backdrop-filter: blur(20px)
+    }
+
+    .question-text {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+      color: var(--text)
+    }
+
+    .question-tag {
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.75rem;
+      font-family: 'Cinzel', serif
+    }
+
+    .fill-input {
+      width: 100%;
+      padding: 0.85rem 1rem;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-size: 1rem;
+      outline: none;
+      font-family: 'Inter', sans-serif;
+      transition: var(--transition)
+    }
+
+    .fill-input:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.1)
+    }
+
+    .fill-input.correct {
+      border-color: var(--teal);
+      background: rgba(45, 122, 110, 0.1)
+    }
+
+    .fill-input.wrong {
+      border-color: var(--crimson);
+      background: rgba(139, 38, 53, 0.1)
+    }
+
+    .feedback {
+      margin-top: 0.75rem;
+      padding: 0.6rem 1rem;
+      border-radius: var(--radius);
+      font-size: 0.875rem;
+      display: none
+    }
+
+    .feedback.correct {
+      background: rgba(45, 122, 110, 0.15);
+      color: #5bc4b4;
+      border: 1px solid rgba(45, 122, 110, 0.3)
+    }
+
+    .feedback.wrong {
+      background: rgba(139, 38, 53, 0.15);
+      color: #e07080;
+      border: 1px solid rgba(139, 38, 53, 0.3)
+    }
+
+    /* RESULT */
+    .result-screen {
+      display: none;
+      text-align: center;
+      padding: 3rem 2rem
+    }
+
+    .result-score {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 5rem;
+      line-height: 1;
+      margin: 1rem 0
+    }
+
+    .result-pass {
+      color: var(--gold)
+    }
+
+    .result-fail {
+      color: var(--crimson)
+    }
+
+    .result-stars {
+      font-size: 2rem;
+      margin: 0.5rem 0
+    }
+
+    .role-unlock {
+      background: linear-gradient(135deg, rgba(201, 168, 76, 0.15), rgba(124, 77, 158, 0.1));
+      border: 1px solid var(--gold-dim);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      animation: glow-pulse 2s ease-in-out infinite;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bg-stars"></div>
+  <nav class="nav">
+    <a href="index.html" class="nav-logo">Academia <span>Maleki</span></a>
+    <ul class="nav-links">
+      <li><a href="dashboard.html">Mi Camino</a></li>
+      <li><a href="glossary.html">Glosario</a></li>
+    </ul>
+    <div class="nav-user">
+      <div id="nav-av" class="nav-avatar"
+        style="background:linear-gradient(135deg,#7c4d9e,#3d6b9e);display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;color:var(--gold);font-size:1rem">
+        ?</div>
+    </div>
+  </nav>
+
+  <div class="exam-wrap page">
+    <!-- EXAM ACTIVE -->
+    <div id="exam-active">
+      <div class="mb-3">
+        <div style="font-size:0.75rem;color:var(--text-muted);letter-spacing:0.1em;text-transform:uppercase"
+          id="exam-level-label">Examen · Nivel 1</div>
+        <h1 class="font-cinzel text-gold" style="font-size:1.5rem;margin-top:0.2rem" id="exam-title">Iniciado del Kräm
+        </h1>
+      </div>
+      <div class="progress-bar mb-2">
+        <div class="progress-fill" id="exam-progress" style="width:0%"></div>
+      </div>
+      <div class="exam-hud">
+        <div class="exam-counter">Pregunta <span id="q-num">1</span> de <span id="q-total">10</span></div>
+        <div class="exam-score-live">Correctas: <span id="correct-count" style="color:var(--gold)">0</span></div>
+      </div>
+      <div class="question-card" id="question-area"></div>
+      <div class="flex-center gap-2">
+        <button class="btn btn-secondary" id="btn-check" onclick="checkAnswer()">Verificar</button>
+        <button class="btn btn-primary" id="btn-next" onclick="nextQuestion()" style="display:none">Siguiente →</button>
+      </div>
+    </div>
+
+    <!-- RESULT SCREEN -->
+    <div class="result-screen" id="result-screen">
+      <div id="result-icon" style="font-size:4rem;margin-bottom:0.5rem"></div>
+      <div id="result-title" class="font-cinzel" style="font-size:1.5rem;margin-bottom:0.5rem"></div>
+      <div class="result-score" id="result-pct"></div>
+      <div class="result-stars" id="result-stars"></div>
+      <p id="result-phrase" style="color:var(--text-muted);font-style:italic;margin:0.5rem 0 1.5rem;font-size:0.95rem">
+      </p>
+      <div id="role-unlock-section" class="role-unlock" style="display:none">
+        <div style="font-size:2rem;margin-bottom:0.5rem">🎮</div>
+        <div class="font-cinzel text-gold" style="font-size:1.1rem;margin-bottom:0.5rem">¡Rol desbloqueado en Discord!
+        </div>
+        <div class="discord-role" style="display:inline-flex" id="unlocked-role"></div>
+        <p class="text-muted mt-2" style="font-size:0.85rem">Tu rol será asignado automáticamente en el servidor de
+          Edrenor.</p>
+      </div>
+      <div id="result-breakdown" style="margin:1.5rem 0;text-align:left"></div>
+      <div class="flex-center gap-2 flex-wrap">
+        <a href="dashboard.html" class="btn btn-primary">Continuar el camino</a>
+        <button onclick="retryExam()" class="btn btn-secondary" id="btn-retry">Reintentar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"><span class="toast-icon" id="toast-icon">✓</span><span id="toast-msg"></span></div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/maleki-data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    const EXAM_BANKS = {
+      1: [
+        { type: 'mc', q: '¿Cómo se dice "El" (artículo masc. singular) en Maleki?', opts: ['dha', 'dhaq', 'dhaka', 'a'], ans: 0 },
+        { type: 'mc', q: '¿Cuál es la vocal Maleki que suena como "cat" en inglés (/æ/)?', opts: ['Ä', 'Ë', 'Ï', 'Ö'], ans: 0 },
+        { type: 'fill', q: 'Traduce al Maleki: "La" (artículo femenino singular)', ans: 'dhaq', hint: 'dhaq' },
+        { type: 'mc', q: '¿Cómo se dice "Yo" en Maleki?', opts: ['Äs', 'Ël', 'Äe', 'Ëk'], ans: 2 },
+        { type: 'mc', q: '¿Qué dígrafo produce el sonido /ʎ/ (L palatal) y significa "azul"?', opts: ['RH', 'GH', 'LH', 'WH'], ans: 2 },
+        { type: 'fill', q: 'Traduce: "amor" en Maleki', ans: 'äkar', hint: 'äkar' },
+        { type: 'mc', q: '¿Cuál es el pronombre "Nosotros" en Maleki?', opts: ['Erk', 'Äs', 'Ëk', 'Ël'], ans: 2 },
+        { type: 'mc', q: 'En Maleki, el acento cae en la _____ sílaba', opts: ['última', 'primera', 'penúltima', 'antepenúltima'], ans: 2 },
+        { type: 'fill', q: 'Traduce: "fuego" en Maleki', ans: 'okor', hint: 'okor' },
+        { type: 'mc', q: '¿Cuál es el artículo indefinido femenino singular?', opts: ['a', 'sha', 'unk', 'shak'], ans: 1 },
+        { type: 'mc', q: 'El sufijo -q en Maleki indica:', opts: ['plural', 'pasado', 'femenino', 'negación'], ans: 2 },
+        { type: 'fill', q: '"agua" en Maleki', ans: 'rham', hint: 'rham' },
+      ],
+      2: [
+        { type: 'mc', q: '¿Cuál es la terminación de infinitivo equivalente a "-ar" en español?', opts: ['-ew', '-iw', '-aw', '-uw'], ans: 2 },
+        { type: 'fill', q: 'Conjuga "kivar" (caminar) en 1ª persona singular presente', ans: 'kivaräe', hint: 'kivaräe' },
+        { type: 'mc', q: '¿Qué sufijo crea sustantivos con significado "-ción"?', opts: ['-det', '-kior', '-are', '-suen'], ans: 1 },
+        { type: 'mc', q: 'En Maleki, los adjetivos se colocan:', opts: ['antes del sustantivo', 'después del sustantivo', 'al final de la oración', 'antes del verbo'], ans: 1 },
+        { type: 'fill', q: 'El prefijo de negación en Maleki es:', ans: 'mäi-', hint: 'mäi-' },
+        { type: 'mc', q: '¿Cómo se conjuga "Akë" (ser) en 3ª persona singular presente?', opts: ['Akäe', 'Akäs', 'Akël', 'Akëk'], ans: 2 },
+        { type: 'mc', q: 'El sufijo -suen equivale en español a:', opts: ['-ción', '-dad', '-oso', '-ble'], ans: 2 },
+        { type: 'fill', q: 'Traduce: "no quiero" (mäi + sefaräe)', ans: 'mäi sefaräe', hint: 'mäi sefaräe' },
+        { type: 'mc', q: '¿Cuál es el sufijo del gerundio para verbos en -aw?', opts: ['-eken', '-yoen', '-koen', '-böe'], ans: 2 },
+        { type: 'mc', q: 'El sufijo de reflexivo (-se) en Maleki es:', opts: ['-iël', '-iës', '-iëm', '-ëon'], ans: 1 },
+        { type: 'fill', q: '"caminar" en infinitivo Maleki', ans: 'kivaraw', hint: 'kivaraw' },
+        { type: 'mc', q: '¿Qué sufijo forma el "agente" (quien hace)?', opts: ['-ian', '-are', '-ki', '-det'], ans: 1 },
+      ],
+      3: [
+        { type: 'fill', q: 'Traduce al Maleki: "bosque azul"', ans: 'iemthe lhae', hint: 'iemthe lhae' },
+        { type: 'mc', q: '¿Cómo se dice "de" (preposición de pertenencia) en Maleki?', opts: ['noc', 'ut', 'vi', 'vel'], ans: 2 },
+        { type: 'fill', q: '"arte" en Maleki', ans: 'nujkü', hint: 'nujkü' },
+        { type: 'mc', q: '"El guerrero fuerte" en Maleki es:', opts: ['bruko trjareo', 'dha trjareo bruko', 'dha bruko trjareo', 'trjareo dha bruko'], ans: 1 },
+        { type: 'fill', q: 'Traduce: "Yo camino" (presente)', ans: 'äe kivaräe', hint: 'äe kivaräe' },
+        { type: 'mc', q: '"batalla" en Maleki es:', opts: ['emeth', 'bellata', 'okor', 'ahat'], ans: 1 },
+        { type: 'fill', q: '"amor" + sufijo -wos (amante/amoroso):', ans: 'äkarwos', hint: 'äkar + -wos' },
+        { type: 'mc', q: '¿Cómo se dice "sin" (preposición) en Maleki?', opts: ['noc', 'vel', 'ut', 'sek'], ans: 1 },
+        { type: 'fill', q: '"amigo" en Maleki', ans: 'ahatël', hint: 'ahatël' },
+        { type: 'mc', q: 'La frase "Mäi kivarël" significa:', opts: ['camina rápido', 'no está caminando', 'caminó ayer', 'caminará'], ans: 1 },
+        { type: 'fill', q: '"sangre" en Maleki', ans: 'emeth', hint: 'emeth' },
+        { type: 'mc', q: 'El orden correcto en Maleki para "La mujer ve el sol" es:', opts: ['dhaq finnir dha ëi formël', 'formël dhaq finnir dha ëi', 'dhaq finnir formël dha ëi', 'dha ëi formël dhaq finnir'], ans: 2 },
+      ]
+    };
+
+    const PASS_PCT = 80;
+    const LEVEL_NAMES = { 1: 'Iniciado del Kräm', 2: 'Erudito de las Cuerdas', 3: 'Maestro Maleki' };
+    const DISCORD_ROLES = { 1: '@Iniciado', 2: '@Erudito', 3: '@Maestro Maleki' };
+
+    let examLevel = 1, questions = [], qIndex = 0, score = 0, answers = [];
+
+    function shuffle(arr) { return arr.sort(() => Math.random() - 0.5) }
+    function startExam() {
+      const bank = EXAM_BANKS[examLevel];
+      questions = shuffle([...bank]).slice(0, 10);
+      qIndex = 0; score = 0; answers = [];
+      document.getElementById('exam-level-label').textContent = 'Examen · Nivel ' + examLevel;
+      document.getElementById('exam-title').textContent = LEVEL_NAMES[examLevel];
+      document.getElementById('q-total').textContent = questions.length;
+      renderQuestion();
+    }
+
+    function renderQuestion() {
+      const q = questions[qIndex];
+      document.getElementById('q-num').textContent = qIndex + 1;
+      document.getElementById('correct-count').textContent = score;
+      const pct = ((qIndex) / questions.length) * 100;
+      document.getElementById('exam-progress').style.width = pct + '%';
+      const area = document.getElementById('question-area');
+      document.getElementById('btn-check').style.display = 'inline-flex';
+      document.getElementById('btn-next').style.display = 'none';
+      if (q.type === 'mc') {
+        const correctText = q.opts[q.ans];
+        area.innerHTML = `<div class="question-tag">Opción múltiple</div>
+      <div class="question-text">${q.q} <button onclick="MalekiVoice.speak('${correctText}')" class="btn btn-ghost btn-sm" style="padding:0.2rem 0.5rem;display:inline-flex" title="Escuchar respuesta">🔊</button></div>
+      <div id="opts">${q.opts.map((o, i) => `
+        <button class="quiz-option" id="opt-${i}" onclick="selectOpt(${i})">
+          <span class="quiz-option-letter">${String.fromCharCode(65 + i)}</span>${o}
+        </button>`).join('')}
+      </div>
+      <div class="feedback" id="feedback"></div>`;
+      } else {
+        area.innerHTML = `<div class="question-tag">Completar</div>
+      <div class="question-text">${q.q} <button onclick="MalekiVoice.speak('${q.ans}')" class="btn btn-ghost btn-sm" style="padding:0.2rem 0.5rem;display:inline-flex" title="Escuchar respuesta">🔊</button></div>
+      <input class="fill-input" id="fill-ans" placeholder="Escribe tu respuesta en Maleki..." autocomplete="off" autocorrect="off" spellcheck="false">
+      <div class="feedback" id="feedback"></div>`;
+        document.getElementById('fill-ans').addEventListener('keydown', e => { if (e.key === 'Enter') checkAnswer(); });
+        setTimeout(() => document.getElementById('fill-ans').focus(), 100);
+      }
+    }
+
+    let selectedOpt = null;
+    function selectOpt(i) {
+      document.querySelectorAll('.quiz-option').forEach(b => b.classList.remove('selected'));
+      document.getElementById('opt-' + i).classList.add('selected');
+      selectedOpt = i;
+    }
+
+    function checkAnswer() {
+      const q = questions[qIndex];
+      const fb = document.getElementById('feedback');
+      let correct = false;
+      if (q.type === 'mc') {
+        if (selectedOpt === null) { window.MalekiUI.toast('Selecciona una opción', ''); return; }
+        correct = selectedOpt === q.ans;
+        document.querySelectorAll('.quiz-option').forEach((b, i) => {
+          b.disabled = true;
+          if (i === q.ans) b.classList.add('correct');
+          else if (i === selectedOpt && !correct) b.classList.add('wrong');
+        });
+      } else {
+        const inp = document.getElementById('fill-ans');
+        const userAns = (inp.value || '').trim().toLowerCase();
+        const correctAns = q.ans.toLowerCase();
+        correct = userAns === correctAns || userAns === correctAns.replace('-', '');
+        inp.disabled = true;
+        inp.classList.add(correct ? 'correct' : 'wrong');
+      }
+      if (correct) score++;
+      answers.push(correct);
+      fb.textContent = correct ? '✓ ¡Correcto! El Kräm te guía.' : '✗ Incorrecto. La respuesta es: ' + q.ans;
+      fb.className = 'feedback ' + (correct ? 'correct' : 'wrong');
+      fb.style.display = 'block';
+      selectedOpt = null;
+      document.getElementById('btn-check').style.display = 'none';
+      const isLast = qIndex === questions.length - 1;
+      const nextBtn = document.getElementById('btn-next');
+      nextBtn.style.display = 'inline-flex';
+      nextBtn.textContent = isLast ? 'Ver resultados ⚔️' : 'Siguiente →';
+    }
+
+    function nextQuestion() {
+      qIndex++;
+      if (qIndex >= questions.length) { showResult(); return; }
+      renderQuestion();
+    }
+
+    async function showResult() {
+      const pct = Math.round((score / questions.length) * 100);
+      const pass = pct >= PASS_PCT;
+      document.getElementById('exam-active').style.display = 'none';
+      const rs = document.getElementById('result-screen');
+      rs.style.display = 'block';
+      document.getElementById('result-icon').textContent = pass ? '🏆' : '📜';
+      document.getElementById('result-title').textContent = pass ? '¡Has superado el desafío!' : 'El camino requiere más práctica';
+      document.getElementById('result-title').style.color = pass ? 'var(--gold)' : 'var(--text-muted)';
+      const pctEl = document.getElementById('result-pct');
+      pctEl.textContent = pct + '%';
+      pctEl.className = 'result-score ' + (pass ? 'result-pass' : 'result-fail');
+      const stars = pct >= 90 ? '⭐⭐⭐' : pct >= 80 ? '⭐⭐' : pct >= 60 ? '⭐' : '';
+      document.getElementById('result-stars').textContent = stars;
+      const phrases = {
+        pass: ['El Kräm vibra en ti. Has honrado al pueblo Malekik.', 'Tu conocimiento crece como el fuego de Okor.', 'Antes de ser palabra, todo fue pulso. Y tú lo has sentido.'],
+        fail: ['El camino del Maleki no se apresura. Vuelve a intentarlo.', 'Mäi kfadrek — no existe límite para quien persevera.', 'El Kräm te espera. Repasa y regresa.']
+      };
+      const arr = pass ? phrases.pass : phrases.fail;
+      document.getElementById('result-phrase').textContent = arr[Math.floor(Math.random() * arr.length)];
+      document.getElementById('btn-retry').style.display = pass ? 'none' : 'inline-flex';
+
+      const breakdown = document.getElementById('result-breakdown');
+      breakdown.innerHTML = `<div class="card" style="padding:1rem">
+    <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.75rem;font-family:'Cinzel',serif;letter-spacing:0.08em">DETALLE</div>
+    ${answers.map((a, i) => `<div style="display:flex;align-items:center;gap:0.5rem;padding:0.4rem 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:0.85rem">
+      <span>${a ? '✅' : '❌'}</span>
+      <span style="flex:1;color:var(--text-muted)">Pregunta ${i + 1}</span>
+      <span style="color:${a ? '#5bc4b4' : '#e07080'}">${a ? 'Correcta' : 'Incorrecta'}</span>
+    </div>`).join('')}
+    <div style="padding:0.75rem 0 0;display:flex;justify-content:space-between;font-family:'Cinzel',serif">
+      <span style="color:var(--text-muted)">Total</span>
+      <span style="color:var(--gold)">${score}/${questions.length} (${pct}%)</span>
+    </div>
+  </div>`;
+
+      const user = await window.MalekiAuth.getCurrentUser();
+      if (pass && user) {
+        await window.MalekiDB.completeExam(user.uid, examLevel, pct);
+        const roleSection = document.getElementById('role-unlock-section');
+        roleSection.style.display = 'block';
+        document.getElementById('unlocked-role').innerHTML = '<span>🎮</span><span>' + DISCORD_ROLES[examLevel] + '</span>';
+        await window.MalekiDiscord.assignRole(user.uid, examLevel);
+        window.MalekiUI.toast('¡Nivel ' + examLevel + ' completado! Rol Discord asignado.', 'success');
+      }
+    }
+
+    function retryExam() {
+      document.getElementById('result-screen').style.display = 'none';
+      document.getElementById('exam-active').style.display = 'block';
+      startExam();
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      await window.MalekiAuth.requireAuth();
+      examLevel = parseInt(sessionStorage.getItem('examLevel') || '1');
+      const user = await window.MalekiAuth.getCurrentUser();
+      if (user) { const i = (user.displayName || user.email || 'M').slice(0, 1).toUpperCase(); document.getElementById('nav-av').textContent = i; }
+      const progress = await window.MalekiDB.getProgress(user ? user.uid : '');
+      if (examLevel > (progress.level || 1) && examLevel !== 1) {
+        window.MalekiUI.toast('Debes completar el nivel anterior primero.', 'error');
+        setTimeout(() => { window.location.href = 'dashboard.html'; }, 2000);
+        return;
+      }
+      startExam();
+    });
+  </script>
+</body>
+
+</html>

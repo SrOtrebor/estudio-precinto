@@ -308,86 +308,20 @@ export default function Invitation() {
                 ) : 'Qué lástima, te vamos a extrañar.'}
               </p>
             </div>
-          ) : !showForm ? (
-            <div style={{ textAlign: 'center', padding: '0.5rem 0' }}>
-              <p style={{ color: 'var(--text-muted)', marginBottom: '1.2rem' }}>¿Vas a poder acompañarnos?</p>
-              <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
-                <button 
-                  type="button" 
-                  className="btn-pill" 
-                  onClick={() => {
-                    setHasRsvped(true);
-                    setIsAttending(false);
-                    localStorage.setItem(`livefeed_guest_attending_${eventId}`, "false");
-                  }} 
-                  style={{ background: 'transparent', border: '1px solid var(--text-muted)', color: 'var(--text-muted)', flex: 1 }}
-                >
-                  No podré ir
-                </button>
-                <button 
-                  type="button" 
-                  className="btn-pill btn-pill-accent" 
-                  onClick={() => setShowForm(true)}
-                  style={{ flex: 1 }}
-                >
-                  Sí, asistiré ✨
-                </button>
-              </div>
-            </div>
           ) : (
-            <div className="fade-in">
-              <p style={{ color: 'var(--accent)', fontWeight: '600', marginBottom: '1rem' }}>📝 Ingresá tus datos para completar la confirmación:</p>
-              <input 
-                type="text" 
-                className="rsvp-input-pill" 
-                placeholder="Tu nombre y apellido *" 
-                value={rsvpName}
-                onChange={e => setRsvpName(e.target.value)}
-                required
-                autoFocus
-              />
-              <input 
-                type="number" 
-                className="rsvp-input-pill" 
-                placeholder="Tu número de DNI (sin puntos) *" 
-                value={rsvpDni}
-                onChange={e => setRsvpDni(e.target.value)}
-                required
-                style={{ marginTop: '0.5rem' }}
-              />
-              <input 
-                type="tel" 
-                className="rsvp-input-pill" 
-                placeholder="Tu WhatsApp / Teléfono *" 
-                value={rsvpPhone}
-                onChange={e => setRsvpPhone(e.target.value)}
-                required
-                style={{ marginTop: '0.5rem' }}
-              />
-              <input 
-                type="email" 
-                className="rsvp-input-pill" 
-                placeholder="Tu Correo Electrónico *" 
-                value={rsvpEmail}
-                onChange={e => setRsvpEmail(e.target.value)}
-                required
-                style={{ marginTop: '0.5rem' }}
-              />
-              <input 
-                type="text" 
-                className="rsvp-input-pill" 
-                placeholder="Tu Marca / Nombre comercial (Opcional)" 
-                value={rsvpEmprendimiento}
-                onChange={e => setRsvpEmprendimiento(e.target.value)}
-                style={{ marginTop: '0.5rem' }}
-              />
-              <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-                <button type="button" className="btn-pill" onClick={() => setShowForm(false)} disabled={rsvpLoading} style={{ background: 'transparent', border: '1px solid var(--text-muted)', color: 'var(--text-muted)' }}>
-                  Volver
-                </button>
-                <button type="button" className="btn-pill btn-pill-accent" onClick={() => handleRSVP(true)} disabled={rsvpLoading}>
-                  {rsvpLoading ? 'Guardando...' : 'Confirmar Asistencia'}
-                </button>
+            <div style={{ textAlign: 'center', padding: '1rem 0' }}>
+              <p style={{ color: 'var(--accent)', fontWeight: 'bold', fontSize: '1.2rem', marginBottom: '1rem' }}>¡Wow! Se agotaron los lugares 🤩</p>
+              <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', lineHeight: '1.5' }}>
+                Nos encantaría tenerte hoy con nosotros, pero ya no quedan cupos.<br /><br />
+                ¡No te desanimes! Se vienen más encuentros increíbles. Sumate a nuestra comunidad para ser la primera persona en enterarse de la próxima edición:
+              </p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center' }}>
+                <a href="https://www.instagram.com/caminoemprendedorar" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', textDecoration: 'none', fontWeight: 'bold', border: '1px solid var(--accent)', padding: '0.8rem 1.5rem', borderRadius: '50px', width: '100%', maxWidth: '300px' }}>
+                  📸 @caminoemprendedorar
+                </a>
+                <a href="https://www.instagram.com/latroncaldenordelta" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', textDecoration: 'none', fontWeight: 'bold', border: '1px solid var(--accent)', padding: '0.8rem 1.5rem', borderRadius: '50px', width: '100%', maxWidth: '300px' }}>
+                  📸 @latroncaldenordelta
+                </a>
               </div>
             </div>
           )}

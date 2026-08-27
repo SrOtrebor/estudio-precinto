@@ -192,56 +192,23 @@ export default function Ingreso() {
         )}
 
         {step === "form" && (
-          <form onSubmit={handleFormSubmit} className="ingreso-form fade-in">
-            <h2>📝 Completá tus datos</h2>
-            <p>No encontramos tu DNI, por favor registrate para ingresar al evento.</p>
+          <div className="ingreso-form fade-in" style={{ textAlign: 'center' }}>
+            <h2>¡Wow! Se agotaron los lugares 🤩</h2>
+            <p>Nos encantaría que te sumes, pero por capacidad del salón ya no podemos aceptar nuevos ingresos en puerta.</p>
+            <p>¡No te desanimes que se vienen más encuentros increíbles! Sumate a nuestra comunidad para ser la primera persona en enterarse de la próxima edición:</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center', marginTop: '1rem' }}>
+              <a href="https://www.instagram.com/caminoemprendedorar" target="_blank" rel="noopener noreferrer" className="btn-primary" style={{ textDecoration: 'none', background: 'transparent', border: '2px solid var(--accent)', color: 'var(--accent)', padding: '0.8rem', width: '100%' }}>
+                📸 @caminoemprendedorar
+              </a>
+              <a href="https://www.instagram.com/latroncaldenordelta" target="_blank" rel="noopener noreferrer" className="btn-primary" style={{ textDecoration: 'none', background: 'transparent', border: '2px solid var(--accent)', color: 'var(--accent)', padding: '0.8rem', width: '100%' }}>
+                📸 @latroncaldenordelta
+              </a>
+            </div>
             
-            <input 
-              type="text" 
-              placeholder="Nombre y Apellido *" 
-              value={formData.name} 
-              onChange={(e) => setFormData({...formData, name: e.target.value})}
-              disabled={processing}
-              required
-            />
-            
-            <input 
-              type="number" 
-              placeholder="DNI *" 
-              value={dni} 
-              disabled={true} 
-            />
-            
-            <input 
-              type="tel" 
-              placeholder="Teléfono *" 
-              value={formData.phone} 
-              onChange={(e) => setFormData({...formData, phone: e.target.value})}
-              disabled={processing}
-              required
-            />
-            
-            <input 
-              type="email" 
-              placeholder="Correo electrónico *" 
-              value={formData.email} 
-              onChange={(e) => setFormData({...formData, email: e.target.value})}
-              disabled={processing}
-              required
-            />
-
-            <input 
-              type="text" 
-              placeholder="Emprendimiento (Opcional)" 
-              value={formData.emprendimiento} 
-              onChange={(e) => setFormData({...formData, emprendimiento: e.target.value})}
-              disabled={processing}
-            />
-            
-            <button type="submit" className="btn-primary" disabled={processing}>
-              {processing ? "Guardando..." : "Registrarme"}
+            <button onClick={() => setStep("dni")} className="btn-primary" style={{ marginTop: '2rem', background: '#333' }}>
+              Volver atrás
             </button>
-          </form>
+          </div>
         )}
 
         {step === "success" && (

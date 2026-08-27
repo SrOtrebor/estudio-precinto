@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Lección — Academia Maleki</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .lesson-wrap {
+      padding-top: 80px;
+      max-width: 820px;
+      margin: 0 auto;
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+      padding-bottom: 4rem
+    }
+
+    .lesson-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem
+    }
+
+    .back-btn {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.875rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem
+    }
+
+    .back-btn:hover {
+      color: var(--gold)
+    }
+
+    .lesson-progress-bar {
+      height: 4px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 2px;
+      margin-bottom: 2rem;
+      overflow: hidden
+    }
+
+    .lesson-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold), var(--amber));
+      transition: width 0.5s ease
+    }
+
+    .card-counter {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-align: center;
+      margin-bottom: 1rem
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1.5rem
+    }
+
+    .lesson-section {
+      margin-bottom: 2.5rem
+    }
+
+    .lesson-title-sm {
+      font-family: 'Cinzel', serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 1rem
+    }
+
+    .table-wrap {
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--border)
+    }
+
+    .note-box {
+      background: rgba(124, 77, 158, 0.08);
+      border: 1px solid rgba(124, 77, 158, 0.25);
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      font-size: 0.9rem;
+      color: var(--text-muted)
+    }
+
+    .note-box strong {
+      color: var(--violet-bright)
+    }
+
+    .audio-slot {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.75rem 1rem;
+      margin-top: 0.5rem
+    }
+
+    .audio-icon {
+      font-size: 1.2rem;
+      opacity: 0.4
+    }
+
+    .audio-label {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      font-style: italic
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bg-stars"></div>
+  <nav class="nav">
+    <a href="index.html" class="nav-logo">Academia <span>Maleki</span></a>
+    <ul class="nav-links">
+      <li><a href="dashboard.html">Mi Camino</a></li>
+      <li><a href="lesson.html" class="active">Lecciones</a></li>
+      <li><a href="glossary.html">Glosario</a></li>
+    </ul>
+    <div class="nav-user">
+      <div id="nav-av" class="nav-avatar"
+        style="background:linear-gradient(135deg,#7c4d9e,#3d6b9e);display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;color:var(--gold);font-size:1rem">
+        ?</div>
+    </div>
+  </nav>
+
+  <div class="lesson-wrap page">
+    <div class="lesson-header">
+      <a href="dashboard.html" class="back-btn">← Volver al camino</a>
+    </div>
+    <div id="lesson-title-h" class="mb-3">
+      <h1 class="font-cinzel text-gold" style="font-size:1.5rem" id="lesson-h1">Cargando...</h1>
+      <p class="text-muted mt-1" id="lesson-sub"></p>
+    </div>
+
+    <div id="lesson-content"></div>
+
+    <div class="mt-4" id="complete-section" style="display:none">
+      <div class="card card-gold text-center" style="padding:2rem">
+        <div style="font-size:3rem;margin-bottom:1rem">⚔️</div>
+        <h2 class="font-cinzel text-gold">Unidad completada</h2>
+        <p class="text-muted mt-2">Tu conocimiento del Maleki crece. El Kräm vibra.</p>
+        <div class="flex-center gap-2 mt-3">
+          <a href="dashboard.html" class="btn btn-primary">Continuar el camino</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"><span class="toast-icon" id="toast-icon">✓</span><span id="toast-msg"></span></div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/maleki-data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    const LESSONS = {
+      phonetics: {
+        title: 'Alfabeto y Fonética', subtitle: 'Las consonantes del Maleki y cómo pronunciarlas',
+        sections: [
+          { type: 'intro', text: 'El Maleki tiene 36 letras. Sus consonantes oclusivas pueden ser suaves o aspiradas. Aprende los sonidos base primero.' },
+          {
+            type: 'table', title: 'Consonantes Oclusivas', cols: ['Letra', 'Sonido IPA', 'Ejemplo', 'Similar en español'],
+            rows: MALEKI.phonetics.plosives.map(p => [p.letter, p.ipa, p.example, p.similar])
+          },
+          {
+            type: 'table', title: 'Consonantes Fricativas', cols: ['Letra(s)', 'IPA', 'Ejemplo', 'Similar a'],
+            rows: MALEKI.phonetics.fricatives.map(f => [f.letter, f.ipa, f.example, f.similar])
+          },
+          {
+            type: 'table', title: 'Dígrafos Especiales', cols: ['Dígrafo', 'IPA', 'Descripción', 'Ejemplo', 'Significado'],
+            rows: MALEKI.phonetics.digraphs.map(d => [d.digraph, d.ipa, d.desc, d.example, d.meaning])
+          },
+          { type: 'note', text: '<strong>Regla de acentuación:</strong> Las palabras se acentúan en la <strong>penúltima sílaba</strong>. Si el acento es distinto, se marca con tilde. Ej: ma-LÉ-ki.' },
+          { type: 'flashcards', title: 'Practica los sonidos', cards: MALEKI.phonetics.plosives.map(p => ({ front: p.letter + ' ' + p.ipa, back: '"' + p.example + '" — como "' + p.similar + '" en español', hint: 'Toca para ver el ejemplo' })) }
+        ]
+      },
+      vowels: {
+        title: 'Vocales y Diacríticos', subtitle: 'Los 10 sonidos vocálicos únicos del Maleki',
+        sections: [
+          { type: 'intro', text: 'El Maleki tiene 10 vocales. Las 5 básicas más 5 con diacríticos que producen sonidos únicos.' },
+          {
+            type: 'table', title: 'Sistema Vocálico', cols: ['Vocal', 'IPA', 'Descripción', 'Similar a', 'Ejemplo', 'Significado'],
+            rows: MALEKI.phonetics.vowels.map(v => [v.vowel, v.ipa, v.desc, v.similar, v.example, v.meaning])
+          },
+          { type: 'note', text: '<strong>Entonación:</strong> El Maleki es descendente al final de frases declarativas. En preguntas, la entonación es <strong>ascendente</strong>.' },
+          { type: 'flashcards', title: 'Practica las vocales', cards: MALEKI.phonetics.vowels.map(v => ({ front: v.vowel + ' ' + v.ipa, back: v.example + ' = "' + v.meaning + '" — como: ' + v.similar, hint: 'Toca para ver el ejemplo' })) }
+        ]
+      },
+      pronouns: {
+        title: 'Pronombres Personales', subtitle: 'Äe, Äs, Ël — las personas del Maleki',
+        sections: [
+          { type: 'intro', text: 'En Maleki no existe distinción de género en los pronombres. El pueblo Malekik considera que todos son hijos de Eioles.' },
+          {
+            type: 'table', title: 'Pronombres', cols: ['Español', 'Maleki', 'Notas culturales'],
+            rows: MALEKI.pronouns.map(p => [p.es, p.mk, p.notes])
+          },
+          { type: 'note', text: '<strong>Nota cultural:</strong> No se dice "Soy <em>un</em> maleki" sino "Soy Maleki". La palabra no tiene género.' },
+          { type: 'flashcards', title: 'Practica los pronombres', cards: MALEKI.pronouns.map(p => ({ front: p.es, back: p.mk + (p.notes ? ' — ' + p.notes : ''), hint: 'Toca para ver en Maleki' })) }
+        ]
+      },
+      articles: {
+        title: 'Artículos', subtitle: 'dha, dhaq, a, sha — el sistema de artículos',
+        sections: [
+          { type: 'intro', text: 'El Maleki distingue género en artículos y sustantivos. El sufijo -q marca el femenino.' },
+          {
+            type: 'table', title: 'Artículos Indefinidos', cols: ['Español', 'Maleki', 'Género', 'Número'],
+            rows: MALEKI.articles.indefinite.map(a => [a.es, a.mk, a.gender, a.number])
+          },
+          {
+            type: 'table', title: 'Artículos Definidos', cols: ['Español', 'Maleki', 'Género', 'Número'],
+            rows: MALEKI.articles.definite.map(a => [a.es, a.mk, a.gender, a.number])
+          },
+          { type: 'note', text: '<strong>Regla del sufijo -q:</strong> Este sufijo es la marca universal del femenino en Maleki. Se aplica a artículos, sustantivos y adjetivos.' },
+          {
+            type: 'flashcards', title: 'Practica los artículos', cards: [
+              { front: 'El', back: 'dha — masculino singular', hint: 'Toca para ver' },
+              { front: 'La', back: 'dhaq — femenino singular (-q marca fem.)', hint: 'Toca para ver' },
+              { front: 'Los', back: 'dhaka — masculino plural', hint: 'Toca para ver' },
+              { front: 'Las', back: 'dhaqk — femenino plural', hint: 'Toca para ver' },
+              { front: 'Un', back: 'a — masculino singular', hint: 'Toca para ver' },
+              { front: 'Una', back: 'sha — femenino singular', hint: 'Toca para ver' },
+            ]
+          }
+        ]
+      },
+      'noun-suffixes': {
+        title: 'Sufijos de Sustantivos', subtitle: '-ian, -are, -kior, -det, -qora y más',
+        sections: [
+          { type: 'intro', text: 'Los sufijos de sustantivos permiten crear nuevas palabras a partir de raíces. Son la base de la derivación Maleki.' },
+          {
+            type: 'table', title: 'Sufijos para Sustantivos', cols: ['Sufijo', 'Equiv. español', 'Función', 'Base', 'Resultado'],
+            rows: MALEKI.suffixes.noun.map(s => [s.suffix, s.equiv, s.func, s.base, s.result])
+          },
+          {
+            type: 'table', title: 'Sufijos de Plural', cols: ['Sufijo', 'Regla de uso', 'Base', 'Resultado'],
+            rows: MALEKI.suffixes.plural.map(s => [s.suffix, s.rule, s.base, s.result])
+          },
+          { type: 'note', text: '<strong>Sufijo de género femenino:</strong> (-q) se añade al final de cualquier sustantivo. Ej: Trjareo (guerrero) → Trjareoq (guerrera)' },
+          { type: 'flashcards', title: 'Practica los sufijos', cards: MALEKI.suffixes.noun.map(s => ({ front: s.suffix + ' (equiv. "' + s.equiv + '")', back: s.base + ' → ' + s.result, hint: 'Toca para ver ejemplo' })) }
+        ]
+      },
+      'adj-suffixes': {
+        title: 'Sufijos de Adjetivos', subtitle: '-suen, -wos, -fer, -kuen, -muan',
+        sections: [
+          { type: 'intro', text: 'Con estos sufijos transformas sustantivos y verbos en adjetivos ricos y descriptivos.' },
+          {
+            type: 'table', title: 'Sufijos para Adjetivos', cols: ['Sufijo', 'Equiv. español', 'Función', 'Base', 'Resultado'],
+            rows: MALEKI.suffixes.adjective.map(s => [s.suffix, s.equiv, s.func, s.base, s.result])
+          },
+          { type: 'flashcards', title: 'Practica', cards: MALEKI.suffixes.adjective.map(s => ({ front: s.suffix + ' (' + s.equiv + ')', back: s.base + ' → ' + s.result, hint: 'Toca para ver' })) }
+        ]
+      },
+      conjugation: {
+        title: 'Conjugación Verbal', subtitle: 'Presente, pasado y futuro en Maleki',
+        sections: [
+          { type: 'intro', text: 'Los verbos Maleki tienen tres terminaciones de infinitivo (-aw, -ew, -iw) y se conjugan con sufijos de persona y tiempo.' },
+          {
+            type: 'table', title: 'Terminaciones de Infinitivo', cols: ['Sufijo', 'Equiv.', 'Ejemplo', 'Significado'],
+            rows: MALEKI.suffixes.infinitive.map(s => [s.suffix, s.equiv, s.example, s.meaning])
+          },
+          {
+            type: 'table', title: 'Sufijos de Conjugación', cols: ['Persona', 'Presente', 'Pasado', 'Futuro'],
+            rows: MALEKI.conjugation.suffixes.map(s => [s.persona, s.presente, s.pasado, s.futuro])
+          },
+          {
+            type: 'table', title: 'Verbo "Ser" (Akë)', cols: ['Persona', 'Presente', 'Pasado', 'Futuro'],
+            rows: MALEKI.conjugation.ser.table.map(r => [r.persona, r.presente, r.pasado, r.futuro])
+          },
+          {
+            type: 'table', title: 'Verbo "Estar" (Tëro)', cols: ['Persona', 'Presente', 'Pasado', 'Futuro'],
+            rows: MALEKI.conjugation.estar.table.map(r => [r.persona, r.presente, r.pasado, r.futuro])
+          },
+          {
+            type: 'table', title: 'Ejemplo: Kivaraw (caminar)', cols: ['Persona', 'Presente', 'Pasado', 'Futuro'],
+            rows: MALEKI.conjugation.example.table.map(r => [r.persona, r.presente, r.pasado, r.futuro])
+          },
+          {
+            type: 'table', title: 'Sufijos de Gerundio', cols: ['Sufijo', 'Equiv.', 'Uso', 'Ejemplo'],
+            rows: MALEKI.suffixes.gerund.map(s => [s.suffix, s.equiv, s.use, s.example])
+          },
+          {
+            type: 'flashcards', title: 'Practica', cards: [
+              { front: 'caminar (yo, presente)', back: 'Kivaräe', hint: 'raíz Kivar + -äe' },
+              { front: 'caminar (tú, futuro)', back: 'Kivaräukem', hint: 'raíz Kivar + -äukem' },
+              { front: 'ser (él, pasado)', back: 'Akëlf', hint: 'Ak + -ëlf' },
+              { front: 'estar (nosotros, futuro)', back: 'Tererkam', hint: 'Ter + -erkam' },
+            ]
+          }
+        ]
+      },
+      syntax: {
+        title: 'Sintaxis y Negación', subtitle: 'SVO, posición de adjetivos, mäi- y reflexivos',
+        sections: [
+          { type: 'intro', text: 'El orden básico del Maleki es Sujeto-Verbo-Objeto (igual que el español). Los adjetivos van DESPUÉS del sustantivo.' },
+          { type: 'note', text: '<strong>Orden SVO:</strong> dha hoonk keleël wylksien = "El hombre come pescado"<br><strong>Adj. después:</strong> Iemthe lhae = "Bosque azul" (lit. bosque azul)<br><strong>Adv. después del verbo:</strong> Dhaq vaeminq kivarël antog = "La señora camina lento"' },
+          {
+            type: 'table', title: 'Preposiciones', cols: ['Maleki', 'Español', 'Ejemplo'],
+            rows: MALEKI.syntax.prepositions.map(p => [p.mk, p.es, p.example])
+          },
+          {
+            type: 'table', title: 'Sufijos Reflexivos', cols: ['Sufijo', 'Equiv.', 'Función', 'Ejemplo'],
+            rows: MALEKI.suffixes.reflexive.map(s => [s.suffix, s.equiv, s.func, s.example])
+          },
+          { type: 'note', text: '<strong>Negación:</strong> Prefijo <strong>mäi-</strong> antes del verbo. Ej: mäi-sefaräe = "no quiero" / mäi-kfadrek = "no existe"' },
+          { type: 'flashcards', title: 'Practica frases', cards: MALEKI.syntax.examples.map(e => ({ front: e.es, back: e.mk, hint: 'Toca para ver en Maleki' })) }
+        ]
+      },
+      'vocab-am': {
+        title: 'Vocabulario A–M', subtitle: 'Primera mitad del diccionario oficial',
+        sections: [
+          { type: 'intro', text: 'Practica las palabras del diccionario Maleki. Toca cada ficha para ver la traducción.' },
+          { type: 'flashcards', title: 'Vocabulario A–M', cards: VOCAB.filter(v => v.es.toLowerCase() < 'n').slice(0, 60).map(v => ({ front: v.es, back: v.mk + (v.ipa ? ' ' + v.ipa : ''), hint: v.notes || 'Toca para ver en Maleki' })) }
+        ]
+      },
+      'vocab-nz': {
+        title: 'Vocabulario N–Z', subtitle: 'Segunda mitad del diccionario oficial',
+        sections: [
+          { type: 'intro', text: 'Continúa con el resto del diccionario Maleki.' },
+          { type: 'flashcards', title: 'Vocabulario N–Z', cards: VOCAB.filter(v => v.es.toLowerCase() >= 'n').slice(0, 60).map(v => ({ front: v.es, back: v.mk + (v.ipa ? ' ' + v.ipa : ''), hint: v.notes || 'Toca para ver en Maleki' })) }
+        ]
+      },
+      phrases: {
+        title: 'Frases y Oraciones', subtitle: 'Construcción de oraciones completas en Maleki',
+        sections: [
+          { type: 'intro', text: 'Ahora ponés en práctica todo lo que aprendiste. Construí oraciones aplicando el orden SVO, los sufijos y la conjugación.' },
+          {
+            type: 'flashcards', title: 'Frases clave', cards: [
+              { front: 'Yo camino hacia el bosque', back: 'Äe kivaräe ut dha iemthe', hint: 'SVO + preposición ut' },
+              { front: 'La guerrera es fuerte', back: 'Dhaq trjareoq akël bruko', hint: 'dhaq = art. fem. / akël = él/ella es' },
+              { front: 'No quiero comer', back: 'Mäi sefaräe keläw', hint: 'mäi- + verbo conjugado' },
+              { front: 'El guerrero está caminando', back: 'Dha trjareo terël kivarkoen', hint: 'terël = está / -koen = gerundio -aw' },
+              { front: 'El amor existe', back: 'Dha äkar kfadräe', hint: 'äkar = amor / kfadräe = existo/existe' },
+              { front: 'Nosotros vemos el sol', back: 'Ëk formaëk dha ëi', hint: 'Ëk = nosotros / dha ëi = el sol' },
+              { front: 'La luz del bosque es azul', back: 'Dhaq thoq vi dha iemthe akël lhae', hint: 'vi = de / lhae = azul' },
+              { front: 'Antes de ser palabra, todo fue pulso', back: 'Anthi akëlf ondkïw, dha eioles teräo ogrêm', hint: 'Frase filosófica Maleki' },
+            ]
+          }
+        ]
+      }
+    };
+
+    let currentCards = [], cardIndex = 0, flipped = false;
+
+    function renderLesson(id) {
+      const lesson = LESSONS[id];
+      if (!lesson) {
+        document.getElementById('lesson-h1').textContent = 'Lección no encontrada';
+        return;
+      }
+      document.title = lesson.title + ' — Academia Maleki';
+      document.getElementById('lesson-h1').textContent = lesson.title;
+      document.getElementById('lesson-sub').textContent = lesson.subtitle;
+      const content = document.getElementById('lesson-content');
+      content.innerHTML = '';
+      let flashcardSection = null;
+      lesson.sections.forEach(sec => {
+        if (sec.type === 'intro') {
+          const d = document.createElement('div');
+          d.className = 'note-box mb-3';
+          d.innerHTML = '📖 ' + sec.text;
+          content.appendChild(d);
+        } else if (sec.type === 'note') {
+          const d = document.createElement('div');
+          d.className = 'note-box mb-3';
+          d.innerHTML = '💡 ' + sec.text;
+          content.appendChild(d);
+        } else if (sec.type === 'table') {
+          const wrap = document.createElement('div');
+          wrap.className = 'lesson-section';
+          wrap.innerHTML = `<div class="lesson-title-sm">${sec.title}</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr>${sec.cols.map(c => `<th>${c}</th>`).join('')}</tr></thead>
+            <tbody>${sec.rows.map(r => `<tr>${r.map((c, i) => `<td${i <= 1 ? ' class="mk-word"' : ''}>${c}</td>`).join('')}</tr>`).join('')}</tbody>
+          </table>
+        </div>
+        <div class="audio-slot" style="cursor:pointer" onclick="MalekiVoice.speak('${sec.rows[0][0]}')">
+          <span class="audio-icon">🔊</span>
+          <span class="audio-label">Escuchar pronunciación del ejemplo</span>
+        </div>`;
+          content.appendChild(wrap);
+        } else if (sec.type === 'flashcards') {
+          flashcardSection = sec;
+        }
+      });
+      if (flashcardSection) {
+        currentCards = flashcardSection.cards;
+        cardIndex = 0; flipped = false;
+        const wrap = document.createElement('div');
+        wrap.className = 'lesson-section';
+        wrap.innerHTML = `<div class="lesson-title-sm">${flashcardSection.title}</div>
+      <div class="card-counter"><span id="card-num">1</span> de ${currentCards.length}</div>
+      <div class="progress-bar mb-2"><div class="progress-fill" id="card-progress" style="width:${100 / currentCards.length}%"></div></div>
+      <div class="flashcard-scene" onclick="flipCard()">
+        <div class="flashcard" id="flashcard">
+          <div class="flashcard-face">
+            <div class="flashcard-word" id="fc-front"></div>
+            <div class="flashcard-hint" id="fc-hint"></div>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <div class="flashcard-word" id="fc-back" style="font-size:1.3rem;color:var(--amber)"></div>
+            <div class="flashcard-ipa" id="fc-notes" style="margin-top:0.5rem"></div>
+          </div>
+        </div>
+      </div>
+      <div class="controls">
+        <button class="btn btn-ghost btn-sm" onclick="prevCard()" id="btn-prev" disabled>← Anterior</button>
+        <button class="btn btn-secondary btn-sm" onclick="MalekiVoice.speak(currentCards[cardIndex].back.split(' ')[0])">🔊 Escuchar</button>
+        <button class="btn btn-primary btn-sm" onclick="nextCard()" id="btn-next">Siguiente →</button>
+      </div>`;
+        content.appendChild(wrap);
+        updateCard();
+      }
+    }
+
+    function updateCard() {
+      const c = currentCards[cardIndex];
+      document.getElementById('fc-front').textContent = c.front;
+      document.getElementById('fc-back').textContent = c.back;
+      document.getElementById('fc-hint').textContent = c.hint || 'Toca para ver';
+      document.getElementById('fc-notes').textContent = c.notes || '';
+      document.getElementById('card-num').textContent = cardIndex + 1;
+      const pct = ((cardIndex + 1) / currentCards.length) * 100;
+      document.getElementById('card-progress').style.width = pct + '%';
+      document.getElementById('btn-prev').disabled = cardIndex === 0;
+      const isLast = cardIndex === currentCards.length - 1;
+      document.getElementById('btn-next').textContent = isLast ? '¡Completar lección! ✓' : 'Siguiente →';
+      const fc = document.getElementById('flashcard');
+      if (flipped) { fc.classList.remove('flipped'); flipped = false; }
+    }
+
+    function flipCard() {
+      const fc = document.getElementById('flashcard');
+      fc.classList.toggle('flipped');
+      flipped = !flipped;
+    }
+
+    function nextCard() {
+      if (cardIndex === currentCards.length - 1) { completeLesson(); return; }
+      cardIndex++; flipped = false; updateCard();
+    }
+
+    function prevCard() {
+      if (cardIndex > 0) { cardIndex--; flipped = false; updateCard(); }
+    }
+
+    async function completeLesson() {
+      const unitId = sessionStorage.getItem('currentUnit');
+      if (unitId) {
+        const user = await window.MalekiAuth.getCurrentUser();
+        if (user) await window.MalekiDB.completeUnit(user.uid, unitId);
+      }
+      document.getElementById('complete-section').style.display = 'block';
+      document.getElementById('lesson-content').style.opacity = '0.3';
+      window.MalekiUI.toast('¡Unidad completada! El Kräm vibra en ti.', 'success');
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      await window.MalekiAuth.requireAuth();
+      const lessonId = sessionStorage.getItem('currentLesson') || 'phonetics';
+      renderLesson(lessonId);
+      const user = await window.MalekiAuth.getCurrentUser();
+      if (user) { const i = (user.displayName || user.email || 'M').slice(0, 1).toUpperCase(); document.getElementById('nav-av').textContent = i; }
+    });
+  </script>
+</body>
+
+</html>

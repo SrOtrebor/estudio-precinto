@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Capa_2" data-name="Capa 2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 72.84 52.7">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: url(#Degradado_sin_nombre_121-3);
+      }
+
+      .cls-2 {
+        fill: url(#Degradado_sin_nombre_121);
+      }
+
+      .cls-3 {
+        fill: url(#Degradado_sin_nombre_121-2);
+      }
+
+      .cls-4 {
+        fill: url(#Degradado_sin_nombre_121-4);
+      }
+
+      .cls-5 {
+        fill: url(#Degradado_sin_nombre_121-6);
+      }
+
+      .cls-6 {
+        fill: url(#Degradado_sin_nombre_122);
+      }
+
+      .cls-7 {
+        fill: url(#Degradado_sin_nombre_121-5);
+      }
+    </style>
+    <radialGradient id="Degradado_sin_nombre_122" data-name="Degradado sin nombre 122" cx="70.46" cy="25.45" fx="70.46" fy="25.45" r="56.86" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#e0e1dd"/>
+      <stop offset=".03" stop-color="#d9d8d1"/>
+      <stop offset=".14" stop-color="#c8c0b1"/>
+      <stop offset=".27" stop-color="#baac96"/>
+      <stop offset=".4" stop-color="#af9d81"/>
+      <stop offset=".54" stop-color="#a79273"/>
+      <stop offset=".72" stop-color="#a38b6a"/>
+      <stop offset="1" stop-color="#a28a68"/>
+    </radialGradient>
+    <radialGradient id="Degradado_sin_nombre_121" data-name="Degradado sin nombre 121" cx="70.46" cy="25.45" fx="70.46" fy="25.45" r="56.86" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#e0e1dd"/>
+      <stop offset="1" stop-color="#a28a68"/>
+    </radialGradient>
+    <radialGradient id="Degradado_sin_nombre_121-2" data-name="Degradado sin nombre 121" cx="70.46" cy="25.45" fx="70.46" fy="25.45" r="56.86" xlink:href="#Degradado_sin_nombre_121"/>
+    <radialGradient id="Degradado_sin_nombre_121-3" data-name="Degradado sin nombre 121" cx="70.46" cy="25.45" fx="70.46" fy="25.45" r="56.86" xlink:href="#Degradado_sin_nombre_121"/>
+    <radialGradient id="Degradado_sin_nombre_121-4" data-name="Degradado sin nombre 121" cy="25.45" fy="25.45" r="56.86" xlink:href="#Degradado_sin_nombre_121"/>
+    <radialGradient id="Degradado_sin_nombre_121-5" data-name="Degradado sin nombre 121" cx="70.46" cy="25.45" fx="70.46" fy="25.45" r="56.86" xlink:href="#Degradado_sin_nombre_121"/>
+    <radialGradient id="Degradado_sin_nombre_121-6" data-name="Degradado sin nombre 121" r="56.86" xlink:href="#Degradado_sin_nombre_121"/>
+  </defs>
+  <g id="Capa_1-2" data-name="Capa 1">
+    <path class="cls-6" d="M53.47,45.24v-17.9h10.42c5.06,0,8.9-6.02,8.9-10.66,0-10.28-9.9-11.96-18.15-10.85-2.25.3-4.24,1.82-4.36,4.22v35.19c-3.23-.59-2.95,3.34-2.69,5.52.11.97.61,1.66,1.61,1.82,1.03.16,4.07.14,5.14.02.97-.11,1.66-.61,1.82-1.61.12-.79.13-3.6-.04-4.35-.27-1.21-1.53-1.55-2.64-1.4ZM53.47,10.06c.11-.49.84-1.01,1.36-1.08,1.72-.25,6.55-.22,8.32-.02,6.15.67,8.12,9.22,3.96,13.4-.52.52-2.55,1.8-3.22,1.8h-10.42v-14.1ZM53.96,49.9h-4.17v-1.72h4.17v1.72Z"/>
+    <path class="cls-2" d="M38.36,29.52c1.82-.25,7.61-1.37,8.36-3.16.36-.87.26-3.99-.36-4.78-1.79-2.27-10.63-3.17-13.46-2.54l.21,3.05c3.84-.14,8.78.07,12.02,2.31-7.8,3.26-16.6,2.71-24.76,1.23v-1.91c0-.56-.49-.93-1.05-.92-.74.01-1.88-.12-2.86.02-1.05.16-1.79-.26-2.12,1.35L.02,19.5c-.1.57.14.75.48,1.11.9.95,3.75,2.65,4.99,3.34,2.78,1.54,5.9,2.83,8.97,3.66-.57,3.12,3.02,2.63,5.26,2.25.36-.06.63-.37.64-.73v-.32c5.99,1.12,11.96,1.55,18,.71ZM17.67,28.32h-1.23v-3.92h1.23v3.92Z"/>
+    <path class="cls-3" d="M72.25.1l-49.92-.1-.5.72-.23,23.07c.17.88,1.72.72,2.45.86V2.33h46.34v3.8l2.45,2.33V1.23c0-.11-.46-1.03-.59-1.13Z"/>
+    <polygon class="cls-1" points="31.53 9.2 46.73 9.2 47.83 6.26 27.73 6.26 27.73 25.13 31.16 25.13 31.16 9.57 31.53 9.2"/>
+    <path class="cls-4" d="M24.05,31.14l-2.45-.61v16.55c0,.2.66,1.35.86,1.35h22.92v-2.45h-21.33v-14.83Z"/>
+    <polygon class="cls-7" points="27.73 31.51 27.73 42.3 47.83 42.3 47.83 39.35 31.53 39.35 31.16 38.99 31.16 31.51 27.73 31.51"/>
+    <path class="cls-5" d="M70.39,39.23l-.37.37h-14.1v2.45h16.06c.1,0,.86-.98.86-1.1v-16.06l-2.45,2.33v12.01Z"/>
+  </g>
+</svg>
