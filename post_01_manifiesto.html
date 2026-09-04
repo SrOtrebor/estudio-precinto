@@ -190,6 +190,56 @@
   </div>
 
   <script>
+    async function exportSlideWithRecipe(slideElement, filename) {
+      // 1. Clonar el elemento
+      const clone = slideElement.cloneNode(true);
+      clone.style.transform = 'none';
+      clone.style.marginBottom = '0';
+      clone.style.boxShadow = 'none'; // Regla 3: Evitar sombras sucias
+
+      // Contenedor temporal fuera de pantalla en resolución nativa
+      const container = document.createElement('div');
+      container.style.position = 'fixed';
+      container.style.top = '-10000px';
+      container.style.left = '-10000px';
+      container.style.width = '1080px';
+      container.style.height = '1350px';
+
+      // Dimensiones exactas para el clon
+      clone.style.width = '1080px';
+      clone.style.height = '1350px';
+      clone.style.padding = '88px';
+      clone.style.borderRadius = '0';
+
+      container.appendChild(clone);
+      document.body.appendChild(container);
+
+      try {
+        // Regla 4: Fix para etiquetas inline
+        clone.querySelectorAll('strong, span, mark, .badge-tag, .slide-num').forEach(el => {
+          el.style.display = 'inline-block';
+        });
+
+        // Captura con html2canvas
+        const canvas = await html2canvas(clone, {
+          width: 1080,
+          height: 1350,
+          scale: 1,
+          useCORS: true,
+          allowTaint: true,
+          backgroundColor: '#0e132b'
+        });
+
+        // Descarga
+        const link = document.createElement('a');
+        link.download = filename;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      } finally {
+        document.body.removeChild(container);
+      }
+    }
+
     async function exportAllSlides() {
       const slides = document.querySelectorAll('.slide-frame');
       const btn = document.querySelector('.btn-action');
@@ -197,17 +247,7 @@
       btn.disabled = true;
 
       for (let i = 0; i < slides.length; i++) {
-        const slide = slides[i];
-        const canvas = await html2canvas(slide, {
-          scale: 2, // 1080x1350 HD
-          useCORS: true,
-          backgroundColor: '#0e132b'
-        });
-
-        const link = document.createElement('a');
-        link.download = `post_01_manifiesto_slide_${i + 1}.png`;
-        link.href = canvas.toDataURL('image/png');
-        link.click();
+        await exportSlideWithRecipe(slides[i], `post_01_manifiesto_slide_${i + 1}.png`);
         await new Promise(r => setTimeout(r, 400));
       }
 
