@@ -89,9 +89,97 @@
 
     /* Main Container */
     .container {
-      padding: 20px 16px;
+      padding: 16px 16px;
       max-width: 680px;
       margin: 0 auto;
+    }
+
+    /* Notification Banner */
+    .notify-banner {
+      background: linear-gradient(135deg, rgba(196, 168, 130, 0.15) 0%, rgba(20, 27, 54, 0.95) 100%);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .notify-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .notify-icon {
+      font-size: 1.6rem;
+      line-height: 1;
+    }
+
+    .notify-text-title {
+      font-family: var(--font-h);
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--white);
+    }
+
+    .notify-text-sub {
+      font-size: 0.78rem;
+      color: var(--light-2);
+      margin-top: 2px;
+    }
+
+    .btn-notify {
+      background: var(--gold);
+      color: #0e132b;
+      font-family: var(--font-h);
+      font-size: 0.8rem;
+      font-weight: 800;
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+
+    .btn-notify:active {
+      transform: scale(0.96);
+    }
+
+    /* Motivation Streak Card */
+    .streak-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 16px 18px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .streak-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .streak-badge {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--gold);
+      font-weight: 700;
+    }
+
+    .streak-quote {
+      font-family: var(--font-h);
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1.4;
     }
 
     /* Tab Switcher */
@@ -101,7 +189,7 @@
       border: 1px solid var(--border-subtle);
       border-radius: 12px;
       padding: 4px;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
       gap: 4px;
     }
 
@@ -174,6 +262,12 @@
       border-radius: 10px;
       cursor: pointer;
       user-select: none;
+      transition: all 0.2s ease;
+    }
+
+    .check-item.done {
+      border-color: rgba(16, 185, 129, 0.4);
+      background: rgba(16, 185, 129, 0.06);
     }
 
     .check-item input[type="checkbox"] {
@@ -284,7 +378,7 @@
 
     .mini-slide {
       flex: 0 0 220px;
-      height: 275px; /* Ratio 4:5 */
+      height: 275px;
       background: #0e132b;
       border: 1px solid var(--border);
       border-radius: 12px;
@@ -383,6 +477,29 @@
 
   <main class="container">
 
+    <!-- Notification Banner -->
+    <div class="notify-banner" id="notify-banner">
+      <div class="notify-info">
+        <div class="notify-icon">🔔</div>
+        <div>
+          <div class="notify-text-title" id="notify-title">Activar Recordatorios Diarios</div>
+          <div class="notify-text-sub" id="notify-sub">Recibe alertas para publicar y prospectar a la hora exacta.</div>
+        </div>
+      </div>
+      <button class="btn-notify" id="btn-notify-action" onclick="setupNotifications()">Activar</button>
+    </div>
+
+    <!-- Motivation Streak Card -->
+    <div class="streak-card">
+      <div class="streak-header">
+        <span class="streak-badge">⚡ FOCO OPERATIVO</span>
+        <span id="streak-counter" style="font-size:0.75rem;color:var(--gold);font-weight:700;">Día activo</span>
+      </div>
+      <div class="streak-quote" id="streak-quote">
+        "15 mensajes bien enviados hoy = 3 llamadas de diagnóstico técnico esta semana."
+      </div>
+    </div>
+
     <!-- Tab Selector -->
     <nav class="tab-nav">
       <button class="tab-btn active" onclick="switchTab('tab-linkedin')">
@@ -404,16 +521,16 @@
         <p class="card-subtitle">Completa estas 3 tareas de lunes a viernes para agendar de 3 a 5 llamadas técnicas por semana.</p>
         
         <div class="checklist">
-          <label class="check-item">
-            <input type="checkbox">
+          <label class="check-item" id="check-item-1">
+            <input type="checkbox" onchange="toggleCheck(this, 'check-item-1')">
             <span class="check-text">1. Buscar 15 perfiles (Agencias / Inmobiliarias / B2B)</span>
           </label>
-          <label class="check-item">
-            <input type="checkbox">
+          <label class="check-item" id="check-item-2">
+            <input type="checkbox" onchange="toggleCheck(this, 'check-item-2')">
             <span class="check-text">2. Enviar 15 solicitudes con mensaje personalizado</span>
           </label>
-          <label class="check-item">
-            <input type="checkbox">
+          <label class="check-item" id="check-item-3">
+            <input type="checkbox" onchange="toggleCheck(this, 'check-item-3')">
             <span class="check-text">3. Responder chats y enviar link a los interesados</span>
           </label>
         </div>
@@ -667,6 +784,20 @@ Evaluamos la arquitectura operativa de su negocio para automatizar sus flujos cr
   </div>
 
   <script>
+    const quotes = [
+      "15 mensajes bien enviados hoy = 3 llamadas de diagnóstico técnico esta semana.",
+      "La constancia en prospección vence a la suerte. ¡A por los primeros 5 hoy!",
+      "La autoridad técnica se construye con publicaciones consistentes.",
+      "Cada director de agencia que contactas es un potencial partner recurrente.",
+      "Tecnología que Resuelve: simplificamos la vida de las empresas."
+    ];
+
+    function updateStreakQuote() {
+      const q = quotes[Math.floor(Math.random() * quotes.length)];
+      const el = document.getElementById('streak-quote');
+      if (el) el.textContent = `"${q}"`;
+    }
+
     function switchTab(tabId) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
@@ -679,17 +810,89 @@ Evaluamos la arquitectura operativa de su negocio para automatizar sus flujos cr
     function copyText(elementId) {
       const text = document.getElementById(elementId).innerText;
       navigator.clipboard.writeText(text).then(() => {
-        showToast();
+        showToast("✓ Copiado al portapapeles");
       });
     }
 
-    function showToast() {
+    function showToast(msg) {
       const toast = document.getElementById('toast');
+      toast.innerHTML = `<span>✓</span> ${msg}`;
       toast.classList.add('show');
       setTimeout(() => {
         toast.classList.remove('show');
       }, 2000);
     }
+
+    function toggleCheck(checkbox, itemId) {
+      const item = document.getElementById(itemId);
+      if (checkbox.checked) {
+        item.classList.add('done');
+        showToast("¡Paso completado!");
+      } else {
+        item.classList.remove('done');
+      }
+    }
+
+    // ── NOTIFICACIONES NATIVAS ────────────────────────────
+    function setupNotifications() {
+      if (!("Notification" in window)) {
+        alert("Este navegador no soporta notificaciones de escritorio.");
+        return;
+      }
+
+      if (Notification.permission === "granted") {
+        triggerNotification();
+      } else if (Notification.permission !== "denied") {
+        Notification.requestPermission().then(permission => {
+          if (permission === "granted") {
+            triggerNotification();
+          }
+        });
+      } else {
+        alert("Las notificaciones están bloqueadas en tu navegador. Puedes habilitarlas en la configuración del sitio.");
+      }
+    }
+
+    function triggerNotification() {
+      const title = "🚀 ¡Momento de Publicar / Prospectar!";
+      const options = {
+        body: "Tienes el Post 01 y 15 prospectos esperándote. ¡Toca aquí para abrir tus copys!",
+        icon: "SVG/isofull.svg",
+        badge: "SVG/isofull.svg",
+        vibrate: [200, 100, 200]
+      };
+
+      try {
+        const notif = new Notification(title, options);
+        notif.onclick = function() {
+          window.focus();
+          this.close();
+        };
+      } catch (e) {
+        console.log("Notificación disparada:", title);
+      }
+
+      const btn = document.getElementById('btn-notify-action');
+      const bannerTitle = document.getElementById('notify-title');
+      const bannerSub = document.getElementById('notify-sub');
+      
+      if (btn) btn.textContent = "✓ Activas";
+      if (bannerTitle) bannerTitle.textContent = "🔔 Recordatorios Activados";
+      if (bannerSub) bannerSub.textContent = "Recibirás alertas para mantener el ritmo de publicación y prospección.";
+      showToast("🔔 ¡Notificaciones activadas!");
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      updateStreakQuote();
+      if (Notification.permission === "granted") {
+        const btn = document.getElementById('btn-notify-action');
+        const bannerTitle = document.getElementById('notify-title');
+        const bannerSub = document.getElementById('notify-sub');
+        if (btn) btn.textContent = "Probar";
+        if (bannerTitle) bannerTitle.textContent = "🔔 Recordatorios Listos";
+        if (bannerSub) bannerSub.textContent = "Toca para probar una notificación en tu teléfono.";
+      }
+    });
   </script>
 
 </body>
