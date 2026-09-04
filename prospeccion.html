@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Portal de Operaciones — Estudio Precinto</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  
+  <style>
+    :root {
+      --navy: #0e132b;
+      --navy-2: #131929;
+      --navy-3: #1a2240;
+      --card-bg: #141b36;
+      --gold: #c4a882;
+      --gold-light: #e5d5c0;
+      --steel: #39506b;
+      --white: #f8f9fa;
+      --light-2: rgba(224, 225, 221, 0.75);
+      --light-3: rgba(224, 225, 221, 0.4);
+      --border: rgba(196, 168, 130, 0.22);
+      --border-subtle: rgba(224, 225, 221, 0.08);
+      --red: #ff4d6d;
+      --green: #10b981;
+      --cyan: #38bdf8;
+      --font-h: 'Manrope', sans-serif;
+      --font-b: 'DM Sans', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: #080c1d;
+      color: var(--white);
+      font-family: var(--font-b);
+      min-height: 100vh;
+      padding-bottom: 90px;
+    }
+
+    /* Top Bar */
+    .top-bar {
+      background: rgba(14, 19, 43, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-logo {
+      height: 22px;
+    }
+
+    .status-pill {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      font-weight: 700;
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--green);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 4px 10px;
+      border-radius: 100px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 6px var(--green);
+    }
+
+    /* Main Container */
+    .container {
+      padding: 20px 16px;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    /* Tab Switcher */
+    .tab-nav {
+      display: flex;
+      background: var(--navy-2);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 4px;
+      margin-bottom: 24px;
+      gap: 4px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 12px 10px;
+      border: none;
+      background: transparent;
+      color: var(--light-2);
+      font-family: var(--font-h);
+      font-size: 0.85rem;
+      font-weight: 700;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .tab-btn.active {
+      background: var(--gold);
+      color: #0e132b;
+      box-shadow: 0 4px 12px rgba(196, 168, 130, 0.25);
+    }
+
+    /* Section Cards */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 20px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    }
+
+    .card-title {
+      font-family: var(--font-h);
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--white);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-subtitle {
+      font-size: 0.88rem;
+      color: var(--light-2);
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+
+    /* Routine Checklist */
+    .checklist {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .check-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(14, 19, 43, 0.6);
+      border: 1px solid var(--border-subtle);
+      padding: 12px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .check-item input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      accent-color: var(--gold);
+      cursor: pointer;
+    }
+
+    .check-text {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--white);
+    }
+
+    /* Script Blocks */
+    .script-box {
+      background: #0b0f24;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+      position: relative;
+    }
+
+    .script-tag {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .script-text {
+      font-size: 0.92rem;
+      color: var(--light-2);
+      line-height: 1.55;
+      white-space: pre-line;
+      margin-bottom: 14px;
+    }
+
+    .btn-copy {
+      background: rgba(196, 168, 130, 0.15);
+      color: var(--gold);
+      border: 1px solid var(--gold);
+      font-family: var(--font-h);
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding: 10px 16px;
+      border-radius: 8px;
+      width: 100%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-copy:active {
+      transform: scale(0.98);
+      background: var(--gold);
+      color: #0e132b;
+    }
+
+    /* Carousel Preview Cards */
+    .carousel-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 24px;
+    }
+
+    .carousel-badge {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: var(--cyan);
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 4px 8px;
+      border-radius: 6px;
+      display: inline-block;
+      margin-bottom: 10px;
+    }
+
+    .carousel-title {
+      font-family: var(--font-h);
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--white);
+      margin-bottom: 12px;
+    }
+
+    /* Preview Slides Horizontal Scroll */
+    .slides-preview-container {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      padding: 10px 0 16px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--gold) transparent;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .mini-slide {
+      flex: 0 0 220px;
+      height: 275px; /* Ratio 4:5 */
+      background: #0e132b;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+    }
+
+    .mini-slide-num {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--gold);
+      font-weight: 700;
+    }
+
+    .mini-slide-title {
+      font-family: var(--font-h);
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--white);
+      line-height: 1.25;
+      margin: auto 0;
+    }
+
+    .mini-slide-tag {
+      font-size: 0.7rem;
+      color: var(--light-3);
+    }
+
+    .btn-download-hd {
+      background: var(--gold);
+      color: #0e132b;
+      font-family: var(--font-h);
+      font-weight: 800;
+      font-size: 0.9rem;
+      padding: 12px 18px;
+      border-radius: 10px;
+      border: none;
+      width: 100%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--gold);
+      color: #0e132b;
+      font-family: var(--font-h);
+      font-weight: 800;
+      font-size: 0.9rem;
+      padding: 12px 24px;
+      border-radius: 100px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+      z-index: 1000;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      opacity: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Bar -->
+  <header class="top-bar">
+    <img src="SVG/logoblanco.svg" alt="Estudio Precinto" class="brand-logo">
+    <div class="status-pill">
+      <div class="status-dot"></div>
+      OPERACIONES ACTIVAS
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- Tab Selector -->
+    <nav class="tab-nav">
+      <button class="tab-btn active" onclick="switchTab('tab-linkedin')">
+        💼 LinkedIn Prospección
+      </button>
+      <button class="tab-btn" onclick="switchTab('tab-instagram')">
+        📸 Instagram Carruseles
+      </button>
+    </nav>
+
+    <!-- ══════════════════════════════════════════════════
+         PESTAÑA 1: PROSPECCIÓN LINKEDIN
+    ═══════════════════════════════════════════════════ -->
+    <section id="tab-linkedin" class="tab-content active">
+
+      <!-- Checklist Diario -->
+      <div class="card">
+        <h2 class="card-title">✅ Rutina Diaria (30 min)</h2>
+        <p class="card-subtitle">Completa estas 3 tareas de lunes a viernes para agendar de 3 a 5 llamadas técnicas por semana.</p>
+        
+        <div class="checklist">
+          <label class="check-item">
+            <input type="checkbox">
+            <span class="check-text">1. Buscar 15 perfiles (Agencias / Inmobiliarias / B2B)</span>
+          </label>
+          <label class="check-item">
+            <input type="checkbox">
+            <span class="check-text">2. Enviar 15 solicitudes con mensaje personalizado</span>
+          </label>
+          <label class="check-item">
+            <input type="checkbox">
+            <span class="check-text">3. Responder chats y enviar link a los interesados</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Script 1: Agencias de Marketing -->
+      <div class="card">
+        <h2 class="card-title">🎯 Mensaje para Agencias de Marketing</h2>
+        <p class="card-subtitle">Para Fundadores, Directores de Agencia o CEOs que necesitan un partner técnico.</p>
+
+        <div class="script-box">
+          <span class="script-tag">COPIAR Y REEMPLAZAR [NOMBRE]</span>
+          <div class="script-text" id="script-agencias">Hola [Nombre], ¿cómo estás?
+
+Veo el trabajo que vienen haciendo con clientes en [Nombre de la Agencia].
+
+Te escribo brevemente: muchas agencias venden grandes estrategias pero pierden tiempo o clientes cuando hay que programar código a medida, integrar la API de WhatsApp, conectar pasarelas de pago o resolver caídas de servidores.
+
+En Estudio Precinto actuamos como su partner técnico de marca blanca: asumimos toda la programación, automatización y compliance técnico de forma directa para que ustedes no tengan que contratar programadores in-house.
+
+¿Tienen actualmente proyectos donde la parte técnica esté retrasando entregas o limitando el servicio a sus clientes?
+
+Saludos,
+[Tu Nombre] | Estudio Precinto</div>
+          <button class="btn-copy" onclick="copyText('script-agencias')">📋 Copiar Mensaje</button>
+        </div>
+      </div>
+
+      <!-- Script 2: Empresas B2B (Turnos y Procesos) -->
+      <div class="card">
+        <h2 class="card-title">🏢 Mensaje para Empresas B2B / Inmobiliarias</h2>
+        <p class="card-subtitle">Para Gerentes y Socios de empresas que coordinan turnos o procesos a mano.</p>
+
+        <div class="script-box">
+          <span class="script-tag">COPIAR Y REEMPLAZAR [NOMBRE]</span>
+          <div class="script-text" id="script-empresas">Hola [Nombre], ¿cómo estás?
+
+Te contacto porque veo el volumen de actividad que manejan en [Nombre de la Empresa].
+
+En empresas de su sector, la coordinación manual de agendas y consultas por WhatsApp suele provocar demoras de respuesta, turnos duplicados y horas de trabajo administrativo perdidas.
+
+En Estudio Precinto implementamos sistemas de autogestión y reservas con sincronización bidireccional inmediata (calendarios, CRM y pasarelas de cobro de señas). Eliminamos la intermediación manual para que el equipo solo atienda al cliente final.
+
+¿Tienen automatizado este flujo actualmente o siguen dependiendo de la gestión manual?
+
+Saludos,
+[Tu Nombre] | Estudio Precinto</div>
+          <button class="btn-copy" onclick="copyText('script-empresas')">📋 Copiar Mensaje</button>
+        </div>
+      </div>
+
+      <!-- Script 3: Follow-up -->
+      <div class="card">
+        <h2 class="card-title">⏳ Mensaje de Seguimiento (A los 4 días)</h2>
+        <p class="card-subtitle">Para enviar si no respondieron el primer mensaje.</p>
+
+        <div class="script-box">
+          <span class="script-tag">FOLLOW-UP CORTO</span>
+          <div class="script-text" id="script-followup">Hola [Nombre], te escribo brevemente por si quedó traspapelado mi mensaje anterior.
+
+Si en algún momento necesitan resolver un cuello de botella técnico o automatizar sus sistemas operativos, podemos coordinar una llamada de 15 minutos para revisar su caso.
+
+Quedo a disposición.</div>
+          <button class="btn-copy" onclick="copyText('script-followup')">📋 Copiar Seguimiento</button>
+        </div>
+      </div>
+
+      <!-- Script 4: Respuesta a Interesados -->
+      <div class="card">
+        <h2 class="card-title">📅 Cierre: Enviar Enlace de Diagnóstico</h2>
+        <p class="card-subtitle">Para cuando te responden: *"Sí, me interesa / ¿cómo trabajan?"*</p>
+
+        <div class="script-box">
+          <span class="script-tag">RESPUESTA PARA AGENDAR LLAMADA</span>
+          <div class="script-text" id="script-agendar">Excelente, [Nombre]. Cada empresa tiene una infraestructura distinta, por lo que primero hacemos una Sesión de Diagnóstico Técnico de 20 minutos (sin costo).
+
+En esa llamada revisamos sus cuellos de botella actuales y les entregamos una propuesta de arquitectura y automatización con presupuesto cerrado.
+
+¿Qué día de esta semana te queda más cómodo para una breve llamada por Google Meet? O si prefieres, puedes elegir el horario directo en nuestro calendario: https://estudioprecinto.com/</div>
+          <button class="btn-copy" onclick="copyText('script-agendar')">📋 Copiar Respuesta de Cierre</button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ══════════════════════════════════════════════════
+         PESTAÑA 2: INSTAGRAM Y CARRUSELES
+    ═══════════════════════════════════════════════════ -->
+    <section id="tab-instagram" class="tab-content">
+
+      <!-- Post 01: Manifiesto -->
+      <div class="carousel-card">
+        <span class="carousel-badge">POST 01 · MANIFIESTO B2B</span>
+        <h3 class="carousel-title">Por qué su empresa no necesita otra página web "bonita"</h3>
+        <p style="font-size:0.85rem;color:var(--light-2);margin-bottom:12px;">4 diapositivas · Formato 4:5</p>
+
+        <!-- Preview Slides -->
+        <div class="slides-preview-container">
+          <div class="mini-slide">
+            <span class="mini-slide-num">LÁMINA 1</span>
+            <div class="mini-slide-title">Por qué su empresa <span style="color:var(--red);">no necesita</span> otra web "bonita".</div>
+            <span class="mini-slide-tag">Portada</span>
+          </div>
+          <div class="mini-slide">
+            <span class="mini-slide-num">LÁMINA 2</span>
+            <div class="mini-slide-title">El 90% de los sitios web <span style="color:var(--red);">fallan en esto:</span></div>
+            <span class="mini-slide-tag">Diagnóstico</span>
+          </div>
+          <div class="mini-slide">
+            <span class="mini-slide-num">LÁMINA 3</span>
+            <div class="mini-slide-title">Una presencia rentable es <span style="color:var(--gold);">ingeniería</span>, no decoración.</div>
+            <span class="mini-slide-tag">Solución</span>
+          </div>
+          <div class="mini-slide">
+            <span class="mini-slide-num">LÁMINA 4</span>
+            <div class="mini-slide-title">Elimine la <span style="color:var(--gold);">fricción técnica</span> de su empresa.</div>
+            <span class="mini-slide-tag">Llamado a Acción</span>
+          </div>
+        </div>
+
+        <button class="btn-download-hd" onclick="window.open('post_01_manifiesto.html', '_blank')">
+          📥 Abrir y Descargar Láminas HD
+        </button>
+
+        <!-- Copy del Post -->
+        <div class="script-box" style="margin-top:16px;">
+          <span class="script-tag">PIE DE FOTO / COPY DEL POST 01</span>
+          <div class="script-text" id="copy-post-1">Un sitio web que no automatiza tareas ni procesa transacciones de forma limpia es un costo operativo, no un activo.
+
+En Estudio Precinto abordamos cada desarrollo como directores técnicos de proyecto: diagnosticamos dónde se traba su operación y construimos la infraestructura digital exacta para resolverlo.
+
+Si su empresa busca estabilidad, automatización y cumplimiento normativo, hablemos. Enlace de diagnóstico técnico en la biografía.
+
+#ConsultoriaTecnologica #AutomatizacionB2B #ArquitecturaDigital #SoftwareB2B #EstudioPrecinto</div>
+          <button class="btn-copy" onclick="copyText('copy-post-1')">📋 Copiar Texto del Post</button>
+        </div>
+      </div>
+
+      <!-- Post 02: Compliance Meta -->
+      <div class="carousel-card">
+        <span class="carousel-badge" style="color:var(--gold);border-color:rgba(196,168,130,0.3);">POST 02 · COMPLIANCE META</span>
+        <h3 class="carousel-title">Las 4 razones por las que Meta rechaza WhatsApp Business API</h3>
+        <p style="font-size:0.85rem;color:var(--light-2);margin-bottom:12px;">5 diapositivas · Formato 4:5</p>
+
+        <!-- Preview Slides -->
+        <div class="slides-preview-container">
+          <div class="mini-slide">
+            <span class="mini-slide-num">LÁMINA 1</span>
+            <div class="mini-slide-title">Las 4 razones por las que <span style="color:var(--cyan);">Meta rechaza</span> WhatsApp API.</div>
+            <span class="mini-slide-tag">Portada</span>
+          </div>
+          <div class="mini-slide">
+            <span class="mini-slide-num">LÁMINA 2</span>
+            <div class="mini-slide-title">1. Inconsistencia <span style="color:var(--gold);">NAP de datos</span>.</div>
+            <span class="mini-slide-tag">Falla 01</span>
+          </div>
+          <div class="mini-slide">
+            <span class="mini-slide-num">LÁMINA 3</span>
+            <div class="mini-slide-title">2. Políticas copiadas <span style="color:var(--red);">sin Ley 25.326</span>.</div>
+            <span class="mini-slide-tag">Falla 02</span>
+          </div>
+          <div class="mini-slide">
+            <span class="mini-slide-num">LÁMINA 4</span>
+            <div class="mini-slide-title">3. DNS incorrectos y <span style="color:var(--cyan);">latencia > 3s</span>.</div>
+            <span class="mini-slide-tag">Falla 03</span>
+          </div>
+          <div class="mini-slide">
+            <span class="mini-slide-num">LÁMINA 5</span>
+            <div class="mini-slide-title">Blindamos su <span style="color:var(--gold);">presencia técnica</span> para Meta.</div>
+            <span class="mini-slide-tag">Resolución</span>
+          </div>
+        </div>
+
+        <button class="btn-download-hd" onclick="window.open('post_02_compliance_meta.html', '_blank')">
+          📥 Abrir y Descargar Láminas HD
+        </button>
+
+        <!-- Copy del Post -->
+        <div class="script-box" style="margin-top:16px;">
+          <span class="script-tag">PIE DE FOTO / COPY DEL POST 02</span>
+          <div class="script-text" id="copy-post-2">Intentar verificar una cuenta comercial en Meta con una página improvisada solo genera bloqueos y retrasos en sus canales de venta.
+
+La verificación comercial de Meta y WhatsApp Business API exige arquitectura de datos precisa, trazabilidad legal y coherencia técnica en toda la infraestructura digital.
+
+En Estudio Precinto desarrollamos sitios institucionales estructurados específicamente para superar auditorías de verificación.
+
+¿Tiene su verificación trabada? Escríbanos por privado para revisar su caso.
+
+#MetaAPI #WhatsAppBusinessAPI #ComplianceDigital #VerificacionMeta #DesarrolloWeb</div>
+          <button class="btn-copy" onclick="copyText('copy-post-2')">📋 Copiar Texto del Post</button>
+        </div>
+      </div>
+
+      <!-- Post 03: Automatización de Turnos -->
+      <div class="carousel-card">
+        <span class="carousel-badge" style="color:var(--green);border-color:rgba(16,185,129,0.3);">POST 03 · AUTOMATIZACIÓN</span>
+        <h3 class="carousel-title">El costo oculto de coordinar turnos por WhatsApp</h3>
+        <p style="font-size:0.85rem;color:var(--light-2);margin-bottom:12px;">4 diapositivas · Formato 4:5</p>
+
+        <!-- Preview Slides -->
+        <div class="slides-preview-container">
+          <div class="mini-slide">
+            <span class="mini-slide-num">LÁMINA 1</span>
+            <div class="mini-slide-title">Coordinar turnos <span style="color:var(--red);">por WhatsApp</span> le cuesta dinero.</div>
+            <span class="mini-slide-tag">Portada</span>
+          </div>
+          <div class="mini-slide">
+            <span class="mini-slide-num">LÁMINA 2</span>
+            <div class="mini-slide-title">Así se pierden <span style="color:var(--red);">ventas a diario</span>:</div>
+            <span class="mini-slide-tag">Flujo Frágil</span>
+          </div>
+          <div class="mini-slide">
+            <span class="mini-slide-num">LÁMINA 3</span>
+            <div class="mini-slide-title">Sincronización <span style="color:var(--gold);">en tiempo real</span> con cobro.</div>
+            <span class="mini-slide-tag">Flujo Precinto</span>
+          </div>
+          <div class="mini-slide">
+            <span class="mini-slide-num">LÁMINA 4</span>
+            <div class="mini-slide-title">Recupere más de <span style="color:var(--gold);">15 horas semanales</span>.</div>
+            <span class="mini-slide-tag">Resolución</span>
+          </div>
+        </div>
+
+        <button class="btn-download-hd" onclick="window.open('post_03_automatizacion_turnos.html', '_blank')">
+          📥 Abrir y Descargar Láminas HD
+        </button>
+
+        <!-- Copy del Post -->
+        <div class="script-box" style="margin-top:16px;">
+          <span class="script-tag">PIE DE FOTO / COPY DEL POST 03</span>
+          <div class="script-text" id="copy-post-3">Si su equipo todavía pasa horas semanales coordinando turnos o confirmando agendas por WhatsApp, tiene una fuga invisible de rentabilidad.
+
+La automatización con sincronización bidireccional elimina el error humano, evita el solapamiento de horarios y asegura la asistencia mediante el cobro automático de señas.
+
+Su personal debe dedicarse a prestar el servicio, no a hacer de recepcionista manual.
+
+Evaluamos la arquitectura operativa de su negocio para automatizar sus flujos críticos. Link en bio para coordinar.
+
+#AutomatizacionDeProcesos #SistemasDeGestion #EficienciaOperativa #TecnologiaQueResuelve</div>
+          <button class="btn-copy" onclick="copyText('copy-post-3')">📋 Copiar Texto del Post</button>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast">
+    <span>✓</span> Copiado al portapapeles
+  </div>
+
+  <script>
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      
+      document.getElementById(tabId).classList.add('active');
+      event.currentTarget.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function copyText(elementId) {
+      const text = document.getElementById(elementId).innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        showToast();
+      });
+    }
+
+    function showToast() {
+      const toast = document.getElementById('toast');
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2000);
+    }
+  </script>
+
+</body>
+</html>

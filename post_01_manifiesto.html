@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Post 01: El Manifiesto — Estudio Precinto</title>
+  <link rel="stylesheet" href="carousel-theme.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+
+  <!-- Barra de Control -->
+  <div class="control-bar">
+    <div>
+      <strong style="color:var(--gold);font-family:var(--font-h);font-size:1.05rem;">Post 01: Manifiesto de Marca</strong>
+      <span style="font-size:0.85rem;color:var(--light-3);margin-left:12px;">(4 Láminas · 1080x1350)</span>
+    </div>
+    <button class="btn-action" onclick="exportAllSlides()">📸 Descargar Todas en HD (PNG)</button>
+  </div>
+
+  <div class="slides-wrapper">
+
+    <!-- SLIDE 1 (Portada) -->
+    <div class="slide-frame" id="slide-1">
+      <div class="slide-content">
+        <div class="slide-header">
+          <img src="SVG/logoblanco.svg" alt="Estudio Precinto" class="brand-logo">
+          <span class="badge-tag">Infraestructura B2B</span>
+        </div>
+
+        <div class="slide-body">
+          <h1 class="slide-title-hero">
+            Por qué su empresa <br>
+            <span class="text-red">no necesita</span> otra <br>
+            página web <span class="text-gold">"bonita"</span>.
+          </h1>
+
+          <div class="impact-card impact-card-alert" style="margin-top:16px;">
+            <div class="impact-title" style="color:var(--red);">
+              ⚠️ El problema silencioso
+            </div>
+            <p class="impact-desc">
+              El diseño decorativo sin ingeniería de backend no factura: solo genera costos y procesos manuales rotos.
+            </p>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <span>Desliza para ver el diagnóstico →</span>
+          <span class="slide-num">01 / 04</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 2 (El Error Crítico) -->
+    <div class="slide-frame" id="slide-2">
+      <div class="slide-content">
+        <div class="slide-header">
+          <img src="SVG/logoblanco.svg" alt="Estudio Precinto" class="brand-logo">
+          <span class="badge-tag" style="color:var(--red);border-color:rgba(255,77,109,0.4);">Diagnóstico Técnico</span>
+        </div>
+
+        <div class="slide-body">
+          <h2 class="slide-title-subpage">
+            El 90% de los sitios web <br>
+            <span class="text-red">fallan en estos 3 puntos:</span>
+          </h2>
+
+          <div class="feature-stack">
+            <div class="feature-pill" style="border-left: 4px solid var(--red);">
+              <span class="feature-num" style="color:var(--red);">01</span>
+              <div>
+                <div class="feature-heading">Pagos y webhooks rotos</div>
+                <div class="feature-sub">El cliente intenta pagar y la pasarela lo rechaza en silencio sin dejar registro.</div>
+              </div>
+            </div>
+
+            <div class="feature-pill" style="border-left: 4px solid var(--red);">
+              <span class="feature-num" style="color:var(--red);">02</span>
+              <div>
+                <div class="feature-heading">Rechazos en Meta API</div>
+                <div class="feature-sub">Falta de compliance legal (Ley 25.326) que bloquea canales de WhatsApp Business.</div>
+              </div>
+            </div>
+
+            <div class="feature-pill" style="border-left: 4px solid var(--red);">
+              <span class="feature-num" style="color:var(--red);">03</span>
+              <div>
+                <div class="feature-heading">Gestión manual lenta</div>
+                <div class="feature-sub">Más de 15 horas semanales perdidas coordinando turnos y agendas por chat.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <span>Cómo lo resolvemos →</span>
+          <span class="slide-num">02 / 04</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3 (La Solución) -->
+    <div class="slide-frame" id="slide-3">
+      <div class="slide-content">
+        <div class="slide-header">
+          <img src="SVG/logoblanco.svg" alt="Estudio Precinto" class="brand-logo">
+          <span class="badge-tag">La Resolución</span>
+        </div>
+
+        <div class="slide-body">
+          <h2 class="slide-title-subpage">
+            Una presencia rentable es <br>
+            <span class="text-gold">ingeniería</span>, no decoración:
+          </h2>
+
+          <div class="feature-stack">
+            <div class="feature-pill" style="border-left: 4px solid var(--gold);background:var(--bg-card-solid);">
+              <span class="feature-num" style="color:var(--gold);">✔</span>
+              <div>
+                <div class="feature-heading" style="color:var(--gold);">Blindaje normativo</div>
+                <div class="feature-sub">Arquitectura web lista para superar auditorías de Meta y normativas legales.</div>
+              </div>
+            </div>
+
+            <div class="feature-pill" style="border-left: 4px solid var(--cyan);background:var(--bg-card-solid);">
+              <span class="feature-num" style="color:var(--cyan);">✔</span>
+              <div>
+                <div class="feature-heading" style="color:var(--cyan);">Sincronización total</div>
+                <div class="feature-sub">Calendario, cobro de señas y CRM conectados en tiempo real.</div>
+              </div>
+            </div>
+
+            <div class="feature-pill" style="border-left: 4px solid var(--green);background:var(--bg-card-solid);">
+              <span class="feature-num" style="color:var(--green);">✔</span>
+              <div>
+                <div class="feature-heading" style="color:var(--green);">Estabilidad 24/7</div>
+                <div class="feature-sub">Sistemas en la nube que operan solos sin requerir intermediación humana.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <span>El siguiente paso →</span>
+          <span class="slide-num">03 / 04</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4 (Cierre) -->
+    <div class="slide-frame" id="slide-4">
+      <div class="slide-content">
+        <div class="slide-header">
+          <img src="SVG/logoblanco.svg" alt="Estudio Precinto" class="brand-logo">
+          <span class="badge-tag">Tecnología que Resuelve</span>
+        </div>
+
+        <div class="slide-body" style="text-align:center;">
+          <h2 class="slide-title-hero" style="font-size:2.2rem;margin-bottom:14px;">
+            Elimine la <br>
+            <span class="text-gold">fricción técnica</span> <br>
+            de su empresa.
+          </h2>
+
+          <p class="slide-subtitle" style="font-size:1rem;margin-bottom:24px;">
+            Actuamos como directores técnicos: diagnosticamos cuellos de botella y construimos la infraestructura digital que su negocio necesita.
+          </p>
+
+          <div class="impact-card impact-card-gold" style="padding:18px;margin-bottom:16px;">
+            <div style="font-family:var(--font-h);font-size:1.05rem;font-weight:800;color:var(--gold);margin-bottom:4px;">
+              EVALUACIÓN OPERATIVA INICIAL
+            </div>
+            <div style="font-size:0.92rem;color:var(--white);font-weight:500;">
+              Sesión de diagnóstico técnico de 20 minutos.
+            </div>
+          </div>
+
+          <p style="font-size:0.85rem;color:var(--light-3);">
+            🔗 Enlace en biografía o envíe un MD con la palabra <strong>DIAGNÓSTICO</strong>.
+          </p>
+        </div>
+
+        <div class="slide-footer">
+          <span>Estudio Precinto · Consultoría B2B</span>
+          <span class="slide-num">04 / 04</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    async function exportAllSlides() {
+      const slides = document.querySelectorAll('.slide-frame');
+      const btn = document.querySelector('.btn-action');
+      btn.textContent = '⏳ Generando capturas HD...';
+      btn.disabled = true;
+
+      for (let i = 0; i < slides.length; i++) {
+        const slide = slides[i];
+        const canvas = await html2canvas(slide, {
+          scale: 2, // 1080x1350 HD
+          useCORS: true,
+          backgroundColor: '#0e132b'
+        });
+
+        const link = document.createElement('a');
+        link.download = `post_01_manifiesto_slide_${i + 1}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        await new Promise(r => setTimeout(r, 400));
+      }
+
+      btn.textContent = '✅ ¡Descarga Completa!';
+      setTimeout(() => {
+        btn.textContent = '📸 Descargar Todas en HD (PNG)';
+        btn.disabled = false;
+      }, 2500);
+    }
+  </script>
+
+</body>
+</html>
