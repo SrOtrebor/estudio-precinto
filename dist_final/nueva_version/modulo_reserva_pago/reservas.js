@@ -35,13 +35,9 @@ async function fetchPricing() {
                 // 4. Update data-modal-price on all .js-booking-modal buttons
                 const bookingModals = document.querySelectorAll('.js-booking-modal');
                 bookingModals.forEach(btn => {
-                    btn.setAttribute('data-modal-price', priceStr);
-                });
-                
-                // 5. Update short price texts in nav and cta
-                const shortTexts = document.querySelectorAll('.js-dynamic-price-k');
-                shortTexts.forEach(el => {
-                    el.textContent = `Landing en 24h — ${priceShort}`;
+                    if (!btn.getAttribute('data-modal-price')) {
+                        btn.setAttribute('data-modal-price', priceStr);
+                    }
                 });
                 
                 // 6. Update JSON-LD Schema
