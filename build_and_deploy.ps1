@@ -41,6 +41,8 @@ Copy-Item -Recurse live-feed/dist/* dist_final/live-feed/
 New-Item -ItemType Directory -Force -Path dist_final/subasta-silenciosa | Out-Null
 Copy-Item -Recurse subasta-silenciosa/dist/* dist_final/subasta-silenciosa/
 
+if (Test-Path precintofit) { Copy-Item -Recurse precintofit dist_final/ }
+
 if (Test-Path curso-maleki) { 
     # Usar robocopy para excluir node_modules
     robocopy curso-maleki dist_final/curso-maleki /E /XD node_modules .git /NFL /NDL /NJH /NJS /nc /ns /np
@@ -55,3 +57,4 @@ if (Test-Path nueva_version) {
 Write-Host "Desplegando en Firebase Hosting..."
 firebase deploy --only hosting --project estudio-precinto
 Write-Host "¡Despliegue completado con éxito!"
+
