@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>NutriFit Casero - Cocina Fácil & Porciones</title>
+  
+  <!-- PWA & Mobile Meta Tags -->
+  <meta name="description" content="Recetario modular argentino: cocina en bloques, galletitas para los chicos, compras semanales y pesos de porciones por edad.">
+  <meta name="theme-color" content="#10B981">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="NutriFit">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+  <link rel="apple-touch-icon" href="icons/icon.svg">
+
+  <!-- Estilos Visuales -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Contenedor Principal Adaptado a Celular (Mobile App Frame) -->
+  <div class="app-viewport">
+    
+    <!-- Header Superior Fijo -->
+    <header class="app-header">
+      <div class="header-top">
+        <div class="brand-wrapper">
+          <div class="brand-logo">🥘</div>
+          <div class="brand-info">
+            <h1>NutriFit Casero</h1>
+            <p>Cocina modular & porciones por edad</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button class="icon-btn" id="themeToggleBtn" title="Cambiar tema" aria-label="Cambiar tema">☀️</button>
+        </div>
+      </div>
+
+      <!-- Barra de Búsqueda Rápida -->
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input 
+          type="text" 
+          id="searchInput" 
+          class="search-input" 
+          placeholder="Buscar receta, ingrediente (papa, pollo, atún...)" 
+          autocomplete="off"
+        >
+        <button class="clear-search-btn" id="clearSearchBtn">&times;</button>
+      </div>
+    </header>
+
+    <!-- Barra Deslizable de Categorías -->
+    <nav class="categories-bar" id="categoriesBar" aria-label="Categorías"></nav>
+
+    <!-- ================================================================
+         VISTA 1: EXPLORADOR DE RECETAS (PRINCIPAL)
+         ================================================================ -->
+    <main class="main-content">
+      <section id="view-recipes" class="view-section active">
+        <div class="section-meta">
+          <h2 class="section-title">🍽️ Preparaciones y Platos</h2>
+          <span class="recipes-count" id="recipesCount">0 recetas</span>
+        </div>
+        <div class="recipes-grid" id="recipesGrid">
+          <!-- Las tarjetas de recetas se inyectan automáticamente vía JavaScript -->
+        </div>
+      </section>
+
+      <!-- ================================================================
+           VISTA 2: GUÍA DE PORCIONES POR EDAD (ADULTO, 13 Y 4 AÑOS)
+           ================================================================ -->
+      <section id="view-portions" class="view-section">
+        <div class="section-meta">
+          <h2 class="section-title">⚖️ ¿Cuánto debe pesar cada porción?</h2>
+        </div>
+
+        <div class="portion-guide-container">
+          <div class="portion-banner">
+            <span class="portion-banner-icon">👨‍👩‍👧‍👦</span>
+            <div>
+              <h3>Guía de Pesos en el Plato</h3>
+              <p>Valores de referencia para no quedarte corto ni tirar comida</p>
+            </div>
+          </div>
+
+          <!-- Selector de Edades -->
+          <div class="portion-tabs">
+            <button class="portion-tab-btn active" data-age="adult">👨 Adulto</button>
+            <button class="portion-tab-btn" data-age="teen">👦 Hijo (13 años)</button>
+            <button class="portion-tab-btn" data-age="kid">👧 Hijo (4 años)</button>
+          </div>
+
+          <!-- Tarjeta Detallada de Porción Activa -->
+          <div class="portion-card" id="portionCardDetail">
+            <!-- Inyectado dinámicamente -->
+          </div>
+
+          <!-- Consejos Prácticos de Servido -->
+          <div class="portion-tips-card">
+            <h4>💡 Cómo medir sin balanza en el día a día</h4>
+            <ul>
+              <li><strong>Proteína (Pollo/Carne/Cerdo):</strong> El tamaño de la palma de la mano abierta (sin dedos) para adulto/13 años; el tamaño de la cajita de fósforos para el de 4 años.</li>
+              <li><strong>Carbohidratos (Arroz/Fideos/Papas):</strong> El puño cerrado de cada persona es la medida exacta de su porción cocida.</li>
+              <li><strong>Verduras:</strong> Las dos manos juntas abiertas en forma de cuenco. ¡Cuanto más color haya en el plato, mejor!</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================
+           VISTA 3: LISTA DE COMPRAS SEMANAL (SÚPER, VERDULERÍA, CARNICERÍA)
+           ================================================================ -->
+      <section id="view-shopping" class="view-section">
+        <div class="shopping-header-card">
+          <div>
+            <h2>🛒 Lista del Súper & Barrio</h2>
+            <p>Cantidades calculadas para tu semana familiar</p>
+          </div>
+          <button class="btn-clear-shopping" id="btnLoadWeeklyPlan">Cargar Semana</button>
+        </div>
+
+        <div class="add-custom-item-row">
+          <input 
+            type="text" 
+            id="addCustomInput" 
+            class="add-custom-input" 
+            placeholder="Añadir producto manualmente..."
+          >
+          <button class="btn-add-item" id="btnAddCustom" title="Añadir">+</button>
+        </div>
+
+        <div class="shopping-items-list" id="shoppingItemsList">
+          <!-- Elementos de compra con checkboxes -->
+        </div>
+
+        <button class="btn-clear-all-shopping" id="btnClearShopping">
+          🗑️ Vaciar toda la lista
+        </button>
+      </section>
+
+      <!-- ================================================================
+           VISTA 4: MIS FAVORITOS
+           ================================================================ -->
+      <section id="view-favorites" class="view-section">
+        <div class="section-meta">
+          <h2 class="section-title">⭐ Mis Recetas Guardadas</h2>
+          <span class="recipes-count" id="favsCount">0 guardadas</span>
+        </div>
+        <div class="recipes-grid" id="favsGrid">
+          <!-- Se cargan las recetas favoritas -->
+        </div>
+      </section>
+    </main>
+
+    <!-- ================================================================
+         BARRA DE NAVEGACIÓN INFERIOR (ESTILO APP NATIVA)
+         ================================================================ -->
+    <nav class="bottom-nav">
+      <button class="nav-item active" data-view="recipes">
+        <span class="nav-icon">🍳</span>
+        <span class="nav-label">Recetas</span>
+      </button>
+      <button class="nav-item" data-view="portions">
+        <span class="nav-icon">⚖️</span>
+        <span class="nav-label">Porciones</span>
+      </button>
+      <button class="nav-item" data-view="shopping">
+        <span class="nav-icon">🛒</span>
+        <span class="nav-label">Compras</span>
+        <span class="nav-badge-count" id="shoppingBadge" style="display:none;">0</span>
+      </button>
+      <button class="nav-item" data-view="favorites">
+        <span class="nav-icon">⭐</span>
+        <span class="nav-label">Favoritos</span>
+        <span class="nav-badge-count" id="favsBadge" style="display:none;">0</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- ================================================================
+       MODAL DE DETALLE DE RECETA (HOJA DESLIZABLE DESDE ABAJO)
+       ================================================================ -->
+  <div class="modal-backdrop" id="recipeModal" role="dialog" aria-modal="true">
+    <div class="modal-sheet">
+      <div class="sheet-handle-bar"></div>
+      <div class="sheet-header-actions">
+        <button class="icon-btn" id="closeModalBtn" title="Cerrar" aria-label="Cerrar">&times;</button>
+      </div>
+      <div class="sheet-scroll-body" id="modalBody">
+        <!-- El contenido dinámico se carga al pulsar cualquier receta -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenedor para Notificaciones Flotantes (Toasts) -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Scripts de Datos y Lógica con versionado para evitar caché antigua -->
+  <script src="js/recipes-data.js?v=2"></script>
+  <script src="js/app.js?v=2"></script>
+</body>
+</html>

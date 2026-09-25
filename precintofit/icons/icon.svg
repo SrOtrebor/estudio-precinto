@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10B981"/>
+      <stop offset="100%" stop-color="#047857"/>
+    </linearGradient>
+    <linearGradient id="bowlGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#E2E8F0"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000000" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <!-- Background with rounded corners (iOS/Android app icon style) -->
+  <rect width="512" height="512" rx="115" fill="url(#bgGrad)"/>
+
+  <!-- Subtle glow inner circle -->
+  <circle cx="256" cy="256" r="190" fill="#FFFFFF" fill-opacity="0.08"/>
+
+  <!-- Healthy Avocado & Leaf Icon -->
+  <g filter="url(#shadow)" transform="translate(100, 100) scale(0.61)">
+    <!-- Leaf 1 -->
+    <path d="M 256,40 C 230,120 160,150 120,160 C 180,210 260,170 256,40 Z" fill="#86EFAC"/>
+    <!-- Leaf 2 -->
+    <path d="M 256,40 C 290,110 360,130 390,140 C 340,200 270,170 256,40 Z" fill="#4ADE80"/>
+
+    <!-- Bowl Base -->
+    <path d="M 60,240 C 60,380 150,470 256,470 C 362,470 452,380 452,240 Z" fill="url(#bowlGrad)"/>
+    <ellipse cx="256" cy="240" rx="196" ry="32" fill="#CBD5E1"/>
+
+    <!-- Bowl Contents (Healthy Salad Ingredients) -->
+    <!-- Greens -->
+    <ellipse cx="210" cy="235" rx="70" ry="25" fill="#22C55E"/>
+    <ellipse cx="310" cy="235" rx="65" ry="24" fill="#16A34A"/>
+    <!-- Avocado slice -->
+    <ellipse cx="256" cy="225" rx="45" ry="30" fill="#FACC15" transform="rotate(-15, 256, 225)"/>
+    <circle cx="256" cy="225" r="16" fill="#854D0E"/>
+    <!-- Cherry Tomato -->
+    <circle cx="170" cy="228" r="18" fill="#EF4444"/>
+    <circle cx="174" cy="224" r="5" fill="#FFFFFF" fill-opacity="0.6"/>
+    <circle cx="340" cy="230" r="17" fill="#EF4444"/>
+    <circle cx="343" cy="226" r="4.5" fill="#FFFFFF" fill-opacity="0.6"/>
+    <!-- Seeds -->
+    <circle cx="215" cy="210" r="3" fill="#FFFFFF"/>
+    <circle cx="295" cy="215" r="3" fill="#FFFFFF"/>
+    <circle cx="240" cy="245" r="3" fill="#FFFFFF"/>
+  </g>
+</svg>
