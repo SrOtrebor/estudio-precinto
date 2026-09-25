@@ -1,7 +1,7 @@
 {
-  "name": "NutriFit - Recetario Saludable",
-  "short_name": "NutriFit",
-  "description": "Tu recetario saludable inteligente: recetas fáciles, información nutricional, lista de compras y temporizador.",
+  "name": "PrecintoFit - Recetario Saludable",
+  "short_name": "PrecintoFit",
+  "description": "Tu recetario saludable modular: cocina en bloques, galletitas caseras, lista de compras y porciones por edad.",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#0F172A",

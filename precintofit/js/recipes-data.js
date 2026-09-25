@@ -1,5 +1,5 @@
 /**
- * NutriFit Argentina - Base de datos de Recetas, Módulos y Porciones
+ * PrecintoFit - Base de datos de Recetas, Módulos y Porciones
  * Adaptado a ingredientes reales argentinos y dinámica familiar (Adulto + Chicos de 13 y 4 años)
  */
 

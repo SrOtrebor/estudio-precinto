@@ -1,5 +1,5 @@
 /**
- * NutriFit Casero - App Logic
+ * PrecintoFit - App Logic
  * Modos de batch cooking, porciones por edad, lista de compras semanal y favoritos
  */
 

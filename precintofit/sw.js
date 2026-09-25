@@ -1,4 +1,4 @@
-const CACHE_NAME = 'nutrifit-v2';
+const CACHE_NAME = 'precintofit-v1';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
